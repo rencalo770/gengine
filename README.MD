@@ -9,7 +9,7 @@
 - support rule's description
 - support define a local variable in a rule, and it invisible between rules
 - support 'if..else' and it's Nested structure
-- support complex logic operationa
+- support complex logic operation
 - support complex Arithmetic (+ -  * /)
 - support method of golang's structure 
 - support single line comment(//)
@@ -17,6 +17,7 @@
 - to make it easy to use,Gengine just supports one return value function's or method's Assignment, but support call multi return value function
 - support directly inject function to run, and rename function
 - support switch to help user to decide when a rule execute error in the list whether continue to execute the last rules 
+- support use '@name' to get rule's name in rule content
 
 ## Gengine not support grammar
 - not support 'else if', beacase the creator hates 'else if'
@@ -248,6 +249,8 @@ func Test_Base(t *testing.T){
 - 支持直接注入函数并执行，并允许函数重命名
 - 支持规则链中有规则执行失败时，是否继续执行后续规则开关
 - 支持一些内置函数
+- 支持使用@name 在规则体内获得当前规则的名称
+
 
 ## Gengine不支持的规则语法
 - 不支持else if, 因为作者讨厌使用else if
@@ -458,8 +461,3 @@ func Test_Base(t *testing.T){
 
 ## 联系
 - renyunyi@bilibili.com
-
-
-## 许可证
-- MIT
-

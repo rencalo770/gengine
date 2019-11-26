@@ -28,3 +28,9 @@ func (cons *Constant) AcceptInteger(i64 int64) error {
 	cons.ConstantValue = i64
 	return nil
 }
+
+//receive rule's name
+func (cons *Constant)AcceptName(name string) error{
+	cons.ConstantValue = name
+	return nil
+}

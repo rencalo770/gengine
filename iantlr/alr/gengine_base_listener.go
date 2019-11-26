@@ -200,3 +200,9 @@ func (s *BasegengineListener) EnterNotOperator(ctx *NotOperatorContext) {}
 
 // ExitNotOperator is called when production notOperator is exited.
 func (s *BasegengineListener) ExitNotOperator(ctx *NotOperatorContext) {}
+
+// EnterAtName is called when production atName is entered.
+func (s *BasegengineListener) EnterAtName(ctx *AtNameContext) {}
+
+// ExitAtName is called when production atName is exited.
+func (s *BasegengineListener) ExitAtName(ctx *AtNameContext) {}

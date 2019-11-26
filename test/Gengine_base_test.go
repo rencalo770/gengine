@@ -30,7 +30,7 @@ func (u *User)Say(){
 }
 
 const (
-	rule2 = `
+	base_rule = `
 rule "测试" "测试描述"  salience 0 
 begin
 		// 重命名函数 测试
@@ -93,7 +93,7 @@ func exe(user *User){
 
 	//读取规则
 	start1 := time.Now().UnixNano()
-	err := ruleBuilder.BuildRuleFromString(rule2)
+	err := ruleBuilder.BuildRuleFromString(base_rule)
 	end1 := time.Now().UnixNano()
 
 	logrus.Infof("规则个数:%d, 加载规则耗时:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )

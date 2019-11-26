@@ -98,6 +98,9 @@ type gengineListener interface {
 	// EnterNotOperator is called when entering the notOperator production.
 	EnterNotOperator(c *NotOperatorContext)
 
+	// EnterAtName is called when entering the atName production.
+	EnterAtName(c *AtNameContext)
+
 	// ExitPrimary is called when exiting the primary production.
 	ExitPrimary(c *PrimaryContext)
 
@@ -187,4 +190,7 @@ type gengineListener interface {
 
 	// ExitNotOperator is called when exiting the notOperator production.
 	ExitNotOperator(c *NotOperatorContext)
+
+	// ExitAtName is called when exiting the atName production.
+	ExitAtName(c *AtNameContext)
 }

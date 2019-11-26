@@ -97,4 +97,7 @@ type gengineVisitor interface {
 	// Visit a parse tree produced by gengineParser#notOperator.
 	VisitNotOperator(ctx *NotOperatorContext) interface{}
 
+	// Visit a parse tree produced by gengineParser#atName.
+	VisitAtName(ctx *AtNameContext) interface{}
+
 }

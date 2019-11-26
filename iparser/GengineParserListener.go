@@ -24,6 +24,7 @@ type GengineParserListener struct {
 
 	KnowledgeContext *base.KnowledgeContext
 	Stack *stack.Stack
+	ruleName      string
 }
 
 func (g *GengineParserListener)AddError(e error)  {
@@ -48,20 +49,20 @@ func (g *GengineParserListener) EnterRuleEntity(ctx *parser.RuleEntityContext) {
 	if len(g.ParseErrors) > 0 {
 		return
 	}
-	entry := &base.RuleEntity{}
-	g.Stack.Push(entry)
+	entity := &base.RuleEntity{}
+	g.Stack.Push(entity)
 }
 
 func (g *GengineParserListener) ExitRuleEntity(ctx *parser.RuleEntityContext) {
 	if len(g.ParseErrors) > 0 {
 		return
 	}
-	entry := g.Stack.Pop().(*base.RuleEntity)
-	if _, ok := g.KnowledgeContext.RuleEntities[entry.RuleName]; ok {
-		g.AddError(errors.Errorf("already existed entity's name \"%s\"", entry.RuleName))
+	entity := g.Stack.Pop().(*base.RuleEntity)
+	if _, ok := g.KnowledgeContext.RuleEntities[entity.RuleName]; ok {
+		g.AddError(errors.Errorf("already existed entity's name \"%s\"", entity.RuleName))
 		return
 	}
-	g.KnowledgeContext.RuleEntities[entry.RuleName] = entry
+	g.KnowledgeContext.RuleEntities[entity.RuleName] = entity
 }
 
 func (g *GengineParserListener) EnterRuleName(ctx *parser.RuleNameContext) {}
@@ -71,8 +72,9 @@ func (g *GengineParserListener) ExitRuleName(ctx *parser.RuleNameContext) {
 		return
 	}
 	ruleName := ctx.GetText()
-	entry := g.Stack.Peek().(*base.RuleEntity)
-	entry.RuleName = ruleName
+	entity := g.Stack.Peek().(*base.RuleEntity)
+	g.ruleName = ruleName
+	entity.RuleName = ruleName
 }
 
 func (g *GengineParserListener) EnterSalience(ctx *parser.SalienceContext) {
@@ -87,8 +89,8 @@ func (g *GengineParserListener) ExitRuleDescription(ctx *parser.RuleDescriptionC
 		return
 	}
 	ruleDescription := ctx.GetText()
-	entry := g.Stack.Peek().(*base.RuleEntity)
-	entry.RuleDescription = ruleDescription
+	entity := g.Stack.Peek().(*base.RuleEntity)
+	entity.RuleDescription = ruleDescription
 }
 
 func (g *GengineParserListener) EnterRuleContent(ctx *parser.RuleContentContext) {
@@ -104,8 +106,8 @@ func (g *GengineParserListener) ExitRuleContent(ctx *parser.RuleContentContext) 
 		return
 	}
 	ruleContent := g.Stack.Pop().(*base.RuleContent)
-	entry := g.Stack.Peek().(*base.RuleEntity)
-	entry.RuleContent = ruleContent
+	entity := g.Stack.Peek().(*base.RuleEntity)
+	entity.RuleContent = ruleContent
 }
 
 func (g *GengineParserListener) EnterAssignment(ctx *parser.AssignmentContext) {
@@ -482,3 +484,16 @@ func (g *GengineParserListener) ExitInteger(ctx *parser.IntegerContext)  {
 	}
 }
 func (g *GengineParserListener) EnterInteger(ctx *parser.IntegerContext)  {}
+
+func (g *GengineParserListener) EnterAtName(ctx *parser.AtNameContext) {}
+
+func (g *GengineParserListener) ExitAtName(ctx *parser.AtNameContext) {
+	if len(g.ParseErrors) > 0 {
+		return
+	}
+	holder := g.Stack.Peek().(base.AtNameHolder)
+	err := holder.AcceptName(g.ruleName)
+	if err != nil {
+		g.AddError(err)
+	}
+}

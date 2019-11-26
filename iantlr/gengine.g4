@@ -42,6 +42,7 @@ constant
     | integer
     | realLiteral
     | stringLiteral
+    | atName
     ;
 
 functionArgs
@@ -75,6 +76,8 @@ assignOperator: ASSIGN ;
 setOperator: SET;
 
 notOperator: NOT;
+
+atName : '@name';
 
 fragment DEC_DIGIT          : [0-9];
 fragment A                  : [aA] ;

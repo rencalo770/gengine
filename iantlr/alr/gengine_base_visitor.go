@@ -127,3 +127,7 @@ func (v *BasegengineVisitor) VisitSetOperator(ctx *SetOperatorContext) interface
 func (v *BasegengineVisitor) VisitNotOperator(ctx *NotOperatorContext) interface{} {
 	return v.VisitChildren(ctx)
 }
+
+func (v *BasegengineVisitor) VisitAtName(ctx *AtNameContext) interface{} {
+	return v.VisitChildren(ctx)
+}
