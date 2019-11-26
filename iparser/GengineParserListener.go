@@ -492,7 +492,7 @@ func (g *GengineParserListener) ExitAtName(ctx *parser.AtNameContext) {
 		return
 	}
 	holder := g.Stack.Peek().(base.AtNameHolder)
-	err := holder.AcceptName(g.ruleName)
+	err := holder.AcceptName(strings.ReplaceAll(g.ruleName, "\"", ""))
 	if err != nil {
 		g.AddError(err)
 	}

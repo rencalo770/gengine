@@ -62,16 +62,16 @@
 //rule
 rule "测试" "测试描述"  salience 0 
 begin
-		// rename function test
-		Sout("XXXXXXXXXX")
+		// rename function test; @name represent the rule name "测试"
+		Sout(@name)
 		// common function test
 		Hello()
 		//struct's method  test
 		User.Say()
 		// if
 		if !(7 == User.GetNum(7)) || !(7 > 8)  {
-			//define variable and string's plus
-			variable = "hello" + (" world" + "zeze")
+			//define variable and string's plus; @name is just a string
+			variable = "hello" + (" world" + "zeze")+"@name"
 			// inner function
 			User.Name = "hhh" + strconv.FormatBool(true)
 			//struct's field 
@@ -134,7 +134,7 @@ const (
 rule "测试" "测试描述"  salience 0 
 begin
 		// 重命名函数 测试
-		Sout("XXXXXXXXXX")
+		Sout(@name)
 		// 普通函数 测试
 		Hello()
 		//结构提方法 测试

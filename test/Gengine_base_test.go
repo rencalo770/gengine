@@ -33,8 +33,8 @@ const (
 	base_rule = `
 rule "测试" "测试描述"  salience 0 
 begin
-		// 重命名函数 测试
-		Sout("XXXXXXXXXX")
+		// 重命名函数 测试; @name represent the rule name "测试"
+		Sout(@name)
 		// 普通函数 测试
 		Hello()
 		//结构提方法 测试
@@ -43,8 +43,8 @@ begin
 		if !(7 == User.GetNum(7)) || !(7 > 8)  {
 			//自定义变量 和 加法 测试
 			variable = "hello" + (" world" + "zeze")
-			// 加法 与 内建函数 测试
-			User.Name = "hhh" + strconv.FormatInt(10, 10)
+			// 加法 与 内建函数 测试 ; @name is just a string  
+			User.Name = "hhh" + strconv.FormatInt(10, 10) + "@name"
 			//结构体属性、方法调用 和 除法 测试
 			User.Age = User.GetNum(8976) / 1000+ 3*(1+1) 
 			//布尔值设置 测试
