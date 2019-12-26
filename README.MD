@@ -14,7 +14,7 @@
 - support method of golang's structure 
 - support single line comment(//)
 - support elegant check error, if there is an error in one rule, gengine will not load the rules to run to forbidden the harm to data 
-- to make it easy to use,Gengine just supports one return value function's or method's Assignment, but support call multi return value function
+- to make it easy to use,Gengine just supports one return value function's or method's Assignment and support return struct, but support call multi return value function
 - support directly inject function to run, and rename function
 - support switch to help user to decide when a rule execute error in the list whether continue to execute the last rules 
 - support use '@name' to get rule's name in rule content
@@ -23,6 +23,7 @@
 - not support 'else if', beacase the creator hates 'else if'
 - not support Multi-level call such as 'user.ip.ipRisk()'，because it not meet the "Dimit rule", and multi-level call make it hard to understand, so it just support this call type: 'ip.ipRisk()'
 - not support multi line comment (/*  comment */)
+- not support multi return value, if you want, you can use return struct 
 - not support nil 
 
 ## something need your attention
@@ -245,7 +246,7 @@ func Test_Base(t *testing.T){
 - 支持结构体方法调用
 - 支持单行注释(//)  
 - 支持优雅的规则检错机制(是的,你没看错,就是检错,不是检测!):如果待加载的一批规则中有一个规则有语法错误，那么规则引擎就不会加载这批规则去执行,防止对数据造成不可预知的危害
-- 支持仅有一个返回值的函数赋值，且返回值为基础类型；支持多返回值函数的调用，但无法处理其返回值
+- 支持仅有一个返回值的函数赋值，且返回值为基础类型或结构体; 支持多返回值函数的调用，但无法处理其返回值
 - 支持直接注入函数并执行，并允许函数重命名
 - 支持规则链中有规则执行失败时，是否继续执行后续规则开关
 - 支持一些内置函数
@@ -255,7 +256,7 @@ func Test_Base(t *testing.T){
 ## Gengine不支持的规则语法
 - 不支持else if, 因为作者讨厌使用else if
 - 不支持形如user.ip.ipRisk()这种多级调用，因为它不符合"迪米特法则"，并且会使代码变得难以理解；只支持ip.ipRisk()这种单级调用
-- 不支持函数多个返回值，并且不支持返回类型为非基础类型
+- 不支持函数多个返回值，当需要返回多个值时，请使用返回结构体
 - 不支持多行注释，因为不想支持
 - 不支持nil 
 

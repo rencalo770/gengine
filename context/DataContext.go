@@ -88,6 +88,11 @@ func (dc *DataContext)GetValue(Vars map[string]interface{}, variable string)(int
 		if obj,ok := dc.base[structAndField[0]]; ok{
 			return core.GetStructAttributeValue(obj, structAndField[1])
 		}
+
+		//for return struct or struct ptr
+		if obj,ok := Vars[structAndField[0]];ok{
+			return core.GetStructAttributeValue(obj, structAndField[1])
+		}
 	}else {
 		//in RuleEntity
 		return Vars[variable], nil

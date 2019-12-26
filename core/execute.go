@@ -58,6 +58,12 @@ func GetRawTypeValue(rs []reflect.Value) (interface{},error){
 			return float32(rs[0].Float()),nil
 		case "float64":
 			return rs[0].Float(),nil
+		case "struct":
+			return rs[0].Interface(),nil
+		case "ptr":
+			newPtr := reflect.New(rs[0].Elem().Type())
+			newPtr.Elem().Set(rs[0].Elem())
+			return newPtr.Interface(), nil
 		default:
 			return nil, errors.Errorf("Can't be handled type: %s", rs[0].Kind().String())
 		}
