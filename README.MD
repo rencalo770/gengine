@@ -2,7 +2,8 @@
 
 ## the rule engine based on golang 
 - this is a rule engine named **Gengine** based on golang and AST, it can help you to load your code(rules) to run while you did not need to restart your application.  
-- Gengine's code structure is Modular design, logic is easy to understand, and it passed the necessary testing！    
+- Gengine's code structure is Modular design, logic is easy to understand, and it passed the necessary testing！
+- it is also a high performance engine    
 
 ## Grammar support by Gengine
 - support the priority of the rules list and the priority scope is -int64 to int64
@@ -57,6 +58,8 @@
 -  /  
 - support string and string's plus
 
+## attention
+- if you want get high performance, please do as the test case do: separate the rule build process and the rule execute process    
 
 ## Gengine rule example
 ```go
@@ -459,6 +462,9 @@ func Test_Base(t *testing.T){
 }
 
 ```
+
+## 注意
+- 如果你想获得高执行效率，请将 规则的构建过程和规则的执行过程相分离 
 
 ## 联系
 - renyunyi@bilibili.com

@@ -94,11 +94,6 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 		math = evl
 	}
 
-/*	//check the right value wheter is nil
-	if e.ExpressionRight == nil {
-		return e.ExpressionLeft.Evaluate(Vars)
-	}*/
-
 	var atom interface{}
 	if e.ExpressionAtom != nil {
 		evl, err := e.ExpressionAtom.Evaluate(Vars)
@@ -109,23 +104,7 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 	}
 
 
-/*	lv, err := e.ExpressionLeft.Evaluate(Vars)
-	if err != nil {
-		return nil, err
-	}
-
-	rv, err := e.ExpressionRight.Evaluate(Vars)
-	if err != nil {
-		return nil, err
-	}
-
-	//
-	flv := reflect.ValueOf(lv)
-	frv := reflect.ValueOf(rv)
-*/
-
 	var b interface{}
-
 	if e.ExpressionRight == nil {
 		if e.ExpressionLeft != nil {
 			left, err := e.ExpressionLeft.Evaluate(Vars)
@@ -135,8 +114,8 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 			b = left
 		}
 	}
-	// && ||  just only to be used between boolean
 
+	// && ||  just only to be used between boolean
 	if e.LogicalOperator != "" {
 
 		lv, err := e.ExpressionLeft.Evaluate(Vars)
@@ -165,7 +144,7 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 		}
 	}
 
-	// == > < != >= <=  just only to be used between data and data, string and string
+	// == > < != >= <=  just only to be used between number and number, string and string
 	if e.ComparisonOperator != ""{
 
 		lv, err := e.ExpressionLeft.Evaluate(Vars)
@@ -208,10 +187,12 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 			default:
 				return nil,errors.Errorf("Can't be recognized ComparisonOperator: %s", e.ComparisonOperator)
 			}
+			goto LAST
 		}
 
+		//data compare
 		if  l, ok1 := TypeMap[tlv]; ok1{
-			if r, ok2 := TypeMap[trv];ok2{
+			if r, ok2 := TypeMap[trv]; ok2{
 				var ll float64
 				switch l {
 				case "int", "int8","int16","int32","int64":
@@ -264,6 +245,7 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 		}
 	}
 
+	LAST:
 	if e.NotOperator == "!" {
 
 		if math != nil {
@@ -273,10 +255,11 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 		if atom != nil {
 			return !reflect.ValueOf(atom).Bool(), nil
 		}
+
 		if b != nil {
 			return !reflect.ValueOf(b).Bool(), nil
 		}
-	}else {
+	} else {
 		if math != nil {
 			return math, nil
 		}
