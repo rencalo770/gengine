@@ -58,8 +58,9 @@
 -  /  
 - support string and string's plus
 
-## attention
+## attention and in action
 - if you want get high performance, please do as the test case do: separate the rule build process and the rule execute process    
+- when you rules contains Very time-consuming operation, such as operate database, you should use engine.ExecuteConcurrent(...), if not ,you should still use engine.Execute(...)
 
 ## Gengine rule example
 ```go
@@ -463,8 +464,9 @@ func Test_Base(t *testing.T){
 
 ```
 
-## 注意
+## 注意 和最佳实践
 - 如果你想获得高执行效率，请将 规则的构建过程和规则的执行过程相分离 
+- 如果你的规则中包含耗时，比如操作数据库，那么建议你用engine.ExecuteConcurrent(...) ,如果没有,建议你仍然用engine.Execute(...)
 
 ## 联系
 - renyunyi@bilibili.com
