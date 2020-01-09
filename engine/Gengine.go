@@ -43,8 +43,9 @@ func (g *Gengine) ExecuteConcurrent(rb * builder.RuleBuilder){
 	var wg sync.WaitGroup
 	wg.Add(len(rb.Kc.RuleEntities))
 	for _,r := range rb.Kc.RuleEntities {
+		rr := r
 		go func() {
-			e := r.Execute()
+			e := rr.Execute()
 			if e != nil {
 				logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
 			}
