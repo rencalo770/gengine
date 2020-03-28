@@ -64,6 +64,11 @@ begin
 			//字符串设置 测试
 			User.Name = "yyyy"
 		}
+		
+		if true {
+			Sout("if true ")
+		}
+
 end`)
 
 func Hello()  {
