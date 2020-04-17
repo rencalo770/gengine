@@ -54,3 +54,31 @@ func (g *Gengine) ExecuteConcurrent(rb * builder.RuleBuilder){
 	}
 	wg.Wait()
 }
+
+
+/*
+ mix model to execute rules
+ in this mode, it will not consider the priority，and it also concurrently to execute rules
+ first to execute the most high priority rule，then concurrently to execute last rules without consider the priority
+*/
+func (g *Gengine) ExecuteMixModel(rb * builder.RuleBuilder){
+	rules := rb.Kc.SortRules
+	if len(rules) > 0 {
+		e := rules[0].Execute()
+		logrus.Errorf("the most high priority rule: [%s]  exe err:+v",rules[0], e)
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(len(rules) - 1)
+	for _,r := range rules[1:] {
+		rr := r
+		go func() {
+			e := rr.Execute()
+			if e != nil {
+				logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+}

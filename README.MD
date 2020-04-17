@@ -467,6 +467,7 @@ func Test_Base(t *testing.T){
 ## 注意 和最佳实践
 - 如果你想获得高执行效率，请将 规则的构建过程和规则的执行过程相分离 
 - 如果你的规则中包含耗时，比如操作数据库，那么建议你用engine.ExecuteConcurrent(...) ,如果没有,建议你仍然用engine.Execute(...)
+- 规则引擎支持混合执行模式，优先执行一个最高优先级的规则，剩下的规则以并发的模式执行
 
 ## 联系
 - renyunyi@bilibili.com
