@@ -53,6 +53,14 @@ func (as *Args) AcceptConstant(cons *Constant) error {
 	return nil
 }
 
+func (as *Args) AcceptMapVar(mapVar *MapVar) error {
+	holder := &Arg{
+		MapVar:           mapVar,
+	}
+	as.ArgList = append(as.ArgList, holder)
+	return nil
+}
+
 func (as *Args) Evaluate(Vars map[string]interface{}) ([]interface{}, error) {
 	if as.ArgList == nil || len(as.ArgList) == 0 {
 		return make([]interface{}, 0), nil

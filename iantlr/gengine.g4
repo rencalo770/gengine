@@ -28,10 +28,11 @@ expressionAtom
     : methodCall
     | functionCall
     | constant
+    | mapVar
     | variable
     ;
 
-assignment : variable  (assignOperator | setOperator)  mathExpression;
+assignment : (mapVar | variable) (assignOperator | setOperator)  mathExpression;
 
 ifStmt : 'if' expression '{' statements '}' elseStmt? ;
 
@@ -46,7 +47,7 @@ constant
     ;
 
 functionArgs
-    : (constant | variable  | functionCall | methodCall )  (','(constant | variable | functionCall | methodCall ))*
+    : (constant | variable  | functionCall | methodCall | mapVar)  (','(constant | variable | functionCall | methodCall | mapVar))*
     ;
 
 integer : '-'? INT;
@@ -76,6 +77,8 @@ assignOperator: ASSIGN ;
 setOperator: SET;
 
 notOperator: NOT;
+
+mapVar: variable LSQARE (integer |stringLiteral | variable ) RSQARE;
 
 atName : '@name';
 
@@ -138,6 +141,9 @@ NOT                         : '!' ;
 
 ASSIGN                      : ':=' ;
 SET                         : '=';
+
+LSQARE    : '[' ;
+RSQARE    : ']' ;
 
 SEMICOLON                   : ';' ;
 LR_BRACE                    : '{';

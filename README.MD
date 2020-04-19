@@ -19,6 +19,7 @@
 - support directly inject function to run, and rename function
 - support switch to help user to decide when a rule execute error in the list whether continue to execute the last rules 
 - support use '@name' to get rule's name in rule content
+- support map and array with base data type, but not support to set Array's value by index 
 
 ## Gengine not support grammar
 - not support 'else if', beacase the creator hates 'else if'

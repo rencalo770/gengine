@@ -100,6 +100,12 @@ func ValueToInterface(v reflect.Value) interface{} {
 		return float32(v.Float())
 	case reflect.Float64:
 		return v.Float()
+	case reflect.Map:
+		return v.Interface()
+	case reflect.Array:
+		return v.Interface()
+	case reflect.Slice:
+		return v.Interface()
 	case reflect.Ptr:
 		newPtr := reflect.New(v.Elem().Type())
 		newPtr.Elem().Set(v.Elem())

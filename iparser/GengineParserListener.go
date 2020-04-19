@@ -497,3 +497,24 @@ func (g *GengineParserListener) ExitAtName(ctx *parser.AtNameContext) {
 		g.AddError(err)
 	}
 }
+
+func (g *GengineParserListener) EnterMapVar(ctx *parser.MapVarContext)  {
+	if len(g.ParseErrors) > 0 {
+		return
+	}
+	mapVar := &base.MapVar{}
+	g.Stack.Push(mapVar)
+
+}
+
+func (g *GengineParserListener) ExitMapVar(ctx *parser.MapVarContext) {
+	if len(g.ParseErrors) > 0 {
+		return
+	}
+	mapVar := g.Stack.Pop().(*base.MapVar)
+	holder := g.Stack.Peek().(base.MapVarHolder)
+	err := holder.AcceptMapVar(mapVar)
+	if err != nil {
+		g.AddError(err)
+	}
+}

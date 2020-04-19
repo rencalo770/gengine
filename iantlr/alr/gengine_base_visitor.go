@@ -1,4 +1,4 @@
-// Code generated from /Users/renyunyi/go/src/gengine/iantlr/gengine.g4 by ANTLR 4.7.2. DO NOT EDIT.
+// Code generated from /Users/renyunyi/go/src/gengine/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package parser // gengine
 
@@ -125,6 +125,10 @@ func (v *BasegengineVisitor) VisitSetOperator(ctx *SetOperatorContext) interface
 }
 
 func (v *BasegengineVisitor) VisitNotOperator(ctx *NotOperatorContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BasegengineVisitor) VisitMapVar(ctx *MapVarContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 

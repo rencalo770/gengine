@@ -144,7 +144,7 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 		}
 	}
 
-	// == > < != >= <=  just only to be used between number and number, string and string
+	// == > < != >= <=  just only to be used between number and number, string and string, bool and bool
 	if e.ComparisonOperator != ""{
 
 		lv, err := e.ExpressionLeft.Evaluate(Vars)
@@ -242,6 +242,21 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 					return nil,errors.Errorf("Can't be recognized ComparisonOperator: %s", e.ComparisonOperator)
 				}
 			}
+			goto LAST
+		}
+
+		if tlv == "bool" && trv == "bool" {
+			switch e.ComparisonOperator {
+			case "==":
+				b = flv.Bool() == frv.Bool()
+				break
+			case "!=":
+				b = flv.Bool() != frv.Bool()
+				break
+			default:
+				return nil,errors.Errorf("Can't be recognized ComparisonOperator: %s", e.ComparisonOperator)
+			}
+			goto LAST
 		}
 	}
 
@@ -272,6 +287,6 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 			return b, nil
 		}
 	}
-	return nil,errors.Errorf("%s", "Can't evaluate Expression err!")
+	return nil,errors.Errorf("%s", "evaluate Expression err!")
 }
 

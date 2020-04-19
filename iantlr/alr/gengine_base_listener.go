@@ -1,4 +1,4 @@
-// Code generated from /Users/renyunyi/go/src/gengine/iantlr/gengine.g4 by ANTLR 4.7.2. DO NOT EDIT.
+// Code generated from /Users/renyunyi/go/src/gengine/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package parser // gengine
 
@@ -200,6 +200,12 @@ func (s *BasegengineListener) EnterNotOperator(ctx *NotOperatorContext) {}
 
 // ExitNotOperator is called when production notOperator is exited.
 func (s *BasegengineListener) ExitNotOperator(ctx *NotOperatorContext) {}
+
+// EnterMapVar is called when production mapVar is entered.
+func (s *BasegengineListener) EnterMapVar(ctx *MapVarContext) {}
+
+// ExitMapVar is called when production mapVar is exited.
+func (s *BasegengineListener) ExitMapVar(ctx *MapVarContext) {}
 
 // EnterAtName is called when production atName is entered.
 func (s *BasegengineListener) EnterAtName(ctx *AtNameContext) {}

@@ -1,4 +1,4 @@
-// Code generated from /Users/renyunyi/go/src/gengine/iantlr/gengine.g4 by ANTLR 4.7.2. DO NOT EDIT.
+// Code generated from /Users/renyunyi/go/src/gengine/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package parser // gengine
 
@@ -98,6 +98,9 @@ type gengineListener interface {
 	// EnterNotOperator is called when entering the notOperator production.
 	EnterNotOperator(c *NotOperatorContext)
 
+	// EnterMapVar is called when entering the mapVar production.
+	EnterMapVar(c *MapVarContext)
+
 	// EnterAtName is called when entering the atName production.
 	EnterAtName(c *AtNameContext)
 
@@ -190,6 +193,9 @@ type gengineListener interface {
 
 	// ExitNotOperator is called when exiting the notOperator production.
 	ExitNotOperator(c *NotOperatorContext)
+
+	// ExitMapVar is called when exiting the mapVar production.
+	ExitMapVar(c *MapVarContext)
 
 	// ExitAtName is called when exiting the atName production.
 	ExitAtName(c *AtNameContext)

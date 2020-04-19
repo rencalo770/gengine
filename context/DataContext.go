@@ -122,3 +122,80 @@ func (dc *DataContext) SetValue(Vars map[string]interface{}  ,variable string, n
 	}
 	return errors.New("setValue not found error.")
 }
+
+func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, mapVarStrkey, mapVarVarkey  string , mapVarIntkey int64, newValue interface{}) error{
+
+	//value is map or array
+	value, e := dc.GetValue(Vars, mapVarName)
+	if e != nil {
+		return errors.Errorf("found mapVar error")
+	}
+
+	typeName := reflect.TypeOf(value).String()
+
+	//set the map's key-value
+	if len(mapVarStrkey) > 0 {
+		reflect.ValueOf(value).SetMapIndex(reflect.ValueOf(mapVarStrkey), reflect.ValueOf(newValue))
+		return nil
+	}
+
+	if len(mapVarVarkey) > 0 {
+		k, e := dc.GetValue(Vars, mapVarVarkey)
+		if e != nil {
+			return e
+		}
+
+		//set the map's key-value
+		if strings.HasPrefix(typeName, "map") {
+			reflect.ValueOf(value).SetMapIndex(reflect.ValueOf(k),reflect.ValueOf(newValue))
+			return nil
+		}
+
+		if strings.HasPrefix(typeName, "[]"){ //slice
+			i := int(reflect.ValueOf(k).Int())
+			if i < 0 {
+				return errors.Errorf("MapVar Array or Slice index must be no-negative integer!")
+			}
+			reflect.ValueOf(value).Index(i).Set(reflect.ValueOf(newValue))
+			return nil
+		}
+
+		//bug XXXXXXXX
+		if strings.Index(typeName, "[") == 0 && strings.Index(typeName, "]") != 1 {
+			return errors.Errorf("Not support to set Array's value by index")
+		}
+	}
+
+
+	//set the map's key-value
+	if strings.HasPrefix(typeName, "map") {
+		reflect.ValueOf(value).SetMapIndex(reflect.ValueOf(mapVarIntkey),reflect.ValueOf(newValue))
+		return nil
+	}
+
+	if strings.HasPrefix(typeName, "[]"){ //slice
+		i := int(reflect.ValueOf(mapVarIntkey).Int())
+		if i < 0 {
+			return errors.Errorf("MapVar Array or Slice index must be no-negative integer!")
+		}
+		reflect.ValueOf(value).Index(i).Set(reflect.ValueOf(newValue))
+		return nil
+	}
+
+	if strings.Index(typeName, "[") == 0 && strings.Index(typeName, "]") != 1 {
+		return errors.Errorf("Not support to set Array's value by index")
+	}
+
+	return errors.New("SetMapVarValue not found error.")
+}
+
+func (dc *DataContext)makeArray(value interface{})  {
+
+	/*arrLen := reflect.ValueOf(value).Len()
+	typeName := reflect.TypeOf(value).String()
+	s := typeName[strings.Index(typeName,"]")+1:]
+*/
+
+
+
+}

@@ -10,6 +10,7 @@ type ExpressionAtom struct {
 	Constant            *Constant
 	FunctionCall        *FunctionCall
 	MethodCall          *MethodCall
+	MapVar              *MapVar
 	knowledgeContext    *KnowledgeContext
 	dataCtx             *context.DataContext
 }
@@ -29,6 +30,10 @@ func (e *ExpressionAtom) Initialize(kc *KnowledgeContext, dc *context.DataContex
 
 	if e.MethodCall != nil {
 		e.MethodCall.Initialize(kc, dc)
+	}
+
+	if e.MapVar != nil {
+		e.MapVar.Initialize(kc, dc)
 	}
 }
 
@@ -64,6 +69,14 @@ func (e *ExpressionAtom)AcceptMethodCall(methodCall *MethodCall) error{
 	return errors.Errorf("MethodCall already defined")
 }
 
+func (e *ExpressionAtom)AcceptMapVar(mapVar *MapVar) error{
+	if e.MapVar == nil {
+		e.MapVar = mapVar
+		return nil
+	}
+	return errors.Errorf("MapVar already defined")
+}
+
 
 func (e *ExpressionAtom) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	if len(e.Variable) > 0 {
@@ -74,6 +87,8 @@ func (e *ExpressionAtom) Evaluate(Vars map[string]interface{}) (interface{}, err
 		return e.FunctionCall.Evaluate(Vars)
 	} else if e.MethodCall != nil {
 		return e.MethodCall.Evaluate(Vars)
+	}else if e.MapVar != nil {
+		return e.MapVar.Evaluate(Vars)
 	}
 	//todo
 	return nil, errors.Errorf("%v", "ExpressionAtom Evaluate error")
