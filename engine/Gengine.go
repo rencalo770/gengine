@@ -40,19 +40,21 @@ func (g *Gengine) Execute(rb *builder.RuleBuilder, b bool) error {
  in this mode, it will not consider the salience  and err control
  */
 func (g *Gengine) ExecuteConcurrent(rb * builder.RuleBuilder){
-	var wg sync.WaitGroup
-	wg.Add(len(rb.Kc.RuleEntities))
-	for _,r := range rb.Kc.RuleEntities {
-		rr := r
-		go func() {
-			e := rr.Execute()
-			if e != nil {
-				logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
-			}
-			wg.Done()
-		}()
+	if len(rb.Kc.RuleEntities) >= 1 {
+		var wg sync.WaitGroup
+		wg.Add(len(rb.Kc.RuleEntities))
+		for _,r := range rb.Kc.RuleEntities {
+			rr := r
+			go func() {
+				e := rr.Execute()
+				if e != nil {
+					logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
+				}
+				wg.Done()
+			}()
+		}
+		wg.Wait()
 	}
-	wg.Wait()
 }
 
 
@@ -68,19 +70,23 @@ func (g *Gengine) ExecuteMixModel(rb * builder.RuleBuilder){
 		if e != nil {
 			logrus.Errorf("the most high priority rule: [%s]  exe err:%+v",rules[0].RuleName, e)
 		}
+	}else{
+		return
 	}
 
-	var wg sync.WaitGroup
-	wg.Add(len(rules) - 1)
-	for _,r := range rules[1:] {
-		rr := r
-		go func() {
-			e := rr.Execute()
-			if e != nil {
-				logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
-			}
-			wg.Done()
-		}()
+	if (len(rules) - 1) >= 1 {
+		var wg sync.WaitGroup
+		wg.Add(len(rules) - 1)
+		for _,r := range rules[1:] {
+			rr := r
+			go func() {
+				e := rr.Execute()
+				if e != nil {
+					logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
+				}
+				wg.Done()
+			}()
+		}
+		wg.Wait()
 	}
-	wg.Wait()
 }
