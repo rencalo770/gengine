@@ -65,7 +65,9 @@ func (g *Gengine) ExecuteMixModel(rb * builder.RuleBuilder){
 	rules := rb.Kc.SortRules
 	if len(rules) > 0 {
 		e := rules[0].Execute()
-		logrus.Errorf("the most high priority rule: [%s]  exe err:%+v",rules[0].RuleName, e)
+		if e != nil {
+			logrus.Errorf("the most high priority rule: [%s]  exe err:%+v",rules[0].RuleName, e)
+		}
 	}
 
 	var wg sync.WaitGroup
