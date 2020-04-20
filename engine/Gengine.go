@@ -28,7 +28,7 @@ func (g *Gengine) Execute(rb *builder.RuleBuilder, b bool) error {
 			if b {
 				logrus.Errorf("rule: %s executed, error: %+v ",r.RuleName, err)
 			} else {
-				return errors.Errorf("rule: %s executed, error: %v ",r.RuleName, err)
+				return errors.Errorf("rule: %s executed, error: %+v ",r.RuleName, err)
 			}
 		}
 	}
@@ -65,7 +65,7 @@ func (g *Gengine) ExecuteMixModel(rb * builder.RuleBuilder){
 	rules := rb.Kc.SortRules
 	if len(rules) > 0 {
 		e := rules[0].Execute()
-		logrus.Errorf("the most high priority rule: [%s]  exe err:+v",rules[0], e)
+		logrus.Errorf("the most high priority rule: [%s]  exe err:%+v",rules[0].RuleName, e)
 	}
 
 	var wg sync.WaitGroup
