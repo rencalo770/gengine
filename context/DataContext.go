@@ -30,6 +30,11 @@ func (dc *DataContext)Add(key string, obj interface{})  {
 	dc.base.Store(key, obj)
 }
 
+func (dc *DataContext)Get(key string) interface{}{
+	value, _ := dc.base.Load(key)
+	return value
+}
+
 /**
 execute the injected functions
 function execute supply multi return values, but simplify ,just return one value
@@ -190,12 +195,5 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 }
 
 func (dc *DataContext)makeArray(value interface{})  {
-
-	/*arrLen := reflect.ValueOf(value).Len()
-	typeName := reflect.TypeOf(value).String()
-	s := typeName[strings.Index(typeName,"]")+1:]
-*/
-
-
 
 }
