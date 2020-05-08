@@ -15,6 +15,10 @@ func NewGengine() *Gengine {
 	return &Gengine{}
 }
 
+type Stag struct {
+	StopTag bool
+}
+
 /**
 	when b is true it means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
  */
@@ -135,6 +139,40 @@ func (g *Gengine) ExecuteMixModelWithStopTag(rb * builder.RuleBuilder, stopTag s
 	}
 
 	if reflect.ValueOf(rb.Dc.Get(stopTag)).Bool() {
+		if (len(rules) - 1) >= 1 {
+			var wg sync.WaitGroup
+			wg.Add(len(rules) - 1)
+			for _,r := range rules[1:] {
+				rr := r
+				go func() {
+					e := rr.Execute()
+					if e != nil {
+						logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
+					}
+					wg.Done()
+				}()
+			}
+			wg.Wait()
+		}
+	}
+}
+/**
+base type :golang translate value
+not base type: golang translate pointer
+ */
+func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb * builder.RuleBuilder, sTag *Stag){
+
+	rules := rb.Kc.SortRules
+	if len(rules) > 0 {
+		e := rules[0].Execute()
+		if e != nil {
+			logrus.Errorf("the most high priority rule: [%s]  exe err:%+v",rules[0].RuleName, e)
+		}
+	}else{
+		return
+	}
+
+	if sTag.StopTag {
 		if (len(rules) - 1) >= 1 {
 			var wg sync.WaitGroup
 			wg.Add(len(rules) - 1)
