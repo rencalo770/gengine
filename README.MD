@@ -6,7 +6,7 @@
 - it is also a high performance engine    
 
 ## the  execute model of rules
- ![avatar](exe_model.png)
+ ![avatar](exe_model.jpg)
 
 ## Grammar support by Gengine
 - support the priority of the rules list and the priority scope is -int64 to int64
