@@ -60,12 +60,36 @@ func (g *Gengine) ExecuteWithStopTag(rb *builder.RuleBuilder, b bool, stopTag st
 			}
 		}
 
-		if reflect.ValueOf(rb.Dc.Get(stopTag)).Bool() {
+		if !reflect.ValueOf(rb.Dc.Get(stopTag)).Bool() {
 			break
 		}
 	}
 	return nil
 }
+
+func (g *Gengine) ExecuteWithStopTagDirect(rb *builder.RuleBuilder, b bool, sTag *Stag) error {
+	if len(rb.Kc.RuleEntities) == 0 {
+		return nil
+	}
+
+	for _,r := range rb.Kc.SortRules{
+		err := r.Execute()
+		if err != nil {
+			if b {
+				logrus.Errorf("rule: %s executed, error: %+v ",r.RuleName, err)
+			} else {
+				return errors.Errorf("rule: %s executed, error: %+v ",r.RuleName, err)
+			}
+		}
+
+		if !sTag.StopTag {
+			break
+		}
+	}
+	return nil
+}
+
+
 
 /*
  concurrent execute rules
@@ -138,7 +162,7 @@ func (g *Gengine) ExecuteMixModelWithStopTag(rb * builder.RuleBuilder, stopTag s
 		return
 	}
 
-	if reflect.ValueOf(rb.Dc.Get(stopTag)).Bool() {
+	if !reflect.ValueOf(rb.Dc.Get(stopTag)).Bool() {
 		if (len(rules) - 1) >= 1 {
 			var wg sync.WaitGroup
 			wg.Add(len(rules) - 1)
