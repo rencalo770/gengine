@@ -69,6 +69,7 @@ begin
 			Sout("if true ")
 		}
 
+		if true{}else{}
 end`)
 
 func Hello()  {

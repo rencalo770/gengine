@@ -13,11 +13,16 @@ type ElseStmt struct {
 }
 
 func (e *ElseStmt) Evaluate(Vars map[string]interface{}) (reflect.Value, error) {
-	value, err:= e.StatementList.Evaluate(Vars)
-	if err != nil {
-		return reflect.ValueOf(nil),err
+
+	if e.StatementList != nil {
+		value, err:= e.StatementList.Evaluate(Vars)
+		if err != nil {
+			return reflect.ValueOf(nil),err
+		}
+		return value,nil
+	}else {
+		return reflect.ValueOf(nil),nil
 	}
-	return value,nil
 }
 
 func (e *ElseStmt) Initialize(kc *KnowledgeContext, dc *context.DataContext) {

@@ -22,7 +22,12 @@ func (i *IfStmt) Evaluate(Vars map[string]interface{}) (reflect.Value, error) {
 	}
 
 	if reflect.ValueOf(it).Bool() {
-		return i.StatementList.Evaluate(Vars)
+		if i.StatementList == nil{
+			return reflect.ValueOf(nil),nil
+		}else {
+			return i.StatementList.Evaluate(Vars)
+		}
+
 	}else {
 		if i.ElseStmt != nil{
 			return i.ElseStmt.Evaluate(Vars)

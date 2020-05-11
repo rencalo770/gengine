@@ -172,7 +172,7 @@ func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb * builder.RuleBuilder, sTa
 		return
 	}
 
-	if sTag.StopTag {
+	if !sTag.StopTag {
 		if (len(rules) - 1) >= 1 {
 			var wg sync.WaitGroup
 			wg.Add(len(rules) - 1)

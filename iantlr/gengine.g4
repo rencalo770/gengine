@@ -34,9 +34,9 @@ expressionAtom
 
 assignment : (mapVar | variable) (assignOperator | setOperator)  mathExpression;
 
-ifStmt : 'if' expression '{' statements '}' elseStmt? ;
+ifStmt : 'if' expression '{' statements? '}' elseStmt? ;
 
-elseStmt : 'else' '{' statements '}';
+elseStmt : 'else' '{' statements? '}';
 
 constant
     : booleanLiteral
