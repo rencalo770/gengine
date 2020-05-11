@@ -5,6 +5,9 @@
 - Gengine's code structure is Modular design, logic is easy to understand, and it passed the necessary testing！
 - it is also a high performance engine    
 
+## the  execute model of rules
+ ![avatar](exe_model.png)
+
 ## Grammar support by Gengine
 - support the priority of the rules list and the priority scope is -int64 to int64
 - support rule's description
