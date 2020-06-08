@@ -83,25 +83,25 @@ func Test_sets(t *testing.T) {
 }
 
 type Data struct {
-	S []string
-	SA []string
-	SB []string
+	S1 []string
+	S2 []string
+	S3 []string
 }
 
 
 const rule = `
 rule "测试交叉并" "规则描述"
 begin
-data.SB = difference(data.S, data.SA)
+data.S3 = difference(data.S1, data.S2)
 end
 `
 
 func exec(){
 
 	data := &Data{
-		S: []string{"111", "2222", "333"},
-		SA: []string{"1111", "222", "333"},
-		SB: []string{},
+		S1: []string{"111", "2222", "333"},
+		S2: []string{"1111", "222", "333"},
+		S3: []string{},
 	}
 
 	dataContext := context.NewDataContext()
@@ -130,7 +130,7 @@ func exec(){
 		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 		err := eng.Execute(ruleBuilder, true)
 
-		for _,v := range data.SB {
+		for _,v := range data.S3 {
 			println(v)
 		}
 		end := time.Now().UnixNano()
