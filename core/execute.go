@@ -162,10 +162,10 @@ func SetAttributeValue(obj interface{}, fieldName string, value interface{}) err
 			field.SetString(reflect.ValueOf(value).String())
 			break
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			field.SetInt(int64(reflect.ValueOf(value).Float()))
+			field.SetInt(int64(reflect.ValueOf(value).Int()))
 			break
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			field.SetUint(uint64(reflect.ValueOf(value).Float()))
+			field.SetUint(uint64(reflect.ValueOf(value).Uint()))
 			break
 		case reflect.Float32, reflect.Float64:
 			field.SetFloat(reflect.ValueOf(value).Float())
