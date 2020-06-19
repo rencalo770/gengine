@@ -103,6 +103,10 @@ func (dc *DataContext)GetValue(Vars map[string]interface{}, variable string)(int
 			return core.GetStructAttributeValue(obj, structAndField[1])
 		}
 	}else {
+		//user set
+		if obj,ok := dc.base.Load(variable); ok{
+			return obj,nil
+		}
 		//in RuleEntity
 		return Vars[variable], nil
 	}
