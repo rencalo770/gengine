@@ -29,7 +29,7 @@ type Req struct {
 
 func GetPool(req *Req){
 
-	println("fuck you。。。。")
+	println("hello....")
 }
 
 /*func Test_Struct(t *testing.T)  {
