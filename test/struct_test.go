@@ -23,17 +23,27 @@ func getPerson(n string, a int64) *Person{
 	}
 }
 
-func Test_Struct(t *testing.T)  {
+type Req struct {
+	//Data string
+}
+
+func GetPool(req *Req){
+
+	println("hello....")
+}
+
+/*func Test_Struct(t *testing.T)  {
 	 p := getPerson("777", 5)
 	 println(p.Age)
-}
+}*/
 
 
 const rule_s = `
 rule "test_struct_return" "test" 
 begin
-	p = getPerson("hello", 100)
-	Sout(p.Age)
+	//p = getPerson("hello", 100)
+	//Sout(p.Age)
+	GetPool(req)
 end
 `
 
@@ -44,8 +54,13 @@ func exe_struct(){
 	dataContext := context.NewDataContext()
 	//注入结构体指针
 	//重命名函数,并注入
+
+	req := &Req{}
 	dataContext.Add("Sout",fmt.Println)
 	dataContext.Add("getPerson",getPerson)
+	dataContext.Add("GetPool", GetPool)
+	dataContext.Add("req", req)
+
 	//初始化规则引擎
 	knowledgeContext := base.NewKnowledgeContext()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)

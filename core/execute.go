@@ -64,6 +64,8 @@ func GetRawTypeValue(rs []reflect.Value) (interface{},error){
 			newPtr := reflect.New(rs[0].Elem().Type())
 			newPtr.Elem().Set(rs[0].Elem())
 			return newPtr.Interface(), nil
+		case "slice":
+			return rs[0].Interface(),nil
 		default:
 			return nil, errors.Errorf("Can't be handled type: %s", rs[0].Kind().String())
 		}
@@ -160,16 +162,19 @@ func SetAttributeValue(obj interface{}, fieldName string, value interface{}) err
 			field.SetString(reflect.ValueOf(value).String())
 			break
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			field.SetInt(int64(reflect.ValueOf(value).Float()))
+			field.SetInt(int64(reflect.ValueOf(value).Int()))
 			break
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			field.SetUint(uint64(reflect.ValueOf(value).Float()))
+			field.SetUint(uint64(reflect.ValueOf(value).Uint()))
 			break
 		case reflect.Float32, reflect.Float64:
 			field.SetFloat(reflect.ValueOf(value).Float())
 			break
 		case reflect.Bool:
 			field.SetBool(reflect.ValueOf(value).Bool())
+			break
+		case reflect.Slice:
+			field.Set(reflect.ValueOf(value))
 			break
 		default:
 			return errors.Errorf("%s:%s", "Not support type", field.Type().Kind().String())

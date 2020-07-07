@@ -5,6 +5,9 @@
 - Gengine's code structure is Modular design, logic is easy to understand, and it passed the necessary testing！
 - it is also a high performance engine    
 
+## the  execute model of rules
+ ![avatar](exe_model.jpg)
+
 ## Grammar support by Gengine
 - support the priority of the rules list and the priority scope is -int64 to int64
 - support rule's description
@@ -256,6 +259,7 @@ func Test_Base(t *testing.T){
 - 支持规则链中有规则执行失败时，是否继续执行后续规则开关
 - 支持一些内置函数
 - 支持使用@name 在规则体内获得当前规则的名称
+- 支持基础类型的map和array，但是不支持基于数组的下标去设置数组的值
 
 
 ## Gengine不支持的规则语法
