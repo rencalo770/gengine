@@ -471,4 +471,4 @@ func Test_Base(t *testing.T){
 - 规则引擎支持混合执行模式，优先执行一个最高优先级的规则，剩下的规则以并发的模式执行
 
 ## 联系
-- renyunyi@bilibili.com
+- M201476117@alumni.hust.edu.cn
