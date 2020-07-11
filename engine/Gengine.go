@@ -20,6 +20,8 @@ type Stag struct {
 }
 
 /**
+sort execute model
+
 	when b is true it means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
  */
 func (g *Gengine) Execute(rb *builder.RuleBuilder, b bool) error {
@@ -41,8 +43,16 @@ func (g *Gengine) Execute(rb *builder.RuleBuilder, b bool) error {
 }
 
 /**
+sort execute model
+
 when b is true it means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule;
 if stopTag become true,it will not continue to execute
+
+stopTag is a name given by user, and user can use it  to control rules execute behavior in rules, it can improve performance
+
+it used in this scene:
+where some high priority rules execute finished, you don't want to execute to the last rules, you can use sTag to control it out of gengine
+
 */
 func (g *Gengine) ExecuteWithStopTag(rb *builder.RuleBuilder, b bool, stopTag string) error {
 	rb.Dc.Add(stopTag, false)
@@ -67,6 +77,18 @@ func (g *Gengine) ExecuteWithStopTag(rb *builder.RuleBuilder, b bool, stopTag st
 	return nil
 }
 
+
+/**
+sort execute model
+
+when b is true it means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule;
+if stopTag become true,it will not continue to execute
+
+sTag is a struct given by user, and user can use it  to control rules execute behavior in rules, it can improve performance
+
+it used in this scene:
+where some high priority rules execute finished, you don't want to execute to the last rules, you can use sTag to control it out of gengine
+ */
 func (g *Gengine) ExecuteWithStopTagDirect(rb *builder.RuleBuilder, b bool, sTag *Stag) error {
 	if len(rb.Kc.RuleEntities) == 0 {
 		return nil
@@ -92,8 +114,8 @@ func (g *Gengine) ExecuteWithStopTagDirect(rb *builder.RuleBuilder, b bool, sTag
 
 
 /*
- concurrent execute rules
- in this mode, it will not consider the salience  and err control
+ concurrent execute model
+ in this mode, it will not consider the priority  and not consider err control
  */
 func (g *Gengine) ExecuteConcurrent(rb * builder.RuleBuilder){
 	if len(rb.Kc.RuleEntities) >= 1 {
@@ -116,6 +138,7 @@ func (g *Gengine) ExecuteConcurrent(rb * builder.RuleBuilder){
 
 /*
  mix model to execute rules
+
  in this mode, it will not consider the priority，and it also concurrently to execute rules
  first to execute the most high priority rule，then concurrently to execute last rules without consider the priority
 */
@@ -148,7 +171,14 @@ func (g *Gengine) ExecuteMixModel(rb * builder.RuleBuilder){
 }
 
 /**
+ mix execute model
+
 if stopTag become true,it will not continue to execute
+stopTag is a name given by user, and user can use it  to control rules execute behavior in rules, it can improve performance
+
+it used in this scene:
+where the first rule execute finished, you don't want to execute to the last rules, you can use sTag to control it in gengine
+
  */
 func (g *Gengine) ExecuteMixModelWithStopTag(rb * builder.RuleBuilder, stopTag string){
 	rb.Dc.Add(stopTag, false)
@@ -181,8 +211,17 @@ func (g *Gengine) ExecuteMixModelWithStopTag(rb * builder.RuleBuilder, stopTag s
 	}
 }
 /**
+ mix execute model
+
 base type :golang translate value
 not base type: golang translate pointer
+
+if stopTag become true,it will not continue to execute
+stopTag is a name given by user, and user can use it  to control rules execute behavior in rules, it can improve performance
+
+it used in this scene:
+where the first rule execute finished, you don't want to execute to the last rules, you can use sTag to control it out of gengine
+
  */
 func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb * builder.RuleBuilder, sTag *Stag){
 

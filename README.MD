@@ -234,7 +234,7 @@ func Test_Base(t *testing.T){
 - renyunyi@bilibili.com
 
 ## Licence
-- MIT
+- BSD
 
 
 
