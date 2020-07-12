@@ -12,14 +12,17 @@ import (
 type GenginePool struct {
 	runningLock      sync.Mutex
 	freeGengines     []*gengineWrapper
+	freeChan         chan int64
 
 	additionLock     sync.Mutex
 	additionGengines []*gengineWrapper
 	additionCount    int64
+	additionNum      int64
+	additionChan     chan int64
 
 	apis    map[string]interface{}
 	minPool int64
-	maxPool int64
+	//maxPool int64
 
 	updateLock       sync.Mutex
 	version          int
@@ -63,6 +66,7 @@ func NewGenginePool(poolMinLen ,poolMaxLen int64, em int, rulesStr string, apiOu
 
 	v := 0
 	fg := make([]*gengineWrapper, poolMinLen)
+ 	fc := make(chan int64, poolMinLen * 2)
 	for i := int64(0); i < poolMinLen; i ++ {
 		dstRb,e := copyRuleBuilder(srcRb)
 		if  e != nil{
@@ -72,18 +76,41 @@ func NewGenginePool(poolMinLen ,poolMaxLen int64, em int, rulesStr string, apiOu
 		 	rulebuilder : dstRb,
 		 	gengine     : NewGengine(),
 		 	version     : v,
+		 	addition    : false,
 		}
+		fc <- 1
+	}
+
+
+	ag := make([]*gengineWrapper, poolMinLen)
+	ac := make(chan int64, (poolMaxLen-poolMinLen) * 2)
+	for i := int64(0); i < poolMaxLen - poolMinLen; i ++ {
+		dstRb,e := copyRuleBuilder(srcRb)
+		if  e != nil{
+			return nil, e
+		}
+		ag[i] = &gengineWrapper{
+			rulebuilder : dstRb,
+			gengine     : NewGengine(),
+			version     : v,
+			addition    : true,
+		}
+		ac <- 1
 	}
 
 	p := &GenginePool{
-		ruleBuilder  : srcRb,
-		freeGengines : fg,
-		apis:          apiOuter,
-		execModel    : em,
-		version      : v,
-		minPool      : poolMinLen,
-		maxPool      : poolMaxLen,
-		clear        : false,
+		ruleBuilder      : srcRb,
+		freeGengines     : fg,
+		freeChan         : fc ,
+		apis             : apiOuter,
+		execModel        : em,
+		version          : v,
+		minPool          : poolMinLen,
+		additionCount    : 0,
+		additionNum      : poolMaxLen - poolMinLen,
+		additionGengines : ag,
+		additionChan     : ac,
+		clear            : false,
 	}
 	return p, nil
 }
@@ -111,7 +138,6 @@ func getRuleBuilder(rulesStr string, apiOuter map[string]interface{}) (*builder.
 }
 
 func copyRuleBuilder(src *builder.RuleBuilder) (*builder.RuleBuilder, error){
-
 	if src == nil {
 		return nil, errors.Errorf("src ruleBuilder is nil")
 	}
@@ -120,78 +146,97 @@ func copyRuleBuilder(src *builder.RuleBuilder) (*builder.RuleBuilder, error){
 	return rb, nil
 }
 
+
+func (gp *GenginePool)getGengineWithChan() (*gengineWrapper, error){
+	select {
+	case  <- gp.freeChan:
+		gp.runningLock.Lock()
+		numFree := len(gp.freeGengines)
+		gw := gp.freeGengines[0]
+		copy(gp.freeGengines, gp.freeGengines[:1])
+		gp.freeGengines = gp.freeGengines[:numFree-1]
+		gp.runningLock.Unlock()
+		return gw, nil
+	case <- gp.additionChan:
+		gp.additionLock.Lock()
+		freeAddition := len(gp.additionGengines)
+		gw := gp.additionGengines[0]
+		copy(gp.additionGengines, gp.additionGengines[:1])
+		gp.additionGengines = gp.additionGengines[:freeAddition]
+		gp.additionLock.Unlock()
+		return gw,nil
+	}
+}
+
 // if there is no enough gengine source, no request will take a lock
 func (gp *GenginePool)getGengine() (*gengineWrapper, error){
 
 	for{
 		gp.getEngineLock.Lock()
 		//check if there has enough resource in pool
-		if len(gp.freeGengines) > 0 {
+		numFree := len(gp.freeGengines)
+		if numFree > 0 {
 			gp.runningLock.Lock()
-			numFree := len(gp.freeGengines)
-			if numFree > 0{
-				gw := gp.freeGengines[0]
-				copy(gp.freeGengines, gp.freeGengines[:1])
-				gp.freeGengines = gp.freeGengines[:numFree-1]
+			gw := gp.freeGengines[0]
+			copy(gp.freeGengines, gp.freeGengines[:1])
+			gp.freeGengines = gp.freeGengines[:numFree-1]
 
-				gp.runningLock.Unlock()
-				gp.getEngineLock.Unlock()
-
-				return gw,nil
-			}else {
-				gp.runningLock.Unlock()
-			}
+			gp.runningLock.Unlock()
+			gp.getEngineLock.Unlock()
+			return gw,nil
 		}
 
 		//check if there has addition resource
-		if len(gp.additionGengines) > 0 {
+		freeAddition := len(gp.additionGengines)
+		if freeAddition > 0 {
 			gp.additionLock.Lock()
-			freeAddition := len(gp.additionGengines)
-			if freeAddition > 0 {
-				gw := gp.additionGengines[0]
-				copy(gp.additionGengines,gp.additionGengines[:1])
-				gp.additionGengines = gp.additionGengines[:freeAddition-1]
+			gw := gp.additionGengines[0]
+			copy(gp.additionGengines,gp.additionGengines[:1])
+			gp.additionGengines = gp.additionGengines[:freeAddition-1]
 
-				gp.additionLock.Unlock()
-				gp.getEngineLock.Unlock()
-
-				return gw,nil
-			}else {
-				gp.additionLock.Unlock()
-			}
+			gp.additionLock.Unlock()
+			gp.getEngineLock.Unlock()
+			return gw,nil
 		}
 
 		//we count create a new gengine
-		addtionNum := gp.maxPool - gp.minPool
-		if gp.additionCount < addtionNum{
-			gp.additionLock.Lock()
-			if gp.additionCount < addtionNum{
-				gp.additionCount ++
-				dstRb,e := copyRuleBuilder(gp.ruleBuilder)
-				if e != nil {
-					gp.additionCount --
+		if gp.additionCount < gp.additionNum{
 
-					gp.additionLock.Unlock()
-					gp.getEngineLock.Unlock()
+			gp.additionCount ++
+			dstRb,e := copyRuleBuilder(gp.ruleBuilder)
+			if e != nil {
+				gp.additionCount --
 
-					return nil,e
-				}else {
-					gw := &gengineWrapper{
-						rulebuilder : dstRb,
-						gengine     : NewGengine(),
-						version     : gp.version,
-						addition    : true,
-					}
-					gp.additionLock.Unlock()
-					gp.getEngineLock.Unlock()
-
-					return gw, nil
-				}
+				gp.getEngineLock.Unlock()
+				return nil,e
 			}else {
-				gp.additionLock.Unlock()
+				gw := &gengineWrapper{
+					rulebuilder : dstRb,
+					gengine     : NewGengine(),
+					version     : gp.version,
+					addition    : true,
+				}
+
+				gp.getEngineLock.Unlock()
+				return gw, nil
 			}
 		}
 		gp.getEngineLock.Unlock()
+	}
+}
+
+func (gp *GenginePool)putGengineChan(gw *gengineWrapper){
+	if gw.addition {
+		gp.additionLock.Lock()
+		gp.additionGengines = append(gp.additionGengines, gw)
+		gp.additionLock.Unlock()
+		gp.additionChan <- 1
+
+	} else {
+		gp.runningLock.Lock()
+		gp.freeGengines = append(gp.freeGengines, gw)
+		gp.runningLock.Unlock()
+		gp.freeChan <- 1
 	}
 }
 

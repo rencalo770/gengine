@@ -46,7 +46,7 @@ func Test_once(t *testing.T){
 	t1 := time.Now()
 	apis := make(map[string]interface{})
 	apis["print"] = fmt.Println
-	pool, e1 := engine.NewGenginePool(5, 6, 1, pool_rule, apis)
+	pool, e1 := engine.NewGenginePool(1, 2, 1, pool_rule, apis)
 	if e1 != nil {
 		println(fmt.Sprintf("e1: %+v", e1))
 	}
@@ -61,6 +61,8 @@ func Test_once(t *testing.T){
 
 func Test_pool_with_rules_for_goruntine(t *testing.T){
 
+	poolMinLen := int64(5)
+	poolMaxLen := int64(10)
 	max := int64(0)
 	min := int64(1000000)
 	cnt := int64(0)
@@ -74,7 +76,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T){
 	t1 := time.Now()
 	apis := make(map[string]interface{})
 	apis["print"] = fmt.Println
-	pool, e1 := engine.NewGenginePool(20, 26, 1, pool_rule, apis)
+	pool, e1 := engine.NewGenginePool(poolMinLen, poolMaxLen, 1, pool_rule, apis)
 	if e1 != nil {
 		println(fmt.Sprintf("e1: %+v", e1))
 	}
@@ -102,7 +104,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T){
 	}()
 
 
-	/*go func() {
+	go func() {
 		for {
 			t2 := time.Now()
 			reqest := &Reqest{Data: 1}
@@ -185,13 +187,13 @@ func Test_pool_with_rules_for_goruntine(t *testing.T){
 			//println("5 exec cost time:", time.Since(t2), "ns\n")
 		}
 	}()
-*/
+
 	go func() {
 		i := 0
 		for {
 			time.Sleep(1 *time.Second)
 			i ++
-			println("sort", i,", min: ", min , "ns, max: ", max ,"ns, cnt:" ,cnt, ", g1:", g1, ",g2:", g2, ",g3:", g3, ",g4:", g4, ",g5:", g5)
+			println("poolMinLen=", poolMinLen,", poolMaxLen=", poolMaxLen,", sort", i,", min: ", min , "ns, max: ", max ,"ns, cnt:" ,cnt, ", g1:", g1, ",g2:", g2, ",g3:", g3, ",g4:", g4, ",g5:", g5)
 		}
 
 	}()
