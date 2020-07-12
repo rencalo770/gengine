@@ -1,4 +1,4 @@
-package test
+package math
 
 import (
 	"gengine/base"
@@ -11,14 +11,16 @@ import (
 )
 
 type Entity struct {
-	Score int
+	Score int32
+	Height float64
 }
 
 const num_rule  =`
 
-rule "测试规则名称2" "规则描述"
+rule "rule name" "rule desc"
 begin
 entity.Score = 100
+entity.Height = 1.68
 end
 `
 
@@ -29,7 +31,7 @@ func exec_num(){
 	dataContext := context.NewDataContext()
 	dataContext.Add("entity",entity)
 
-	//初始化规则引擎
+	//init rule engine
 	knowledgeContext := base.NewKnowledgeContext()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
 
@@ -38,7 +40,7 @@ func exec_num(){
 	err := ruleBuilder.BuildRuleFromString(num_rule)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("规则个数:%d, 加载规则耗时:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
 
 	if err != nil{
 		logrus.Errorf("err:%s ", err)
@@ -50,6 +52,7 @@ func exec_num(){
 		err := eng.Execute(ruleBuilder, true)
 		end := time.Now().UnixNano()
 		println(entity.Score)
+		println(entity.Height)
 		if err != nil{
 			logrus.Errorf("execute rule error: %v", err)
 		}

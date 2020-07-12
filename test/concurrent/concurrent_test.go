@@ -14,52 +14,15 @@ import (
 )
 
 
-const (
-	base_rule = `
-rule "测试" "测试描述"  salience 0 
-begin
-		// 重命名函数 测试; @name represent the rule name "测试"
-		Sout(@name)
-		// 普通函数 测试
-		Hello()
-		//结构提方法 测试
-		User.Say()
-		// if
-		if !(7 == User.GetNum(7)) || !(7 > 8)  {
-			//自定义变量 和 加法 测试
-			variable = "hello" + (" world" + "zeze")
-			// 加法 与 内建函数 测试 ; @name is just a string  
-			User.Name = "hhh" + strconv.FormatInt(10, 10) + "@name"
-			//结构体属性、方法调用 和 除法 测试
-			User.Age = User.GetNum(8976) / 1000+ 3*(1+1) 
-			//布尔值设置 测试
-			User.Male = false
-			//规则内自定义变量调用 测试
-			User.Print(variable)
-			//float测试	也支持科学计数法		
-			f = 9.56			
-			PrintReal(f)
-			//嵌套if-else测试
-			if false	{
-				Sout("嵌套if测试")
-			}else{
-				Sout("嵌套else测试")
-			}
-		}else{ //else
-			//字符串设置 测试
-			User.Name = "yyyy"
-		}
-end`)
-
 func readAll() string {
 	f, err := os.Open("/Users/renyunyi/go/src/gengine/test/rule.gengine")
 	if err != nil {
-		logrus.Errorf("读取文件报错%+v", err)
+		logrus.Errorf("read file err: %+v", err)
 	}
 
 	b,e := ioutil.ReadAll(f)
 	if e != nil {
-		logrus.Errorf("读取文件报错%+v", e)
+		logrus.Errorf("read file err: %+v", e)
 	}
 	return string(b)
 
@@ -107,28 +70,26 @@ func PrintReal(real float64){
 
 
 func exe_concurrent(user *User, s string){
-	/**
-	不要注入除函数和结构体指针以外的其他类型(如变量)
-	*/
+
 	dataContext := context.NewDataContext()
-	//注入结构体指针
+	//inject struct
 	dataContext.Add("User", user)
-	//重命名函数,并注入
+	//rename and inject
 	dataContext.Add("Sout",fmt.Println)
-	//直接注入函数
+	//inject
 	dataContext.Add("Hello",Hello)
 	dataContext.Add("PrintReal", PrintReal)
 
-	//初始化规则引擎
+	//init rule engine
 	knowledgeContext := base.NewKnowledgeContext()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
 
-	//读取规则
+	//read rule
 	start1 := time.Now().UnixNano()
 	err := ruleBuilder.BuildRuleFromString(s)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("规则个数:%d, 加载规则耗时:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
 
 	if err != nil{
 		logrus.Errorf("err:%s ", err)
@@ -151,51 +112,3 @@ func exe_concurrent(user *User, s string){
 		logrus.Infof("user.Age=%d,Name=%s,Male=%t", user.Age, user.Name, user.Male)
 	}
 }
-
-
-
-
-func exe_sort(user *User, s string){
-	/**
-	不要注入除函数和结构体指针以外的其他类型(如变量)
-	*/
-	dataContext := context.NewDataContext()
-	//注入结构体指针
-	dataContext.Add("User", user)
-	//重命名函数,并注入
-	dataContext.Add("Sout",fmt.Println)
-	//直接注入函数
-	dataContext.Add("Hello",Hello)
-	dataContext.Add("PrintReal", PrintReal)
-
-	//初始化规则引擎
-	knowledgeContext := base.NewKnowledgeContext()
-	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
-
-	//读取规则
-	start1 := time.Now().UnixNano()
-	err := ruleBuilder.BuildRuleFromString(s)
-	end1 := time.Now().UnixNano()
-
-	logrus.Infof("规则个数:%d, 加载规则耗时:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
-
-	if err != nil{
-		logrus.Errorf("err:%s ", err)
-	}else{
-		eng := engine.NewGengine()
-		for i :=0 ; i< 10 ; i ++ {
-			start := time.Now().UnixNano()
-			// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
-			_ = eng.Execute(ruleBuilder, true)
-			end := time.Now().UnixNano()
-			logrus.Infof("execute rule cost %d ns",end-start)
-		}
-		if err != nil{
-			logrus.Errorf("execute rule error: %v", err)
-		}
-
-		logrus.Infof("user.Age=%d,Name=%s,Male=%t", user.Age, user.Name, user.Male)
-	}
-}
-
-

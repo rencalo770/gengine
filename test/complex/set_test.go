@@ -90,7 +90,7 @@ type Data struct {
 
 
 const rule = `
-rule "测试交叉并" "规则描述"
+rule "测试交叉并" "rule desc"
 begin
 data.S3 = difference(data.S1, data.S2)
 end
@@ -110,7 +110,7 @@ func exec(){
 	dataContext.Add("intersect",intersect)
 	dataContext.Add("difference",difference)
 
-	//初始化规则引擎
+	//init rule engine
 	knowledgeContext := base.NewKnowledgeContext()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
 
@@ -119,7 +119,7 @@ func exec(){
 	err := ruleBuilder.BuildRuleFromString(rule)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("规则个数:%d, 加载规则耗时:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
 
 	if err != nil{
 		logrus.Errorf("err:%s ", err)

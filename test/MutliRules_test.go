@@ -16,7 +16,7 @@ import (
 )
 
 const rule1 = `
-rule "姓名测试0" "我可以的"  salience 0
+rule "name test" "i can"  salience 0
 begin
 		if 7 == User.GetNum(7){
 			User.Age = User.GetNum(89767) + 10000000
@@ -28,7 +28,7 @@ end
 rule "姓名测试1" "我可以的"  salience 0
 begin
 		if 7 == User.GetNum(7){
-			User.Age = User.GetNum(89767) + 10000000
+			User.Age = User.GetNum(89767) + 100000000
 			User.Print("6666")
 		}else{
 			User.Name = "yyyy"
@@ -46,21 +46,16 @@ func Test_Multi(t *testing.T){
 	dataContext := context.NewDataContext()
 	dataContext.Add("User", user)
 
-	//初始化规则引擎
+	//init rule engine
 	knowledgeContext := base.NewKnowledgeContext()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeContext,dataContext)
 
-	//读取规则
-/*	bs, e := ioutil.ReadFile("/path/to/file")
-	if e != nil {
-		panic(e)
-	}*/
 
 	start1 := time.Now().UnixNano()
 	err := ruleBuilder.BuildRuleFromString(rule1) //string(bs)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("规则个数:%d, 加载规则耗时:%d", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d", len(knowledgeContext.RuleEntities), end1-start1 )
 
 	if err != nil{
 		logrus.Errorf("err:%s ", err)
@@ -69,6 +64,7 @@ func Test_Multi(t *testing.T){
 
 		start := time.Now().UnixNano()
 		err := eng.Execute(ruleBuilder,true)
+		println(user.Age)
 		end := time.Now().UnixNano()
 		if err != nil{
 			logrus.Errorf("execute rule error: %v", err)

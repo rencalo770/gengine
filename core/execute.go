@@ -3,6 +3,7 @@ package core
 import (
 	"gengine/core/errors"
 	"reflect"
+	"strings"
 )
 
 func InvokeFunction(obj interface{}, methodName string, parameters []interface{}) (interface{}, error) {
@@ -134,7 +135,7 @@ func GetStructAttributeValue(obj interface{}, fieldName string) (interface{}, er
 }
 
 /**
-设置属性值
+set field value
  */
 func SetAttributeValue(obj interface{}, fieldName string, value interface{}) error {
 	var field = reflect.ValueOf(nil)
@@ -157,17 +158,42 @@ func SetAttributeValue(obj interface{}, fieldName string, value interface{}) err
 	}
 
 	if field.CanSet() {
+		typeName := reflect.ValueOf(value).Type().String()
 		switch field.Type().Kind() {
 		case reflect.String:
 			field.SetString(reflect.ValueOf(value).String())
 			break
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			field.SetInt(int64(reflect.ValueOf(value).Int()))
+			if strings.HasPrefix(typeName, "uint") {
+				field.SetInt(int64(reflect.ValueOf(value).Uint()))
+				return nil
+			}
+			if strings.HasPrefix(typeName, "float") {
+				field.SetInt(int64(reflect.ValueOf(value).Float()))
+				return nil
+			}
+			field.SetInt(reflect.ValueOf(value).Int())
 			break
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			field.SetUint(uint64(reflect.ValueOf(value).Uint()))
+			if strings.HasPrefix(typeName, "int") && reflect.ValueOf(value).Int() >= 0{
+				field.SetUint(uint64(reflect.ValueOf(value).Int()))
+				return nil
+			}
+			if strings.HasPrefix(typeName, "float") && reflect.ValueOf(value).Float() >=0 {
+				field.SetUint(uint64(reflect.ValueOf(value).Float()))
+				return nil
+			}
+			field.SetUint(reflect.ValueOf(value).Uint())
 			break
 		case reflect.Float32, reflect.Float64:
+			if strings.HasPrefix(typeName, "int") {
+				field.SetFloat(float64(reflect.ValueOf(value).Int()))
+				return nil
+			}
+			if strings.HasPrefix(typeName, "uint") {
+				field.SetFloat(float64(reflect.ValueOf(value).Uint()))
+				return nil
+			}
 			field.SetFloat(reflect.ValueOf(value).Float())
 			break
 		case reflect.Bool:

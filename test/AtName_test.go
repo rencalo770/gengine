@@ -19,13 +19,13 @@ func PrintName(name string){
 use '@name',you can get rule name in rule content
  */
 const atname_rule  =`
-rule "测试规则名称1" "规则描述"
+rule "测试规则名称1" "rule desc"
 begin
   va = @name
   PrintName(va)
   PrintName(@name)
 end
-rule "测试规则名称2" "规则描述"
+rule "rule name" "rule desc"
 begin
   va = @name
   PrintName(va)
@@ -37,16 +37,16 @@ func exec(){
 	dataContext := context.NewDataContext()
 	dataContext.Add("PrintName",PrintName)
 
-	//初始化规则引擎
+	//init rule engine
 	knowledgeContext := base.NewKnowledgeContext()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
 
-	//读取规则
+	//resolve rules from string
 	start1 := time.Now().UnixNano()
 	err := ruleBuilder.BuildRuleFromString(atname_rule)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("规则个数:%d, 加载规则耗时:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
 
 	if err != nil{
 		logrus.Errorf("err:%s ", err)

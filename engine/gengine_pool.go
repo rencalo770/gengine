@@ -26,6 +26,8 @@ type GenginePool struct {
 	clear            bool  //whether rules has been cleared ，if true it means there is no rules in gengine
 	ruleBuilder      *builder.RuleBuilder
 	execModel        int
+
+	getEngineLock  sync.RWMutex //just one can get this lock
 }
 
 type gengineWrapper struct {
@@ -122,6 +124,7 @@ func copyRuleBuilder(src *builder.RuleBuilder) (*builder.RuleBuilder, error){
 func (gp *GenginePool)getGengine() (*gengineWrapper, error){
 
 	for{
+		gp.getEngineLock.Lock()
 		//check if there has enough resource in pool
 		if len(gp.freeGengines) > 0 {
 			gp.runningLock.Lock()
@@ -130,7 +133,10 @@ func (gp *GenginePool)getGengine() (*gengineWrapper, error){
 				gw := gp.freeGengines[0]
 				copy(gp.freeGengines, gp.freeGengines[:1])
 				gp.freeGengines = gp.freeGengines[:numFree-1]
+
 				gp.runningLock.Unlock()
+				gp.getEngineLock.Unlock()
+
 				return gw,nil
 			}else {
 				gp.runningLock.Unlock()
@@ -142,10 +148,13 @@ func (gp *GenginePool)getGengine() (*gengineWrapper, error){
 			gp.additionLock.Lock()
 			freeAddition := len(gp.additionGengines)
 			if freeAddition > 0 {
-				gw := gp.additionGengines[0];
+				gw := gp.additionGengines[0]
 				copy(gp.additionGengines,gp.additionGengines[:1])
 				gp.additionGengines = gp.additionGengines[:freeAddition-1]
+
 				gp.additionLock.Unlock()
+				gp.getEngineLock.Unlock()
+
 				return gw,nil
 			}else {
 				gp.additionLock.Unlock()
@@ -161,8 +170,11 @@ func (gp *GenginePool)getGengine() (*gengineWrapper, error){
 				dstRb,e := copyRuleBuilder(gp.ruleBuilder)
 				if e != nil {
 					gp.additionCount --
+
 					gp.additionLock.Unlock()
-					return nil, e
+					gp.getEngineLock.Unlock()
+
+					return nil,e
 				}else {
 					gw := &gengineWrapper{
 						rulebuilder : dstRb,
@@ -171,15 +183,15 @@ func (gp *GenginePool)getGengine() (*gengineWrapper, error){
 						addition    : true,
 					}
 					gp.additionLock.Unlock()
+					gp.getEngineLock.Unlock()
+
 					return gw, nil
 				}
 			}else {
 				gp.additionLock.Unlock()
 			}
 		}
-		//prevent user add cost-time operate into rules make status become bad
-		//prevent user want to support High QPS，but user didn't give enough resource(pool length is too small and server's resource is low), lead to make status become bad
-		//time.Sleep(10 * time.Microsecond)
+		gp.getEngineLock.Unlock()
 	}
 }
 

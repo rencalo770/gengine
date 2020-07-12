@@ -22,12 +22,12 @@ end
 func exe(father *Father){
 
 	dataContext := context.NewDataContext()
-	//注入结构体指针
+	//inject struct
 	dataContext.Add("Father", father)
-	//重命名函数,并注入
+	//rename and inject
 	dataContext.Add("Sout",fmt.Println)
 
-	//初始化规则引擎
+	//init rule engine
 	knowledgeContext := base.NewKnowledgeContext()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
 
@@ -36,7 +36,7 @@ func exe(father *Father){
 	err := ruleBuilder.BuildRuleFromString(ext_rule)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("规则个数:%d, 加载规则耗时:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
 
 	if err != nil{
 		logrus.Errorf("err:%s ", err)

@@ -188,19 +188,19 @@ func exe(user *User){
 	 不要注入除函数和结构体指针以外的其他类型(如变量)
 	 */
 	dataContext := context.NewDataContext()
-	//注入结构体指针
+	//inject struct
 	dataContext.Add("User", user)
-	//重命名函数,并注入
+	//rename and inject
 	dataContext.Add("Sout",fmt.Println)
 	//直接注入函数
 	dataContext.Add("Hello",Hello)
 	dataContext.Add("PrintReal",PrintReal)
 
-	//初始化规则引擎
+	//init rule engine 
 	knowledgeContext := base.NewKnowledgeContext()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
 
-	//读取规则
+	//resolve rules from string 
 	err := ruleBuilder.BuildRuleFromString(rule2)
 	if err != nil{
 		logrus.Errorf("err:%s ", err)
@@ -427,19 +427,19 @@ func exe(user *User){
 	 不要注入除函数和结构体指针以外的其他类型(如变量)
 	 */
 	dataContext := context.NewDataContext()
-	//注入结构体指针
+	//inject struct
 	dataContext.Add("User", user)
-	//重命名函数,并注入
+	//rename and inject
 	dataContext.Add("Sout",fmt.Println)
 	//直接注入函数
 	dataContext.Add("Hello",Hello)
 	dataContext.Add("PrintReal",PrintReal)
 
-	//初始化规则引擎
+	//init rule engine 
 	knowledgeContext := base.NewKnowledgeContext()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
 
-	//读取规则
+	//resolve rules from string 
 	err := ruleBuilder.BuildRuleFromString(rule2)
 	if err != nil{
 		logrus.Errorf("err:%s ", err)

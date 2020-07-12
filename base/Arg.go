@@ -37,22 +37,18 @@ func (a *Arg) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
 
 func (a *Arg) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	if len(a.Variable) > 0 {
-		//单值
 		return a.dataCtx.GetValue(Vars, a.Variable)
 	}
 
 	if a.Constant != nil {
-		//单值
 		return a.Constant.Evaluate(Vars)
 	}
 
 	if a.FunctionCall != nil {
-		//单值
 		return a.FunctionCall.Evaluate(Vars)
 	}
 
 	if a.MethodCall != nil {
-		//单值
 		return a.MethodCall.Evaluate(Vars)
 	}
 

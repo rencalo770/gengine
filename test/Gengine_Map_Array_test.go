@@ -19,7 +19,7 @@ type MapArray struct {
 }
 
 const ma_rule  =`
-rule "测试规则" "规则描述"
+rule "测试规则" "rule desc"
 begin
   
   x = Ma.Mx["hello"]
@@ -93,7 +93,7 @@ func Test_map_array(t *testing.T) {
 	dataContext.Add("PrintName",fmt.Println)
 	dataContext.Add("Ma", Ma)
 
-	//初始化规则引擎
+	//init rule engine
 	knowledgeContext := base.NewKnowledgeContext()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
 
@@ -102,7 +102,7 @@ func Test_map_array(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(ma_rule)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("规则个数:%d, 加载规则耗时:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
 
 
 	if err != nil{

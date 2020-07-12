@@ -39,7 +39,7 @@ func Test_Priority(t *testing.T){
 	dataContext := context.NewDataContext()
 	dataContext.Add("Print", Print)
 
-	//初始化规则引擎
+	//init rule engine
 	knowledgeContext := base.NewKnowledgeContext()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeContext,dataContext)
 
@@ -47,7 +47,7 @@ func Test_Priority(t *testing.T){
 	err := ruleBuilder.BuildRuleFromString(rule4)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("规则个数:%d, 加载规则耗时:%d", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d", len(knowledgeContext.RuleEntities), end1-start1 )
 
 	if err != nil{
 		logrus.Errorf("err:%s ", err)

@@ -52,8 +52,8 @@ func exe_struct(){
 	不要注入除函数和结构体指针以外的其他类型(如变量)
 	*/
 	dataContext := context.NewDataContext()
-	//注入结构体指针
-	//重命名函数,并注入
+	//inject struct
+	//rename and inject
 
 	req := &Req{}
 	dataContext.Add("Sout",fmt.Println)
@@ -61,7 +61,7 @@ func exe_struct(){
 	dataContext.Add("GetPool", GetPool)
 	dataContext.Add("req", req)
 
-	//初始化规则引擎
+	//init rule engine
 	knowledgeContext := base.NewKnowledgeContext()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
 
@@ -70,7 +70,7 @@ func exe_struct(){
 	err := ruleBuilder.BuildRuleFromString(rule_s)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("规则个数:%d, 加载规则耗时:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
 
 	if err != nil{
 		logrus.Errorf("err:%s ", err)

@@ -34,7 +34,7 @@ func (builder *RuleBuilder) BuildRuleFromString(ruleString string) error{
 
 	psr := parser.NewgengineParser(stream)
 	psr.BuildParseTrees = true
-	//语法错误监听器
+	//grammar listener
 	errListener := iparser.NewGengineErrorListener()
 	psr.AddErrorListener(errListener)
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Primary())

@@ -123,7 +123,7 @@ SALIENCE                    : S A L I E N C E ;
 BEGIN                       : B E G I N;
 END                         : E N D;
 
-SIMPLENAME :  ('a'..'z' |'A'..'Z')+ ( ('0'..'9') | ('a'..'z' |'A'..'Z') )* ;
+SIMPLENAME :  ('a'..'z' |'A'..'Z'| '_')+ ( ('0'..'9') | ('a'..'z' |'A'..'Z') | '_' )* ;
 
 INT : '0'..'9' + ;
 PLUS                        : '+' ;

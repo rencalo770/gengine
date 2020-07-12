@@ -14,7 +14,7 @@ import (
 
 const (
 	rule3 = `
-rule "姓名测试" "我可以的" salience 0
+rule "name test" "i can" salience 0
 BEGIN
 		if 7 == User.GetNum(7){
 			User.Age = User.GetNum(89767) + 10000000
@@ -43,7 +43,7 @@ func Test_grammar(t *testing.T)  {
 func Test_base_msg(t *testing.T){
 
 	dataContext := context.NewDataContext()
-	//初始化规则引擎
+	//init rule engine
 	knowledgeContext := base.NewKnowledgeContext()
 	ruleBuilder := builder.NewRuleBuilder(knowledgeContext,dataContext)
 

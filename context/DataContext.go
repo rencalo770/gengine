@@ -169,7 +169,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 			return nil
 		}
 
-		//bug XXXXXXXX
+		//array and map
 		if strings.Index(typeName, "[") == 0 && strings.Index(typeName, "]") != 1 {
 			return errors.Errorf("Not support to set Array's value by index")
 		}
