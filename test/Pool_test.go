@@ -61,8 +61,8 @@ func Test_once(t *testing.T){
 
 func Test_pool_with_rules_for_goruntine(t *testing.T){
 
-	poolMinLen := int64(5)
-	poolMaxLen := int64(10)
+	poolMinLen := int64(2)
+	poolMaxLen := int64(3)
 	max := int64(0)
 	min := int64(1000000)
 	cnt := int64(0)
