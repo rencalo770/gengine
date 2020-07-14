@@ -230,13 +230,15 @@ func Test_Base(t *testing.T){
 
 ```
 
-## Connection
-- renyunyi@bilibili.com
 
 ## Licence
-- BSD
+- Officially authorized by bilibili  (www.bilibili.com)
+- BSD licensed
 
-
+## Question Connection
+- write issue or connect
+- renyunyi@bilibili.com
+- M201476117@alumni.hust.edu.cn
 
 ## 基于golang的规则引擎
 - **Gengine**是一款基于AST(Abstract Syntax Tree)和golang语言实现的规则引擎。能够让你在golang这种静态语言上，在不停服务的情况下实现动态加载与配置规则。
@@ -474,5 +476,12 @@ func Test_Base(t *testing.T){
 - 如果你的规则中包含耗时，比如操作数据库，那么建议你用engine.ExecuteConcurrent(...) ,如果没有,建议你仍然用engine.Execute(...)
 - 规则引擎支持混合执行模式，优先执行一个最高优先级的规则，剩下的规则以并发的模式执行
 
-## 联系
+
+## 授权
+- 哔哩哔哩官方授权开源 ( www.bilibili.com)
+- 基于BSD开源协议授权 
+
+## 问题联系
+- 提issue，或者联系
+- renyunyi@bilibili.com
 - M201476117@alumni.hust.edu.cn

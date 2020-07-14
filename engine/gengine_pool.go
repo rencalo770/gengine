@@ -43,7 +43,7 @@ type gengineWrapper struct {
 // just init once!!!
 
 // best practise：
-// when the has cost-time operate in your rule or you want to support high concurrency(> 20QPS) , please set poolMinLen bigger Appropriately
+// when the has cost-time operate in your rule or you want to support high concurrency(> 200000QPS) , please set poolMinLen bigger Appropriately
 // when you use NewGenginePool,you just think of it as the connection pool of mysql, the higher QPS you want to support, the more resource you need to give
 func NewGenginePool(poolMinLen ,poolMaxLen int64, em int, rulesStr string, apiOuter map[string]interface{}) (*GenginePool, error){
 
