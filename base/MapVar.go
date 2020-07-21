@@ -2,6 +2,7 @@ package base
 
 import (
 	"gengine/context"
+	"gengine/core"
 	"gengine/core/errors"
 	"reflect"
 	"strings"
@@ -30,45 +31,102 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	}
 	typeName := reflect.TypeOf(value).String()
 
-	if len(m.Strkey) > 0 { //map
-		return reflect.ValueOf(value).MapIndex(reflect.ValueOf(m.Strkey)).Interface(), nil
-	}
+	// map
+	if strings.HasPrefix(typeName, "map") {
 
-	if len(m.Varkey) > 0 {
+		typeStr := reflect.TypeOf(value).String()
+		keyType := typeStr[strings.Index(typeStr, "[") + 1: strings.Index(typeStr, "]")]
 
-		k, e := m.dataCtx.GetValue(Vars, m.Varkey)
+		if len(m.Varkey) > 0 {
+			key, e := m.dataCtx.GetValue(Vars, m.Varkey)
+			if e != nil {
+				return nil, e
+			}
+
+			wantedKey, e := core.GetWantedValue(key, keyType)
+			if e != nil {
+				return nil, e
+			}
+			return reflect.ValueOf(value).MapIndex(reflect.ValueOf(wantedKey)).Interface(), nil
+		}
+
+		if len(m.Strkey) > 0 {
+			return reflect.ValueOf(value).MapIndex(reflect.ValueOf(m.Strkey)).Interface(), nil
+		}
+
+		//intKey
+		wantedKey, e := core.GetWantedValue(m.Intkey, keyType)
 		if e != nil {
 			return nil, e
 		}
 
-		if strings.HasPrefix(typeName, "map") {
-			return reflect.ValueOf(value).MapIndex(reflect.ValueOf(k)).Interface(), nil
-		}
+		return reflect.ValueOf(value).MapIndex(reflect.ValueOf(wantedKey)).Interface(), nil
+	}
 
-		if strings.HasPrefix(typeName, "["){//array or slice
-			i := int(reflect.ValueOf(k).Int())
-			if i < 0 {
-				return nil,errors.Errorf("MapVar index must be no-negative integer!")
+	//slice or array
+	if strings.HasPrefix(typeName, "[]") || (strings.HasPrefix(typeName, "[") && strings.Index(typeName,"]") != 1){
+		if len(m.Varkey) > 0 {
+			wantedKey, e := m.dataCtx.GetValue(Vars, m.Varkey)
+			if e != nil {
+				return nil, e
 			}
+			return reflect.ValueOf(value).Index(int(reflect.ValueOf(wantedKey).Int())).Interface(), nil
+		}
 
-			return reflect.ValueOf(value).Index(i).Interface(),nil
+		if m.Intkey >= 0 {
+			return reflect.ValueOf(value).Index(int(m.Intkey)).Interface(), nil
+		}else {
+			return nil, errors.New("Slice or Array index must be non-negative!")
 		}
 	}
 
-	//m.Intkey
-	if strings.HasPrefix(typeName, "map") {
-		return reflect.ValueOf(value).MapIndex(reflect.ValueOf(m.Intkey)).Interface(), nil
-	}
+	//pointer map
+	if strings.HasPrefix(typeName, "*map[") {
+		typeStr := reflect.TypeOf(value).String()
+		keyType := typeStr[strings.Index(typeStr, "[") + 1: strings.Index(typeStr, "]")]
 
-	if strings.HasPrefix(typeName, "["){//array or slice
-		i := int(m.Intkey)
-		if i < 0 {
-			return nil,errors.Errorf("MapVar is Array, Intkey must be no-negative integer!")
+		if len(m.Varkey) > 0 {
+			key, e := m.dataCtx.GetValue(Vars, m.Varkey)
+			if e != nil {
+				return nil, e
+			}
+			wantedKey, e := core.GetWantedValue(key, keyType)
+			if e != nil {
+				return nil, e
+			}
+			return reflect.ValueOf(value).Elem().MapIndex(reflect.ValueOf(wantedKey)).Interface(), nil
 		}
-		return reflect.ValueOf(value).Index(i).Interface(),nil
+
+		if len(m.Strkey) > 0 {
+			return reflect.ValueOf(value).Elem().MapIndex(reflect.ValueOf(m.Strkey)).Interface(), nil
+		}
+
+		wantedKey, e := core.GetWantedValue(m.Intkey, keyType)
+		if e != nil {
+			return nil, e
+		}
+		return reflect.ValueOf(value).Elem().MapIndex(reflect.ValueOf(wantedKey)).Interface(), nil
 	}
 
-	return nil,errors.Errorf("MapVar Evaluate error!")
+	//pointer slice or pointer array
+	if strings.HasPrefix(typeName, "*[]") || (strings.HasPrefix(typeName, "*[") && strings.Index(typeName,"]") != 2){
+
+		if len(m.Varkey) > 0 {
+			wantedKey, e := m.dataCtx.GetValue(Vars, m.Varkey)
+			if e != nil {
+				return nil, e
+			}
+			return reflect.ValueOf(value).Elem().Index(int(reflect.ValueOf(wantedKey).Int())).Interface(), nil
+		}
+
+		if m.Intkey >= 0 {
+			return reflect.ValueOf(value).Elem().Index(int(m.Intkey)).Interface(), nil
+		}else {
+			return nil, errors.New("Slice or Array index must be non-negative!")
+		}
+	}
+
+	return nil,errors.New("Evaluate MapVarValue Only support directly-Pointer-Map, directly-Pointer-Slice and directly-Pointer-Array  or Map, Slice and Array in Pointer-Struct!")
 }
 
 func (m *MapVar)AcceptVariable(name string) error{
@@ -81,12 +139,12 @@ func (m *MapVar)AcceptVariable(name string) error{
 		m.Varkey = name
 		return nil
 	}
-	return errors.Errorf("MapVar's Varkey set three times!")
+	return errors.New("MapVar's Varkey set three times!")
 }
 
 func (m *MapVar)AcceptInteger(i64 int64)  error{
 	if i64 < 0 {
-		return errors.Errorf("MapVar's index must be non-negative integer!")
+		return errors.New("MapVar's index must be non-negative integer!")
 	}
 
 	m.Intkey = i64
@@ -98,5 +156,5 @@ func (m *MapVar)AcceptString(str string) error  {
 		m.Strkey = str
 		return nil
 	}
-	return errors.Errorf("MapVar's Strkey set three times!")
+	return errors.New("MapVar's Strkey set three times!")
 }

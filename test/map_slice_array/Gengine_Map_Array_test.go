@@ -1,4 +1,4 @@
-package test
+package map_slice_array
 
 import (
 	"fmt"
@@ -54,7 +54,8 @@ begin
   
   xx = Ma.Ax[2]
   PrintName(xx) 
-  //Ma.Ax[2] = 3000001
+  Ma.Ax[2] = 300011111
+  PrintName(Ma.Ax[2]) 
  
   yy = Ma.Ax
   PrintName(yy[1]) 
@@ -65,16 +66,18 @@ begin
   }
 
   z = Ma.Sx[1]
-  PrintName(z) 
+  PrintName("z--1--->",z) 
 
+//you can read data from zz,but you can set value to zz
   zz = Ma.Sx
   if zz[2] == "kkkk"{
-     PrintName("kkkk") 
+     PrintName("z--2--->","kkkk") 
   }
 
+
   a = 2
-  zz[a] = "MMMM"
-  PrintName(zz[a]) 
+  Ma.Sx[a] = "MMMM"
+  PrintName("z--3-->", Ma.Sx[a]) 
 
 end
 `
@@ -112,12 +115,6 @@ func Test_map_array(t *testing.T) {
 		start := time.Now().UnixNano()
 		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 		err := eng.Execute(ruleBuilder, true)
-
-		println("----------", Ma.Mx["hello"])
-		println("----------", Ma.Mx["your"])
-		println("++++++++++", Ma.Ax[2])
-		println("==========", Ma.Sx[2])
-
 		end := time.Now().UnixNano()
 		if err != nil{
 			logrus.Errorf("execute rule error: %v", err)

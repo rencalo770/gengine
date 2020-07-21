@@ -41,12 +41,12 @@ func (builder *RuleBuilder) BuildRuleFromString(ruleString string) error{
 
 	if  len(errListener.GrammarErrors) > 0 {
 		builder.Kc.ClearRules()
-		return errors.Errorf("%v", errListener.GrammarErrors)
+		return errors.Errorf("%+v", errListener.GrammarErrors)
 	}
 
 	if len(listener.ParseErrors) > 0 {
 		builder.Kc.ClearRules()
-		return errors.Errorf("%v", listener.ParseErrors)
+		return errors.Errorf("%+v", listener.ParseErrors)
 	}
 
 	//initial

@@ -10,7 +10,7 @@ func InvokeFunction(obj interface{}, methodName string, parameters []interface{}
 	objVal := reflect.ValueOf(obj)
 	fun := objVal.MethodByName(methodName).Interface()
 	//change type for base type params
-	funcVal, params := TypeChange(fun, parameters)
+	funcVal, params := ParamsTypeChange(fun, parameters)
 	args := make([]reflect.Value, 0)
 	for _, param :=range params  {
 		args = append(args, reflect.ValueOf(param))
@@ -30,42 +30,42 @@ func GetRawTypeValue(rs []reflect.Value) (interface{},error){
 	if len(rs) == 0 {
 		return nil, nil
 	}else {
-		switch rs[0].Kind().String(){
-		case "string":
+		switch rs[0].Kind(){
+		case reflect.String:
 			return rs[0].String(),nil
-		case "bool":
+		case reflect.Bool:
 			return rs[0].Bool(), nil
-		case "int":
+		case reflect.Int:
 			return int(rs[0].Int()),nil
-		case "int8":
+		case reflect.Int8:
 			return int8(rs[0].Int()),nil
-		case "int16":
+		case reflect.Int16:
 			return int16(rs[0].Int()),nil
-		case "int32":
+		case reflect.Int32:
 			return int32(rs[0].Int()),nil
-		case "int64":
-			return int64(rs[0].Int()),nil
-		case "uint":
+		case reflect.Int64:
+			return rs[0].Int(), nil
+		case reflect.Uint:
 			return uint(rs[0].Uint()),nil
-		case "uint8":
+		case reflect.Uint8:
 			return uint8(rs[0].Uint()),nil
-		case "uint16":
+		case reflect.Uint16:
 			return uint16(rs[0].Uint()),nil
-		case "uint32":
+		case reflect.Uint32:
 			return uint32(rs[0].Uint()),nil
-		case "uint64":
+		case reflect.Uint64:
 			return rs[0].Uint(),nil
-		case "float32":
+		case reflect.Float32:
 			return float32(rs[0].Float()),nil
-		case "float64":
+		case reflect.Float64:
 			return rs[0].Float(),nil
-		case "struct":
+		case reflect.Struct:
 			return rs[0].Interface(),nil
-		case "ptr":
+		case reflect.Ptr:
 			newPtr := reflect.New(rs[0].Elem().Type())
 			newPtr.Elem().Set(rs[0].Elem())
 			return newPtr.Interface(), nil
-		case "slice":
+		case reflect.Slice, reflect.Map, reflect.Array:
 			return rs[0].Interface(),nil
 		default:
 			return nil, errors.Errorf("Can't be handled type: %s", rs[0].Kind().String())
@@ -214,48 +214,48 @@ func SetAttributeValue(obj interface{}, fieldName string, value interface{}) err
 /*
 number type exchange
 */
-func TypeChange(f interface{}, params []interface{})(interface{}, []interface{}){
+func ParamsTypeChange(f interface{}, params []interface{})(interface{}, []interface{}){
 	tf := reflect.TypeOf(f)
 	if tf.Kind().String() == "ptr"{
 		tf = tf.Elem()
 	}
 	plen := tf.NumIn()
 	for i := 0; i < plen; i ++ {
-		switch tf.In(i).Kind().String(){
-		case "int":
+		switch tf.In(i).Kind(){
+		case reflect.Int:
 			params[i] = int(reflect.ValueOf(params[i]).Int())
 			break
-		case "int8":
+		case reflect.Int8:
 			params[i] = int8(reflect.ValueOf(params[i]).Int())
 			break
-		case "int16":
+		case reflect.Int16:
 			params[i] = int16(reflect.ValueOf(params[i]).Int())
 			break
-		case "int32":
+		case reflect.Int32:
 			params[i] = int32(reflect.ValueOf(params[i]).Int())
 			break
-		case "int64":
+		case reflect.Int64:
 			params[i] = reflect.ValueOf(params[i]).Int()
 			break
-		case "uint":
+		case reflect.Uint:
 			params[i] = uint(reflect.ValueOf(params[i]).Uint())
 			break
-		case "uint8":
+		case reflect.Uint8:
 			params[i] = uint8(reflect.ValueOf(params[i]).Uint())
 			break
-		case "uint16":
+		case reflect.Uint16:
 			params[i] = uint16(reflect.ValueOf(params[i]).Uint())
 			break
-		case "uint32":
+		case reflect.Uint32:
 			params[i] = uint32(reflect.ValueOf(params[i]).Uint())
 			break
-		case "uint64":
+		case reflect.Uint64:
 			params[i] = reflect.ValueOf(params[i]).Uint()
 			break
-		case "float32":
+		case reflect.Float32:
 			params[i] = float32(reflect.ValueOf(params[i]).Float())
 			break
-		case "float64":
+		case reflect.Float64:
 			params[i] = reflect.ValueOf(params[i]).Float()
 			break
 		default:
@@ -263,4 +263,43 @@ func TypeChange(f interface{}, params []interface{})(interface{}, []interface{})
 		}
 	}
 	return f,params
+}
+
+
+func GetWantedValue(newValue interface{}, toKind string) (interface{}, error) {
+	rawKind := reflect.ValueOf(newValue).Kind().String()
+	if rawKind == toKind {
+		return newValue, nil
+	}
+
+	switch toKind {
+	case "int":
+		return int(reflect.ValueOf(newValue).Int()), nil
+	case "int8":
+		return int8(reflect.ValueOf(newValue).Int()), nil
+	case "int16":
+		return int16(reflect.ValueOf(newValue).Int()), nil
+	case "int32":
+		return int32(reflect.ValueOf(newValue).Int()), nil
+	case "int64":
+		return reflect.ValueOf(newValue).Int(), nil
+
+	case "uint":
+		return uint(reflect.ValueOf(newValue).Uint()), nil
+	case "uint8":
+		return uint8(reflect.ValueOf(newValue).Uint()), nil
+	case "uint16":
+		return uint16(reflect.ValueOf(newValue).Uint()), nil
+	case "uint32":
+		return uint32(reflect.ValueOf(newValue).Uint()), nil
+	case "uint64":
+		return reflect.ValueOf(newValue).Uint(), nil
+
+	case "float32":
+		return float32(reflect.ValueOf(newValue).Float()), nil
+	case "float64":
+		return reflect.ValueOf(newValue).Float(), nil
+	}
+
+	return newValue, nil
 }

@@ -48,7 +48,7 @@ type gengineWrapper struct {
 func NewGenginePool(poolMinLen ,poolMaxLen int64, em int, rulesStr string, apiOuter map[string]interface{}) (*GenginePool, error){
 
 	if !(0 < poolMinLen && poolMinLen  < poolMaxLen) {
-		return nil, errors.Errorf("pool length must be bigger than 0, and poolMaxLen must bigger than poolMinLen")
+		return nil, errors.New("pool length must be bigger than 0, and poolMaxLen must bigger than poolMinLen")
 	}
 
 	if em != 1 && em != 2 && em != 3 {
@@ -112,7 +112,7 @@ func getRuleBuilder(rulesStr string, apiOuter map[string]interface{}) (*builder.
 
 func copyRuleBuilder(src *builder.RuleBuilder) (*builder.RuleBuilder, error){
 	if src == nil {
-		return nil, errors.Errorf("src ruleBuilder is nil")
+		return nil, errors.New("src ruleBuilder is nil!")
 	}
 	r1 := *src
 	rb:= &r1

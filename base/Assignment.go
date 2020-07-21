@@ -57,7 +57,7 @@ func (a *Assignment)AcceptMathExpression(me *MathExpression) error{
 		a.MathExpression = me
 		return nil
 	}
-	return errors.Errorf("%s","MathExpression already set twice")
+	return errors.New("MathExpression already set twice!")
 }
 
 func (a *Assignment)AcceptVariable(name string) error{
@@ -65,7 +65,7 @@ func (a *Assignment)AcceptVariable(name string) error{
 		a.Variable = name
 		return nil
 	}
-	return errors.Errorf("Variable already set twice")
+	return errors.New("Variable already set twice!")
 }
 
 func (a *Assignment) AcceptMapVar(mapVar *MapVar) error {
@@ -73,5 +73,5 @@ func (a *Assignment) AcceptMapVar(mapVar *MapVar) error {
 		a.MapVar = mapVar
 		return nil
 	}
-	return errors.Errorf("MapVar already set twice")
+	return errors.New("MapVar already set twice!")
 }

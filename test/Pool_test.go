@@ -193,7 +193,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T){
 		for {
 			time.Sleep(1 *time.Second)
 			i ++
-			println("poolMinLen=", poolMinLen,", poolMaxLen=", poolMaxLen,", sort", i,", min: ", min , "ns, max: ", max ,"ns, cnt:" ,cnt, ", g1:", g1, ",g2:", g2, ",g3:", g3, ",g4:", g4, ",g5:", g5)
+			println("poolMinLen=", poolMinLen,", poolMaxLen=", poolMaxLen,", sort", i,", min: ", min , "ns, max: ", max ,"ns, request-QPS:" ,int(cnt)/i, ", g1:", g1, ",g2:", g2, ",g3:", g3, ",g4:", g4, ",g5:", g5)
 		}
 
 	}()

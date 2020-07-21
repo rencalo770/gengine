@@ -32,7 +32,7 @@ func (t *RuleContent)AcceptStatements(stmts *Statements)error {
 		t.Statements = stmts
 		return nil
 	}
-	return errors.Errorf("RuleContent's statements set twice.")
+	return errors.New("RuleContent's statements set twice.")
 }
 
 

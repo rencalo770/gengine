@@ -42,7 +42,7 @@ func (e *ExpressionAtom)AcceptVariable(name string) error {
 		e.Variable = name
 		return nil
 	}
-	return errors.Errorf("Variable already defined")
+	return errors.New("Variable already defined")
 }
 
 func (e *ExpressionAtom)AcceptConstant(cons *Constant) error {
@@ -50,7 +50,7 @@ func (e *ExpressionAtom)AcceptConstant(cons *Constant) error {
 		e.Constant = cons
 		return nil
 	}
-	return errors.Errorf("Constant already defined")
+	return errors.New("Constant already defined")
 }
 
 func (e *ExpressionAtom)AcceptFunctionCall(funcCall *FunctionCall) error  {
@@ -58,7 +58,7 @@ func (e *ExpressionAtom)AcceptFunctionCall(funcCall *FunctionCall) error  {
 		e.FunctionCall = funcCall
 		return nil
 	}
-	return errors.Errorf("FunctionCall already defined")
+	return errors.New("FunctionCall already defined")
 }
 
 func (e *ExpressionAtom)AcceptMethodCall(methodCall *MethodCall) error{
@@ -66,7 +66,7 @@ func (e *ExpressionAtom)AcceptMethodCall(methodCall *MethodCall) error{
 		e.MethodCall = methodCall
 		return nil
 	}
-	return errors.Errorf("MethodCall already defined")
+	return errors.New("MethodCall already defined")
 }
 
 func (e *ExpressionAtom)AcceptMapVar(mapVar *MapVar) error{
@@ -74,7 +74,7 @@ func (e *ExpressionAtom)AcceptMapVar(mapVar *MapVar) error{
 		e.MapVar = mapVar
 		return nil
 	}
-	return errors.Errorf("MapVar already defined")
+	return errors.New("MapVar already defined")
 }
 
 
@@ -91,6 +91,6 @@ func (e *ExpressionAtom) Evaluate(Vars map[string]interface{}) (interface{}, err
 		return e.MapVar.Evaluate(Vars)
 	}
 	//todo
-	return nil, errors.Errorf("%v", "ExpressionAtom Evaluate error")
+	return nil, errors.New("ExpressionAtom Evaluate error!")
 }
 

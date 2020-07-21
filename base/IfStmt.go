@@ -58,7 +58,7 @@ func (i *IfStmt)AcceptExpression(expr *Expression) error{
 		i.Expression = expr
 		return nil
 	}
-	return errors.Errorf("IfStmt Expression set twice!")
+	return errors.New("IfStmt Expression set twice!")
 }
 
 func (i *IfStmt)AcceptStatements(stmts *Statements)error{
@@ -66,5 +66,5 @@ func (i *IfStmt)AcceptStatements(stmts *Statements)error{
 		i.StatementList = stmts
 		return nil
 	}
-	return errors.Errorf("ifStmt's statements set twice")
+	return errors.New("ifStmt's statements set twice!")
 }

@@ -25,7 +25,7 @@ func (e *MathExpression) AcceptMathExpression(atom *MathExpression) error {
 		e.MathExpressionRight = atom
 		return nil
 	}
-	return errors.Errorf("%v","expressionAtom set twice")
+	return errors.New("expressionAtom set twice")
 }
 
 
@@ -51,7 +51,7 @@ func (e *MathExpression) AcceptExpressionAtom(atom *ExpressionAtom) error{
 		e.ExpressionAtom = atom
 		return nil
 	}
-	return errors.Errorf("%s","ExpressionAtom already set twice!")
+	return errors.New("ExpressionAtom already set twice!")
 }
 
 

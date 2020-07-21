@@ -155,7 +155,7 @@ func Div(ax, bx interface{}) (interface{}, error) {
 	}
 
 	if bfloat == 0 {
-		return nil, errors.Errorf("DIV(/) can't be used to Div ZERO(0)!")
+		return nil, errors.New("DIV(/) can't be used to Div ZERO(0)!")
 	}
 	return afloat / bfloat, nil
 }

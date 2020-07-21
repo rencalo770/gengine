@@ -58,7 +58,7 @@ func (e *Expression) AcceptExpressionAtom(atom *ExpressionAtom) error{
 		e.ExpressionAtom = atom
 		return nil
 	}
-	return errors.Errorf("%s","ExpressionAtom already set twice!")
+	return errors.New("ExpressionAtom already set twice!")
 }
 
 func (e *Expression) AcceptMathExpression(atom *MathExpression) error {
@@ -66,7 +66,7 @@ func (e *Expression) AcceptMathExpression(atom *MathExpression) error {
 		e.MathExpression = atom
 		return nil
 	}
-	return errors.Errorf("%s", " Expression's MathExpression set twice")
+	return errors.New(" Expression's MathExpression set twice")
 }
 
 func(e *Expression)AcceptExpression(expression *Expression) error{
@@ -79,7 +79,7 @@ func(e *Expression)AcceptExpression(expression *Expression) error{
 		e.ExpressionRight = expression
 		return nil
 	}
-	return errors.Errorf("%s","Expression already set twice! ")
+	return errors.New("Expression already set twice! ")
 }
 
 func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) {
@@ -287,6 +287,6 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 			return b, nil
 		}
 	}
-	return nil,errors.Errorf("%s", "evaluate Expression err!")
+	return nil,errors.New("evaluate Expression err!")
 }
 

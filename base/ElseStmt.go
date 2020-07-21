@@ -38,5 +38,5 @@ func (e *ElseStmt)AcceptStatements(stmts *Statements ) error {
 		e.StatementList = stmts
 		return nil
 	}
-	return errors.Errorf("ElseStmt set twice")
+	return errors.New("ElseStmt set twice!")
 }

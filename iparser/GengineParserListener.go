@@ -6,6 +6,7 @@ import (
 	parser "gengine/iantlr/alr"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/golang-collections/collections/stack"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -351,7 +352,13 @@ func (g *GengineParserListener) ExitStringLiteral(ctx *parser.StringLiteralConte
 	}
 	holder := g.Stack.Peek().(base.StringHolder)
 	text := ctx.GetText()
-	err := holder.AcceptString(strings.Trim(text, "\""))
+	txt := strings.Trim(text, "\"")
+	if reflect.TypeOf(holder).String() == "*base.MapVar" {
+		if txt == "" {
+			g.AddError(errors.New("MAP key should not be null string"))
+		}
+	}
+	err := holder.AcceptString(txt)
 	if err != nil {
 		g.AddError(err)
 	}

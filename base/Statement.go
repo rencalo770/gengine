@@ -32,7 +32,7 @@ func (s *Statement) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		return s.Assignment.Evaluate(Vars)
 	}
 
-	return nil,errors.Errorf("Statement evaluate error")
+	return nil,errors.New("Statement evaluate error!")
 }
 
 func (s *Statement) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
@@ -62,7 +62,7 @@ func (s *Statement)AcceptFunctionCall(funcCall *FunctionCall) error  {
 		s.FunctionCall = funcCall
 		return nil
 	}
-	return errors.Errorf("FunctionCall already defined")
+	return errors.New("FunctionCall already defined!")
 }
 
 
@@ -71,6 +71,6 @@ func (s *Statement)AcceptMethodCall(methodCall *MethodCall) error{
 		s.MethodCall = methodCall
 		return nil
 	}
-	return errors.Errorf("MethodCall already defined")
+	return errors.New("MethodCall already defined!")
 }
 

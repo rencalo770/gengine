@@ -27,7 +27,7 @@ func (mc *MethodCall) AcceptArgs(funcArg *Args) error {
 		mc.MethodArgs = funcArg
 		return nil
 	}
-	return errors.Errorf("methodArgs set twice")
+	return errors.New("methodArgs set twice!")
 }
 
 func (mc *MethodCall) Evaluate(Vars map[string]interface{}) (interface{}, error) {

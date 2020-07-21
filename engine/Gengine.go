@@ -70,8 +70,14 @@ func (g *Gengine) ExecuteWithStopTag(rb *builder.RuleBuilder, b bool, stopTag st
 			}
 		}
 
-		if !reflect.ValueOf(rb.Dc.Get(stopTag)).Bool() {
-			break
+		value, err := rb.Dc.Get(stopTag)
+		if err!= nil {
+			//become sort model
+			logrus.Errorf("error: %+v ", err)
+		}else {
+			if !reflect.ValueOf(value).Bool() {
+				break
+			}
 		}
 	}
 	return nil
@@ -192,21 +198,27 @@ func (g *Gengine) ExecuteMixModelWithStopTag(rb * builder.RuleBuilder, stopTag s
 		return
 	}
 
-	if !reflect.ValueOf(rb.Dc.Get(stopTag)).Bool() {
-		if (len(rules) - 1) >= 1 {
-			var wg sync.WaitGroup
-			wg.Add(len(rules) - 1)
-			for _,r := range rules[1:] {
-				rr := r
-				go func() {
-					e := rr.Execute()
-					if e != nil {
-						logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
-					}
-					wg.Done()
-				}()
+	value, err := rb.Dc.Get(stopTag)
+	if err!= nil {
+		//become sort model
+		logrus.Errorf("error: %+v ", err)
+	}else {
+		if !reflect.ValueOf(value).Bool() {
+			if (len(rules) - 1) >= 1 {
+				var wg sync.WaitGroup
+				wg.Add(len(rules) - 1)
+				for _,r := range rules[1:] {
+					rr := r
+					go func() {
+						e := rr.Execute()
+						if e != nil {
+							logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
+						}
+						wg.Done()
+					}()
+				}
+				wg.Wait()
 			}
-			wg.Wait()
 		}
 	}
 }
