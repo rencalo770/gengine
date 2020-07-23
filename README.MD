@@ -242,7 +242,7 @@ func Test_Base(t *testing.T){
 
 ## Question Connection
 - write issue or connect
-- renyunyi@bilibili.com (可能因为公司屏蔽等原因，可能会接受不到邮件)
+- renyunyi@bilibili.com (become some reason,this mail box may can't get mail)
 - M201476117@alumni.hust.edu.cn
 
 ## 基于golang的规则引擎
@@ -491,5 +491,5 @@ func Test_Base(t *testing.T){
 
 ## 问题联系
 - 提issue，或者联系
-- renyunyi@bilibili.com
+- renyunyi@bilibili.com (因为公司屏蔽等原因，可能会接受不到邮件)
 - M201476117@alumni.hust.edu.cn
