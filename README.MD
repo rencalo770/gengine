@@ -23,7 +23,7 @@
 - support switch to help user to decide when a rule execute error in the list whether continue to execute the last rules 
 - support use '@name' to get rule's name in rule content
 - support map, slice, array
-- support rule pool
+- support rule pool, code location: gengine/engine/gengine_pool.go, test case: gengine/test/Pool_test.go
 
 ## Gengine not support grammar
 - not support 'else if', beacase the creator hates 'else if'
@@ -66,6 +66,10 @@
 ## attention and in action
 - if you want get high performance, please do as the test case do: separate the rule build process and the rule execute process    
 - when you rules contains Very time-consuming operation, such as operate database, you should use engine.ExecuteConcurrent(...), if not ,you should still use engine.Execute(...)
+
+## use 
+- go mod or go vendor 
+
 
 ## Gengine rule example
 ```go
@@ -238,7 +242,7 @@ func Test_Base(t *testing.T){
 
 ## Question Connection
 - write issue or connect
-- renyunyi@bilibili.com
+- renyunyi@bilibili.com (可能因为公司屏蔽等原因，可能会接受不到邮件)
 - M201476117@alumni.hust.edu.cn
 
 ## 基于golang的规则引擎
@@ -263,7 +267,10 @@ func Test_Base(t *testing.T){
 - 支持一些内置函数
 - 支持使用@name 在规则体内获得当前规则的名称
 - 支持基础类型的map, slice, array
-- 支持规则池
+- 支持规则池,代码位置gengine/engine/gengine_pool.go, 测试用例 gengine/test/Pool_test.go
+
+## 使用
+- go mod 或者 go vendor
 
 ## Gengine不支持的规则语法
 - 不支持else if, 因为作者讨厌使用else if
