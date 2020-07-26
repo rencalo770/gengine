@@ -14,20 +14,20 @@ type ElseIfStmt struct {
 }
 
 
-func (ef *ElseIfStmt) Evaluate(Vars map[string]interface{}) (reflect.Value, error) {
+func (ef *ElseIfStmt) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	it ,err := ef.Expression.Evaluate(Vars)
 	if err != nil {
-		return reflect.ValueOf(nil), err
+		return nil, err
 	}
 
 	if reflect.ValueOf(it).Bool() {
 		if ef.StatementList == nil{
-			return reflect.ValueOf(nil),nil
+			return nil,nil
 		}else {
 			return ef.StatementList.Evaluate(Vars)
 		}
 	}else {
-		return reflect.ValueOf(nil),nil
+		return nil,nil
 	}
 }
 

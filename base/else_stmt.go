@@ -3,7 +3,6 @@ package base
 import (
 	"gengine/context"
 	"gengine/core/errors"
-	"reflect"
 )
 
 type ElseStmt struct {
@@ -12,16 +11,16 @@ type ElseStmt struct {
 	dataCtx          *context.DataContext
 }
 
-func (e *ElseStmt) Evaluate(Vars map[string]interface{}) (reflect.Value, error) {
+func (e *ElseStmt) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 
 	if e.StatementList != nil {
 		value, err:= e.StatementList.Evaluate(Vars)
 		if err != nil {
-			return reflect.ValueOf(nil),err
+			return nil,err
 		}
 		return value,nil
 	}else {
-		return reflect.ValueOf(nil),nil
+		return nil,nil
 	}
 }
 

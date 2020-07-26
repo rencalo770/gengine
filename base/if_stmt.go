@@ -15,16 +15,16 @@ type IfStmt struct {
 	dataCtx          *context.DataContext
 }
 
-func (i *IfStmt) Evaluate(Vars map[string]interface{}) (reflect.Value, error) {
+func (i *IfStmt) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 
 	it ,err := i.Expression.Evaluate(Vars)
 	if err != nil {
-		return reflect.ValueOf(nil), err
+		return nil, err
 	}
 
 	if reflect.ValueOf(it).Bool() {
 		if i.StatementList == nil{
-			return reflect.ValueOf(nil),nil
+			return nil,nil
 		}else {
 			return i.StatementList.Evaluate(Vars)
 		}
@@ -35,13 +35,13 @@ func (i *IfStmt) Evaluate(Vars map[string]interface{}) (reflect.Value, error) {
 			for _,elseIfStmt := range i.ElseIfStmtList {
 				v, err := elseIfStmt.Expression.Evaluate(Vars)
 				if err != nil {
-					return reflect.ValueOf(nil), err
+					return nil, err
 				}
 
 				if reflect.ValueOf(v).Bool() {
 					sv, err := elseIfStmt.StatementList.Evaluate(Vars)
 					if err != nil {
-						return reflect.ValueOf(nil), err
+						return nil, err
 					}
 					return sv, nil
 				}
@@ -51,7 +51,7 @@ func (i *IfStmt) Evaluate(Vars map[string]interface{}) (reflect.Value, error) {
 		if i.ElseStmt != nil{
 			return i.ElseStmt.Evaluate(Vars)
 		}else {
-			return reflect.ValueOf(nil),nil
+			return nil,nil
 		}
 	}
 }

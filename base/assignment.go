@@ -3,7 +3,6 @@ package base
 import (
 	"gengine/context"
 	"gengine/core/errors"
-	"reflect"
 )
 
 // := or =
@@ -15,28 +14,28 @@ type Assignment struct {
 	dataCtx          *context.DataContext
 }
 
-func (a *Assignment) Evaluate(Vars map[string]interface{}) (reflect.Value, error) {
+func (a *Assignment) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	v, err := a.MathExpression.Evaluate(Vars)
 	if err != nil {
-		return reflect.ValueOf(nil), err
+		return nil, err
 	}
 
 	if len(a.Variable) > 0 {
 		err = a.dataCtx.SetValue(Vars, a.Variable, v)
 		if err != nil {
-			return reflect.ValueOf(nil), err
+			return nil, err
 		}
-		return reflect.ValueOf(nil), nil
+		return nil, nil
 	}
 
 	if a.MapVar != nil {
 		err := a.dataCtx.SetMapVarValue(Vars, a.MapVar.Name, a.MapVar.Strkey, a.MapVar.Varkey, a.MapVar.Intkey, v)
 		if err != nil {
-			return reflect.ValueOf(nil),err
+			return nil,err
 		}
 	}
 
-	return reflect.ValueOf(nil), nil
+	return nil, nil
 }
 
 func (a *Assignment) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
