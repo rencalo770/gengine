@@ -46,6 +46,9 @@ type gengineVisitor interface {
 	// Visit a parse tree produced by gengineParser#ifStmt.
 	VisitIfStmt(ctx *IfStmtContext) interface{}
 
+	// Visit a parse tree produced by gengineParser#elseIfStmt.
+	VisitElseIfStmt(ctx *ElseIfStmtContext) interface{}
+
 	// Visit a parse tree produced by gengineParser#elseStmt.
 	VisitElseStmt(ctx *ElseStmtContext) interface{}
 

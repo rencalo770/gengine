@@ -12,8 +12,8 @@ type Statements struct {
 }
 
 func (s *Statements) Evaluate(Vars map[string]interface{}) (reflect.Value, error) {
-	for _, val := range s.StatementList{
-		_, err := val.Evaluate(Vars)
+	for _, statement := range s.StatementList{
+		_, err := statement.Evaluate(Vars)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}

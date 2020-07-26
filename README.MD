@@ -12,7 +12,7 @@
 - support the priority of the rules list and the priority scope is -int64 to int64
 - support rule's description
 - support define a local variable in a rule, and it invisible between rules
-- support 'if..else' and it's Nested structure
+- support 'if..else ../ if ..else... /if .. else if ... else'  and it's Nested structure
 - support complex logic operation
 - support complex Arithmetic (+ -  * /)
 - support method of golang's structure 
@@ -26,7 +26,6 @@
 - support rule pool, code location: gengine/engine/gengine_pool.go, test case: gengine/test/Pool_test.go
 
 ## Gengine not support grammar
-- not support 'else if', beacase the creator hates 'else if'
 - not support Multi-level call such as 'user.ip.ipRisk()'，because it not meet the "Dimit rule", and multi-level call make it hard to understand, so it just support this call type: 'ip.ipRisk()'
 - not support multi line comment (/*  comment */)
 - not support multi return value, if you want, you can use return struct 
@@ -255,7 +254,7 @@ func Test_Base(t *testing.T){
 - 支持的优先级范围 -int64 ～ int64 
 - 支持中文规则名与中文规则描述
 - 支持规则内定义变量，但规则内定义的变量在规则与规则之间的不可见
-- 支持 if../if..else.. 代码块和其代码块嵌套
+- 支持 if../if..else../if .. else if ... else  代码块和其代码块嵌套
 - 支持复杂逻辑运算
 - 支持复杂数学四则运算(+ -  * /)
 - 支持结构体方法调用
@@ -273,7 +272,6 @@ func Test_Base(t *testing.T){
 - go mod 或者 go vendor
 
 ## Gengine不支持的规则语法
-- 不支持else if, 因为作者讨厌使用else if
 - 不支持形如user.ip.ipRisk()这种多级调用，因为它不符合"迪米特法则"，并且会使代码变得难以理解；只支持ip.ipRisk()这种单级调用
 - 不支持函数多个返回值，当需要返回多个值时，请使用返回结构体
 - 不支持多行注释，因为不想支持

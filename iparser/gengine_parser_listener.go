@@ -458,6 +458,23 @@ func (g *GengineParserListener)EnterSetOperator(ctx *parser.SetOperatorContext){
 
 func (g *GengineParserListener)ExitSetOperator(ctx *parser.SetOperatorContext){}
 
+func (g *GengineParserListener) EnterElseIfStmt(ctx *parser.ElseIfStmtContext) {
+	if len(g.ParseErrors) > 0{
+		return
+	}
+	elseIfStmt := &base.ElseIfStmt{}
+	g.Stack.Push(elseIfStmt)
+}
+
+func (g *GengineParserListener) ExitElseIfStmt(ctx *parser.ElseIfStmtContext) {
+	if len(g.ParseErrors) > 0 {
+		return
+	}
+	elseIfStmt := g.Stack.Pop().(*base.ElseIfStmt)
+	ifStmt := g.Stack.Peek().(*base.IfStmt)
+	ifStmt.ElseIfStmtList = append(ifStmt.ElseIfStmtList, elseIfStmt)
+}
+
 func (g *GengineParserListener)EnterElseStmt(ctx *parser.ElseStmtContext){
 	if len(g.ParseErrors) > 0{
 		return

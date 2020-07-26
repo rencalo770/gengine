@@ -9,6 +9,7 @@ import (
 type IfStmt struct {
 	Expression       *Expression
 	StatementList    *Statements
+	ElseIfStmtList   []*ElseIfStmt
 	ElseStmt         *ElseStmt
 	knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
@@ -29,6 +30,24 @@ func (i *IfStmt) Evaluate(Vars map[string]interface{}) (reflect.Value, error) {
 		}
 
 	}else {
+
+		if i.ElseIfStmtList != nil {
+			for _,elseIfStmt := range i.ElseIfStmtList {
+				v, err := elseIfStmt.Expression.Evaluate(Vars)
+				if err != nil {
+					return reflect.ValueOf(nil), err
+				}
+
+				if reflect.ValueOf(v).Bool() {
+					sv, err := elseIfStmt.StatementList.Evaluate(Vars)
+					if err != nil {
+						return reflect.ValueOf(nil), err
+					}
+					return sv, nil
+				}
+			}
+		}
+
 		if i.ElseStmt != nil{
 			return i.ElseStmt.Evaluate(Vars)
 		}else {
@@ -46,6 +65,12 @@ func (i *IfStmt) Initialize(kc *KnowledgeContext,  dc *context.DataContext) {
 	}
 	if i.StatementList != nil {
 		i.StatementList.Initialize(kc, dc)
+	}
+
+	if i.ElseIfStmtList != nil {
+		for _,elseIfStmt := range i.ElseIfStmtList{
+			elseIfStmt.Initialize(kc, dc)
+		}
 	}
 
 	if i.ElseStmt != nil {

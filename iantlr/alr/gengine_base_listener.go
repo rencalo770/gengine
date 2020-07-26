@@ -99,6 +99,12 @@ func (s *BasegengineListener) EnterIfStmt(ctx *IfStmtContext) {}
 // ExitIfStmt is called when production ifStmt is exited.
 func (s *BasegengineListener) ExitIfStmt(ctx *IfStmtContext) {}
 
+// EnterElseIfStmt is called when production elseIfStmt is entered.
+func (s *BasegengineListener) EnterElseIfStmt(ctx *ElseIfStmtContext) {}
+
+// ExitElseIfStmt is called when production elseIfStmt is exited.
+func (s *BasegengineListener) ExitElseIfStmt(ctx *ElseIfStmtContext) {}
+
 // EnterElseStmt is called when production elseStmt is entered.
 func (s *BasegengineListener) EnterElseStmt(ctx *ElseStmtContext) {}
 

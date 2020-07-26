@@ -60,6 +60,10 @@ func (v *BasegengineVisitor) VisitIfStmt(ctx *IfStmtContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
+func (v *BasegengineVisitor) VisitElseIfStmt(ctx *ElseIfStmtContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BasegengineVisitor) VisitElseStmt(ctx *ElseStmtContext) interface{} {
 	return v.VisitChildren(ctx)
 }

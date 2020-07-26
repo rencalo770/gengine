@@ -47,6 +47,9 @@ type gengineListener interface {
 	// EnterIfStmt is called when entering the ifStmt production.
 	EnterIfStmt(c *IfStmtContext)
 
+	// EnterElseIfStmt is called when entering the elseIfStmt production.
+	EnterElseIfStmt(c *ElseIfStmtContext)
+
 	// EnterElseStmt is called when entering the elseStmt production.
 	EnterElseStmt(c *ElseStmtContext)
 
@@ -142,6 +145,9 @@ type gengineListener interface {
 
 	// ExitIfStmt is called when exiting the ifStmt production.
 	ExitIfStmt(c *IfStmtContext)
+
+	// ExitElseIfStmt is called when exiting the elseIfStmt production.
+	ExitElseIfStmt(c *ElseIfStmtContext)
 
 	// ExitElseStmt is called when exiting the elseStmt production.
 	ExitElseStmt(c *ElseStmtContext)
