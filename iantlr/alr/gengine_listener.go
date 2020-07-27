@@ -1,4 +1,4 @@
-// Code generated from /Users/renyunyi/go/src/gengine/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
+// Code generated from /Users/renyunyi/go/src/gengine/iantlr/gengine.g4 by ANTLR 4.7.2. DO NOT EDIT.
 
 package parser // gengine
 
@@ -31,6 +31,9 @@ type gengineListener interface {
 
 	// EnterStatement is called when entering the statement production.
 	EnterStatement(c *StatementContext)
+
+	// EnterConcStatement is called when entering the concStatement production.
+	EnterConcStatement(c *ConcStatementContext)
 
 	// EnterExpression is called when entering the expression production.
 	EnterExpression(c *ExpressionContext)
@@ -130,6 +133,9 @@ type gengineListener interface {
 
 	// ExitStatement is called when exiting the statement production.
 	ExitStatement(c *StatementContext)
+
+	// ExitConcStatement is called when exiting the concStatement production.
+	ExitConcStatement(c *ConcStatementContext)
 
 	// ExitExpression is called when exiting the expression production.
 	ExitExpression(c *ExpressionContext)

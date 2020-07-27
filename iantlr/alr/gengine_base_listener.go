@@ -1,4 +1,4 @@
-// Code generated from /Users/renyunyi/go/src/gengine/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
+// Code generated from /Users/renyunyi/go/src/gengine/iantlr/gengine.g4 by ANTLR 4.7.2. DO NOT EDIT.
 
 package parser // gengine
 
@@ -68,6 +68,12 @@ func (s *BasegengineListener) EnterStatement(ctx *StatementContext) {}
 
 // ExitStatement is called when production statement is exited.
 func (s *BasegengineListener) ExitStatement(ctx *StatementContext) {}
+
+// EnterConcStatement is called when production concStatement is entered.
+func (s *BasegengineListener) EnterConcStatement(ctx *ConcStatementContext) {}
+
+// ExitConcStatement is called when production concStatement is exited.
+func (s *BasegengineListener) ExitConcStatement(ctx *ConcStatementContext) {}
 
 // EnterExpression is called when production expression is entered.
 func (s *BasegengineListener) EnterExpression(ctx *ExpressionContext) {}

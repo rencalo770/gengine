@@ -9,7 +9,9 @@ salience : SALIENCE integer;
 ruleContent : statements;
 statements: statement+;
 
-statement : ifStmt | methodCall  | functionCall | assignment;
+statement : ifStmt | methodCall  | functionCall | assignment | concStatement ;
+
+concStatement : 'conc' '{' assignment* '}';
 
 expression : mathExpression
             | expression comparisonOperator expression

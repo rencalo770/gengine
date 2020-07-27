@@ -10,6 +10,7 @@ import (
 )
 
 type DataContext struct {
+	lock  sync.Mutex
 	base  sync.Map
 }
 
@@ -46,7 +47,7 @@ func(dc *DataContext)ExecFunc(funcName string, parameters []interface{}) (interf
 	if f, ok := dc.base.Load(funcName);ok{
 		f, params := core.ParamsTypeChange(f, parameters)
 		if f == nil {
-			return nil, errors.New("Can't find %s in DataContext[when use it, please set it before]!")
+			return nil, errors.Errorf("Can't find %s in DataContext[when use it, please set it before]!", funcName)
 		}
 		fun := reflect.ValueOf(f)
 		args := make([]reflect.Value, 0)
@@ -129,7 +130,9 @@ func (dc *DataContext) SetValue(Vars map[string]interface{}  ,variable string, n
 		}
 	}else {
 		//in RuleEntity
+		dc.lock.Lock()
 		Vars[variable] = newValue
+		dc.lock.Unlock()
 		return nil
 	}
 	return errors.New("setValue not found error.")

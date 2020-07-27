@@ -111,6 +111,23 @@ func (g *GengineParserListener) ExitRuleContent(ctx *parser.RuleContentContext) 
 	entity.RuleContent = ruleContent
 }
 
+func (g *GengineParserListener) EnterConcStatement(ctx *parser.ConcStatementContext) {
+	if len(g.ParseErrors) > 0 {
+		return
+	}
+	concStatement := &base.ConcStatement{}
+	g.Stack.Push(concStatement)
+}
+
+func (g *GengineParserListener) ExitConcStatement(ctx *parser.ConcStatementContext) {
+	if len(g.ParseErrors) > 0 {
+		return
+	}
+	concStatement := g.Stack.Pop().(*base.ConcStatement)
+	statement := g.Stack.Peek().(*base.Statement)
+	statement.ConcStatement = concStatement
+}
+
 func (g *GengineParserListener) EnterAssignment(ctx *parser.AssignmentContext) {
 	if len(g.ParseErrors) > 0 {
 		return
@@ -124,8 +141,11 @@ func (g *GengineParserListener) ExitAssignment(ctx *parser.AssignmentContext) {
 		return
 	}
 	assignment := g.Stack.Pop().(*base.Assignment)
-	statement := g.Stack.Peek().(*base.Statement)
-	statement.Assignment = assignment
+	holder := g.Stack.Peek().(base.AssignmentHolder)
+	err := holder.AcceptAssignment(assignment)
+	if err != nil {
+		g.AddError(err)
+	}
 }
 
 func (g *GengineParserListener) EnterMathExpression(ctx *parser.MathExpressionContext) {

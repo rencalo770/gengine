@@ -10,6 +10,7 @@ type Statement struct {
 	MethodCall       *MethodCall
 	FunctionCall     *FunctionCall
 	Assignment       *Assignment
+	ConcStatement    *ConcStatement
 	knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
 }
@@ -30,6 +31,10 @@ func (s *Statement) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 
 	if s.Assignment != nil {
 		return s.Assignment.Evaluate(Vars)
+	}
+
+	if s.ConcStatement != nil {
+		return s.ConcStatement.Evaluate(Vars)
 	}
 
 	return nil,errors.New("Statement evaluate error!")
@@ -55,6 +60,9 @@ func (s *Statement) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
 		s.Assignment.Initialize(kc, dc)
 	}
 
+	if s.ConcStatement != nil {
+		s.ConcStatement.Initialize(kc, dc)
+	}
 }
 
 func (s *Statement)AcceptFunctionCall(funcCall *FunctionCall) error  {
@@ -74,3 +82,10 @@ func (s *Statement)AcceptMethodCall(methodCall *MethodCall) error{
 	return errors.New("MethodCall already defined!")
 }
 
+func (s *Statement) AcceptAssignment(assignment *Assignment) error {
+	if s.Assignment != nil {
+		s.Assignment = assignment
+		return nil
+	}
+	return errors.New("Assignment already defined!")
+}
