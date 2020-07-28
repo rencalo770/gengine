@@ -83,7 +83,7 @@ func (s *Statement)AcceptMethodCall(methodCall *MethodCall) error{
 }
 
 func (s *Statement) AcceptAssignment(assignment *Assignment) error {
-	if s.Assignment != nil {
+	if s.Assignment == nil {
 		s.Assignment = assignment
 		return nil
 	}
