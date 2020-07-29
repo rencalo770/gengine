@@ -260,6 +260,8 @@ func (gp *GenginePool)prepare(reqName string, req interface{}, respName string, 
 }
 
 //execute rules as the user set execute model when init or update
+//req, it is better to be ptr, or you will not get changed data
+//resp, it is better to be ptr, or you will not get changed dat
 func (gp *GenginePool)ExecuteRules(reqName string, req interface{}, respName string, resp interface{}) error{
 
 	//rules has bean cleared
@@ -300,6 +302,8 @@ if you know what you are doing, it will improve your rules execute performance
 
 if you want to know more about stag, to see the note above every method in Gengine.go
 */
+//req, it is better to be ptr, or you will not get changed data
+//resp, it is better to be ptr, or you will not get changed data
 func (gp *GenginePool)ExecuteRulesWithStopTag(reqName string, req interface{}, respName string, resp interface{}, stag *Stag) error {
 
 	//rules has bean cleared
