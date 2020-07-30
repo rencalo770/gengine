@@ -65,7 +65,7 @@
 ## attention and in action
 - if you want get high performance, please do as the test case do: separate the rule build process and the rule execute process    
 - when you rules contains Very time-consuming operation, such as operate database, you should use engine.ExecuteConcurrent(...), if not ,you should still use engine.Execute(...)
-
+- newest version is compatible with all older versions
 ## use 
 - go mod or go vendor 
 
@@ -481,7 +481,7 @@ func Test_Base(t *testing.T){
 - 如果你想获得高执行效率，请将 规则的构建过程和规则的执行过程相分离 
 - 如果你的规则中包含耗时，比如操作数据库，那么建议你用engine.ExecuteConcurrent(...) ,如果没有,建议你仍然用engine.Execute(...)
 - 规则引擎支持混合执行模式，优先执行一个最高优先级的规则，剩下的规则以并发的模式执行
-
+- 最新版本会兼容所有老版本功能
 
 ## 授权
 - 哔哩哔哩官方授权开源 ( www.bilibili.com)
