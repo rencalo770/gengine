@@ -16,6 +16,8 @@ rule "extends test" "extends test"
 begin
 	Father.Son = "tom"
 	Sout(Father.Son)
+	Father.Eat= "apple"
+	Sout(Father.Eat)
 end
 `
 
@@ -56,6 +58,8 @@ func exe(father *Father){
 
 
 func Test_ext(t *testing.T) {
-	father := &Father{}
+	father := &Father{
+		Man:&Man{},
+	}
 	exe(father)
 }
