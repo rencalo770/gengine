@@ -5,6 +5,7 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/core/errors"
+	"github.com/sirupsen/logrus"
 	"sync"
 )
 
@@ -259,6 +260,36 @@ func (gp *GenginePool)prepare(reqName string, req interface{}, respName string, 
 	return gw, nil
 }
 
+func (gp *GenginePool)prepareWithMultiInput(data map[string]interface{}) (*gengineWrapper ,error){
+	//get gengine resource
+	gw, e := gp.getGengine()
+	if e != nil {
+		return nil,e
+	}
+
+	//version is old, need to update
+	if gw.version != gp.version {
+		dstRb, e := copyRuleBuilder(gp.ruleBuilder)
+		gw.rulebuilder = dstRb
+		if e != nil {
+			return nil, e
+		}
+		//update success
+		gw.version = gp.version
+	}
+
+	for  k, v := range data {
+		//user should not inject "" string or nil value
+		if k != "" && v != nil {
+			gw.rulebuilder.Dc.Add(k, v)
+		}else {
+			logrus.Error("you should not input null string or nil value")
+		}
+	}
+	
+	return gw, nil
+}
+
 //execute rules as the user set execute model when init or update
 //req, it is better to be ptr, or you will not get changed data
 //resp, it is better to be ptr, or you will not get changed dat
@@ -294,6 +325,46 @@ func (gp *GenginePool)ExecuteRules(reqName string, req interface{}, respName str
 	}
 
 	return nil
+}
+
+/**
+user can input more data to use in engine
+
+this func is no different with
+ */
+func  (gp *GenginePool)ExecuteRulesWithMultiInput(data map[string]interface{}) error{
+
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil
+	}
+
+	gw,e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e
+	}
+	//release resource
+	defer gp.putGengineLocked(gw)
+
+	if gp.execModel == 1 { //sort
+		// when some rule execute error ,it will continue to execute last
+		e := gw.gengine.Execute(gw.rulebuilder, true)
+		return e
+	}
+
+	if gp.execModel == 2 { //concurrent
+		gw.gengine.ExecuteConcurrent(gw.rulebuilder)
+		return nil
+	}
+
+	if gp.execModel == 3 { //mix
+		gw.gengine.ExecuteMixModel(gw.rulebuilder)
+		return nil
+	}
+
+	return nil
+
 }
 
 /**
