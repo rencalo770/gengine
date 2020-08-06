@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"gengine/core/errors"
 	"reflect"
 	"strings"
@@ -211,6 +212,12 @@ func SetAttributeValue(obj interface{}, fieldName string, value interface{}) err
 	return nil
 }
 
+const (
+	_int   = 1
+	_uint  = 2
+	_float = 3
+)
+
 /*
 number type exchange
 */
@@ -223,40 +230,124 @@ func ParamsTypeChange(f interface{}, params []interface{})(interface{}, []interf
 	for i := 0; i < plen; i ++ {
 		switch tf.In(i).Kind(){
 		case reflect.Int:
-			params[i] = int(reflect.ValueOf(params[i]).Int())
+			tag := getNumType(params[i])
+			if tag == _int {
+				params[i] = int(reflect.ValueOf(params[i]).Int())
+			}else if tag == _uint {
+				params[i] = int(reflect.ValueOf(params[i]).Uint())
+			}else {
+				params[i] = int(reflect.ValueOf(params[i]).Float())
+			}
 			break
 		case reflect.Int8:
-			params[i] = int8(reflect.ValueOf(params[i]).Int())
+			tag := getNumType(params[i])
+			if tag == _int {
+				params[i] = int8(reflect.ValueOf(params[i]).Int())
+			}else if tag == _uint {
+				params[i] = int8(reflect.ValueOf(params[i]).Uint())
+			}else {
+				params[i] = int8(reflect.ValueOf(params[i]).Float())
+			}
 			break
 		case reflect.Int16:
-			params[i] = int16(reflect.ValueOf(params[i]).Int())
+			tag := getNumType(params[i])
+			if tag == _int {
+				params[i] = int16(reflect.ValueOf(params[i]).Int())
+			}else if tag == _uint {
+				params[i] = int16(reflect.ValueOf(params[i]).Uint())
+			}else {
+				params[i] = int16(reflect.ValueOf(params[i]).Float())
+			}
 			break
 		case reflect.Int32:
-			params[i] = int32(reflect.ValueOf(params[i]).Int())
+			tag := getNumType(params[i])
+			if tag == _int {
+				params[i] = int32(reflect.ValueOf(params[i]).Int())
+			}else if tag == _uint {
+				params[i] = int32(reflect.ValueOf(params[i]).Uint())
+			}else {
+				params[i] = int32(reflect.ValueOf(params[i]).Float())
+			}
 			break
 		case reflect.Int64:
-			params[i] = reflect.ValueOf(params[i]).Int()
+			tag := getNumType(params[i])
+			if tag == _int {
+				params[i] = reflect.ValueOf(params[i]).Int()
+			}else if tag == _uint {
+				params[i] = int64(reflect.ValueOf(params[i]).Uint())
+			}else {
+				params[i] = int64(reflect.ValueOf(params[i]).Float())
+			}
 			break
 		case reflect.Uint:
-			params[i] = uint(reflect.ValueOf(params[i]).Uint())
+			tag := getNumType(params[i])
+			if tag == _int {
+				params[i] = uint(reflect.ValueOf(params[i]).Int())
+			}else if tag == _uint {
+				params[i] = uint(reflect.ValueOf(params[i]).Uint())
+			}else {
+				params[i] = uint(reflect.ValueOf(params[i]).Float())
+			}
 			break
 		case reflect.Uint8:
-			params[i] = uint8(reflect.ValueOf(params[i]).Uint())
+			tag := getNumType(params[i])
+			if tag == _int {
+				params[i] = uint8(reflect.ValueOf(params[i]).Int())
+			}else if tag == _uint {
+				params[i] = uint8(reflect.ValueOf(params[i]).Uint())
+			}else {
+				params[i] = uint8(reflect.ValueOf(params[i]).Float())
+			}
 			break
 		case reflect.Uint16:
-			params[i] = uint16(reflect.ValueOf(params[i]).Uint())
+			tag := getNumType(params[i])
+			if tag == _int {
+				params[i] = uint16(reflect.ValueOf(params[i]).Int())
+			}else if tag == _uint {
+				params[i] = uint16(reflect.ValueOf(params[i]).Uint())
+			}else {
+				params[i] = uint16(reflect.ValueOf(params[i]).Float())
+			}
 			break
 		case reflect.Uint32:
-			params[i] = uint32(reflect.ValueOf(params[i]).Uint())
+			tag := getNumType(params[i])
+			if tag == _int {
+				params[i] = uint32(reflect.ValueOf(params[i]).Int())
+			}else if tag == _uint {
+				params[i] = uint32(reflect.ValueOf(params[i]).Uint())
+			}else {
+				params[i] = uint32(reflect.ValueOf(params[i]).Float())
+			}
 			break
 		case reflect.Uint64:
-			params[i] = reflect.ValueOf(params[i]).Uint()
+			tag := getNumType(params[i])
+			if tag == _int {
+				params[i] = uint64(reflect.ValueOf(params[i]).Int())
+			}else if tag == _uint {
+				params[i] = reflect.ValueOf(params[i]).Uint()
+			}else {
+				params[i] = uint64(reflect.ValueOf(params[i]).Float())
+			}
 			break
 		case reflect.Float32:
-			params[i] = float32(reflect.ValueOf(params[i]).Float())
+			tag := getNumType(params[i])
+			if tag == _int {
+				params[i] = float32(reflect.ValueOf(params[i]).Int())
+			}else if tag == _uint {
+				params[i] = float32(reflect.ValueOf(params[i]).Uint())
+			}else {
+				params[i] = float32(reflect.ValueOf(params[i]).Float())
+			}
 			break
 		case reflect.Float64:
-			params[i] = reflect.ValueOf(params[i]).Float()
+			tag := getNumType(params[i])
+			if tag == _int {
+				params[i] = float64(reflect.ValueOf(params[i]).Int())
+			}else if tag == _uint {
+				params[i] = float64(reflect.ValueOf(params[i]).Uint())
+			}else {
+				params[i] = reflect.ValueOf(params[i]).Float()
+			}
 			break
 		default:
 			continue
@@ -265,6 +356,23 @@ func ParamsTypeChange(f interface{}, params []interface{})(interface{}, []interf
 	return f,params
 }
 
+
+func getNumType(param interface{}) int {
+	ts := reflect.ValueOf(param).Kind().String()
+	if strings.HasPrefix(ts, "int"){
+		return _int
+	}
+
+	if strings.HasPrefix(ts, "uint") {
+		return _uint
+	}
+
+	if strings.HasPrefix(ts, "float")  {
+		return _float
+	}
+
+	panic(fmt.Sprintf("it is not number type, type is %s !", ts))
+}
 
 func GetWantedValue(newValue interface{}, toKind string) (interface{}, error) {
 	rawKind := reflect.ValueOf(newValue).Kind().String()
