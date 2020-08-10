@@ -1,10 +1,12 @@
 package engine
 
 import (
+	"gengine/base"
 	"gengine/builder"
 	"gengine/core/errors"
 	"github.com/sirupsen/logrus"
 	"reflect"
+	"sort"
 	"sync"
 )
 
@@ -264,4 +266,80 @@ func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb * builder.RuleBuilder, sTa
 			wg.Wait()
 		}
 	}
+}
+
+/**
+user can choose specified name rules to run with sort
+*/
+func (g *Gengine)ExecuteSelectedRules(rb * builder.RuleBuilder, names []string)  {
+	rules := []*base.RuleEntity{}
+	for _, name :=range names {
+		if ruleEntity, ok := rb.Kc.RuleEntities[name];ok{
+			rr:= ruleEntity
+			rules = append(rules, rr)
+		}else {
+			logrus.Errorf("no such rule named: %s", name)
+		}
+	}
+
+	if len(rules) < 1 {
+		return
+	}
+
+	if len(rules) >=2 {
+		sort.SliceStable(rules, func(i, j int) bool {
+			return rules[i].Salience > rules[j].Salience
+		})
+	}
+
+	for  _,rule := range rules  {
+		rr:= rule
+		e := rr.Execute()
+		if e != nil {
+			logrus.Errorf("execute rule :%s, err:%+v", rr.RuleName, e)
+		}
+	}
+}
+
+
+/**
+user can choose specified name rules to concurrent run
+ */
+func (g *Gengine)ExecuteSelectedRulesConcurrent(rb * builder.RuleBuilder, names []string)  {
+
+	rules := []*base.RuleEntity{}
+	for _,name :=range names {
+		if ruleEntity,ok := rb.Kc.RuleEntities[name];ok{
+			rr:= ruleEntity
+			rules = append(rules, rr)
+		}else {
+			logrus.Errorf("no such rule named: %s", name)
+		}
+	}
+
+	if len(rules) < 1 {
+		return
+	}
+
+	if len(rules) <= 1 {
+		e := rules[0].Execute()
+		if e != nil {
+			logrus.Errorf("execute rule: %s, err: %+v", rules[0].RuleName, e)
+		}
+		return
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(len(rules))
+	for _,r := range rules {
+		rr := r
+		go func() {
+			e := rr.Execute()
+			if e != nil {
+				logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
 }

@@ -72,7 +72,8 @@ func (g *GengineParserListener) ExitRuleName(ctx *parser.RuleNameContext) {
 	if len(g.ParseErrors) > 0 {
 		return
 	}
-	ruleName := ctx.GetText()
+	text := ctx.GetText()
+	ruleName := strings.Trim(text, "\"")
 	entity := g.Stack.Peek().(*base.RuleEntity)
 	g.ruleName = ruleName
 	entity.RuleName = ruleName
@@ -89,7 +90,8 @@ func (g *GengineParserListener) ExitRuleDescription(ctx *parser.RuleDescriptionC
 	if len(g.ParseErrors) > 0 {
 		return
 	}
-	ruleDescription := ctx.GetText()
+	text := ctx.GetText()
+	ruleDescription := strings.Trim(text, "\"")
 	entity := g.Stack.Peek().(*base.RuleEntity)
 	entity.RuleDescription = ruleDescription
 }

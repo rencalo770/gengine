@@ -23,8 +23,36 @@ rule "测试规则名称1" "rule desc"
 begin
 	Req.Data = 10 + 7 + 8
    // print(Req.Data)
+end
+rule "1" "rule desc"
+begin
+    print("1")
+end
+rule "2" "rule desc"
+begin
+	   print("2")
 end`
 	)
+
+func Test_pool_select_rules(t *testing.T) {
+
+	t1 := time.Now()
+	apis := make(map[string]interface{})
+	apis["print"] = fmt.Println
+	pool, e1 := engine.NewGenginePool(1, 2, 1, pool_rule, apis)
+	if e1 != nil {
+		println(fmt.Sprintf("e1: %+v", e1))
+	}
+	println("build pool cost time:", time.Since(t1), "ns")
+	reqest := &Reqest{}
+	data := make(map[string]interface{})
+	data["Req"] = reqest
+
+	e2 := pool.ExecuteSelectedRulesWithMultiInput(data,[]string{"测试规则名称1", "1"})
+	if e2!=nil {
+		panic(e2)
+	}
+}
 
 //test no rules in pool
 func Test_pool_no_rules(t *testing.T) {

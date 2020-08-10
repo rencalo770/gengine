@@ -330,8 +330,8 @@ func (gp *GenginePool)ExecuteRules(reqName string, req interface{}, respName str
 /**
 user can input more data to use in engine
 
-this func is no different with
- */
+it is no difference with ExecuteRules, you just can inject more data use this api
+*/
 func  (gp *GenginePool)ExecuteRulesWithMultiInput(data map[string]interface{}) error{
 
 	//rules has bean cleared
@@ -406,5 +406,50 @@ func (gp *GenginePool)ExecuteRulesWithStopTag(reqName string, req interface{}, r
 		return nil
 	}
 
+	return nil
+}
+
+/**
+see ExecuteSelectedRules in gengine.go
+*/
+func  (gp *GenginePool)ExecuteSelectedRulesWithMultiInput(data map[string]interface{}, names []string) error{
+
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil
+	}
+
+	gw,e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e
+	}
+	//release resource
+	defer gp.putGengineLocked(gw)
+
+	gw.gengine.ExecuteSelectedRules(gw.rulebuilder, names)
+	return nil
+}
+
+
+/**
+see ExecuteSelectedRulesConcurrent in gengine.go
+*/
+func  (gp *GenginePool)ExecuteSelectedRulesConcurrentWithMultiInput(data map[string]interface{}, names []string) error{
+
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil
+	}
+
+	gw,e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e
+	}
+	//release resource
+	defer gp.putGengineLocked(gw)
+
+	gw.gengine.ExecuteSelectedRulesConcurrent(gw.rulebuilder, names)
 	return nil
 }
