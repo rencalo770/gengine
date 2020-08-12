@@ -9,7 +9,7 @@
 ## 设计思想
 可以看这篇文章: https://xie.infoq.cn/article/40bfff1fbca1867991a1453ac
 
-## 模型执行规则
+## 规则执行模式
  ![avatar](exe_model.jpg)
 
 ## Gengine支持的规则语法
