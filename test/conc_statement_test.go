@@ -15,21 +15,28 @@ const rule_conc_statement  = `
 rule "conc_test" "test" 
 begin
 	conc  { // this should be used in time-consuming operation, such as the operation contains network connection (get data from remote based on network) 
+		println("hihihi")
 		a = 3.0
 		b = 4
 		c = 6.8
 		d = "hello world"
         e = "you will be happy here!"
+		sout("heheheheh")
 	}
 	println(a, b, c, d, e)
 
 end
 `
 
+func Sout(str string)  {
+	println("----",str)
+}
+
 func Test_conc_statement(t *testing.T) {
 
 	dataContext := context.NewDataContext()
 	dataContext.Add("println",fmt.Println)
+	dataContext.Add("sout", Sout)
 
 	//init rule engine
 	knowledgeContext := base.NewKnowledgeContext()

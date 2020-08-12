@@ -11,7 +11,7 @@ statements: statement+;
 
 statement : ifStmt | methodCall  | functionCall | assignment | concStatement ;
 
-concStatement : 'conc' '{' assignment* '}';
+concStatement : 'conc' '{' ( methodCall | functionCall | assignment )* '}';
 
 expression : mathExpression
             | expression comparisonOperator expression
