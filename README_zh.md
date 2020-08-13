@@ -1,6 +1,9 @@
 # Gengine
 - [English](README.md)
 
+## 官方文档
+- rencalo770.github.io/gengine_doc
+
 ## 基于golang的规则引擎
 - **Gengine**是一款基于AST(Abstract Syntax Tree)和golang语言实现的规则引擎。能够让你在golang这种静态语言上，在不停服务的情况下实现动态加载与配置规则。
 - **代码结构松散，逻辑极其简单，但经过了必要且详尽的测试**
