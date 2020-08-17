@@ -143,10 +143,6 @@ func (m *MapVar)AcceptVariable(name string) error{
 }
 
 func (m *MapVar)AcceptInteger(i64 int64)  error{
-	if i64 < 0 {
-		return errors.New("MapVar's index must be non-negative integer!")
-	}
-
 	m.Intkey = i64
 	return nil
 }

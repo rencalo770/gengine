@@ -11,12 +11,13 @@ import (
 
 type DataContext struct {
 	lock  sync.Mutex
-	base  sync.Map
+	lockMap sync.Mutex
+	base  map[string]interface{}
 }
 
 func NewDataContext() *DataContext {
 	dc := &DataContext{
-		base: sync.Map{},
+		base: make(map[string]interface{}),
 	}
 	dc.loadInnerUDF()
 	return dc
@@ -28,12 +29,17 @@ func (dc *DataContext)loadInnerUDF(){
 }
 
 func (dc *DataContext)Add(key string, obj interface{})  {
-	dc.base.Store(key, obj)
+	dc.lockMap.Lock()
+	dc.base[key] = obj
+	dc.lockMap.Unlock()
 }
 
 func (dc *DataContext)Get(key string) (interface{}, error){
-	if value, ok := dc.base.Load(key);ok{
-		return value, nil
+	dc.lockMap.Lock()
+	v := dc.base[key]
+	dc.lockMap.Unlock()
+	if v != nil{
+		return v, nil
 	}else {
 		return nil, errors.Errorf("not Found key :%s ", key)
 	}
@@ -44,8 +50,12 @@ execute the injected functions
 function execute supply multi return values, but simplify ,just return one value
  */
 func(dc *DataContext)ExecFunc(funcName string, parameters []interface{}) (interface{}, error) {
-	if f, ok := dc.base.Load(funcName);ok{
-		f, params := core.ParamsTypeChange(f, parameters)
+	dc.lockMap.Lock()
+	v := dc.base[funcName]
+	dc.lockMap.Unlock()
+
+	if v != nil{
+		f, params := core.ParamsTypeChange(v, parameters)
 		if f == nil {
 			return nil, errors.Errorf("Can't find %s in DataContext[when use it, please set it before]!", funcName)
 		}
@@ -76,8 +86,12 @@ func (dc *DataContext)ExecMethod(methodName string, args []interface{} ) (interf
 		return nil,errors.Errorf("Not supported call, just support struct.method call, now length is %d", len(structAndMethod))
 	}
 
-	if struc, ok := dc.base.Load(structAndMethod[0]); ok {
-		res, err := core.InvokeFunction(struc, structAndMethod[1], args)
+	dc.lockMap.Lock()
+	v := dc.base[structAndMethod[0]]
+	dc.lockMap.Unlock()
+
+	if v != nil {
+		res, err := core.InvokeFunction(v, structAndMethod[1], args)
 		if err != nil {
 			return nil, err
 		}
@@ -98,8 +112,12 @@ func (dc *DataContext)GetValue(Vars map[string]interface{}, variable string)(int
 			return nil,errors.Errorf("Not supported Field, just support struct.field , now length is %d", len(structAndField))
 		}
 
-		if obj,ok := dc.base.Load(structAndField[0]); ok{
-			return core.GetStructAttributeValue(obj, structAndField[1])
+		dc.lockMap.Lock()
+		v := dc.base[structAndField[0]]
+		dc.lockMap.Unlock()
+
+		if v != nil{
+			return core.GetStructAttributeValue(v, structAndField[1])
 		}
 
 		//for return struct or struct ptr
@@ -108,8 +126,12 @@ func (dc *DataContext)GetValue(Vars map[string]interface{}, variable string)(int
 		}
 	}else {
 		//user set
-		if obj,ok := dc.base.Load(variable); ok{
-			return obj,nil
+		dc.lockMap.Lock()
+		v := dc.base[variable]
+		dc.lockMap.Unlock()
+
+		if v != nil{
+			return v,nil
 		}
 		//in RuleEntity
 		return Vars[variable], nil
@@ -125,8 +147,12 @@ func (dc *DataContext) SetValue(Vars map[string]interface{}  ,variable string, n
 			return errors.Errorf("Not supported Field, just support struct.field , now length is %d", len(structAndField))
 		}
 
-		if obj, ok := dc.base.Load(structAndField[0]);ok {
-			return core.SetAttributeValue(obj, structAndField[1], newValue)
+		dc.lockMap.Lock()
+		v := dc.base[structAndField[0]]
+		dc.lockMap.Unlock()
+
+		if v != nil {
+			return core.SetAttributeValue(v, structAndField[1], newValue)
 		}
 	}else {
 		//in RuleEntity

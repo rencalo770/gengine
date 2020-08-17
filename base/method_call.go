@@ -3,7 +3,6 @@ package base
 import (
 	"gengine/context"
 	"gengine/core/errors"
-	"reflect"
 )
 
 type MethodCall struct {
@@ -37,7 +36,7 @@ func (mc *MethodCall) Evaluate(Vars map[string]interface{}) (interface{}, error)
 	} else {
 		av, err := mc.MethodArgs.Evaluate(Vars)
 		if err != nil {
-			return reflect.ValueOf(nil), err
+			return nil, err
 		}
 		argumentValues = av
 	}
