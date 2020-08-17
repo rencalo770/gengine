@@ -22,9 +22,9 @@ rule "map test" "m dec"
 begin
 
 //map in struct
-a = 1
-MS.MII[1] = 22
-println("MS.MII[1]--->",MS.MII[1])
+a = -1
+MS.MII[-1] = 22
+println("MS.MII[-1]--->",MS.MII[-1])
 println("MS.MII[a]--->",MS.MII[a])
 
 b = "1"
@@ -59,7 +59,7 @@ end
 
 func Test_m1(t *testing.T) {
 	MS := &MS{
-		MII: &map[int]int{1: 1},
+		MII: &map[int]int{-1: 1},
 		MSI: map[string]int{"hello": 1},
 		MIS: map[int]string{1: "helwo"},
 	}

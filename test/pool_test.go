@@ -3,6 +3,7 @@ package test
 import (
 	"fmt"
 	"gengine/engine"
+	"math/rand"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -22,15 +23,20 @@ const (
 rule "测试规则名称1" "rule desc"
 begin
 	Req.Data = 10 + 7 + 8
-   // print(Req.Data)
+	//sleep()   
+	// print(Req.Data)
 end
 rule "1" "rule desc"
 begin
-    print("1")
+	Req.Data = 10 + 7 + 8
+	//sleep()
+	//print("1")
 end
 rule "2" "rule desc"
 begin
-	   print("2")
+	Req.Data = 10 + 7 + 8
+	//sleep()
+	//	   print("2")
 end`
 	)
 
@@ -86,11 +92,16 @@ func Test_once(t *testing.T){
 	}
 }
 
+func Sleep(){
+	rand.Seed(time.Now().UnixNano())
+	i := rand.Intn(1000)
+	time.Sleep(time.Nanosecond * time.Duration(i))
+}
 
 func Test_pool_with_rules_for_goruntine(t *testing.T){
 
-	poolMinLen := int64(2)
-	poolMaxLen := int64(3)
+	poolMinLen := int64(1)
+	poolMaxLen := int64(2)
 	max := int64(0)
 	min := int64(1000000)
 	cnt := int64(0)
@@ -104,7 +115,8 @@ func Test_pool_with_rules_for_goruntine(t *testing.T){
 	t1 := time.Now()
 	apis := make(map[string]interface{})
 	apis["print"] = fmt.Println
-	pool, e1 := engine.NewGenginePool(poolMinLen, poolMaxLen, 1, pool_rule, apis)
+	apis["sleep"] = Sleep
+	pool, e1 := engine.NewGenginePool(poolMinLen, poolMaxLen, 2, pool_rule, apis)
 	if e1 != nil {
 		println(fmt.Sprintf("e1: %+v", e1))
 	}

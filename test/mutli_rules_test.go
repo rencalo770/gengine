@@ -74,6 +74,7 @@ func Test_Multi(t *testing.T){
 	}
 }
 
+/*
 func Test_Read(t*testing.T){
 
 	bytes, e := ioutil.ReadFile("/path/to/file")
@@ -83,7 +84,7 @@ func Test_Read(t*testing.T){
 	fmt.Println(string(bytes))
 
 }
-
+*/
 func Test_Write(t *testing.T){
 
 	r :=`rule "TTTTTTT" "我可以的"  salience 0
@@ -107,7 +108,7 @@ func Test_Write(t *testing.T){
 	cont := buffer.String()
 
 
-	fileName := "/Users/renyunyi/go/src/gengine/test/file"
+	fileName := "/tmp/file"
 	err := ioutil.WriteFile(fileName, []byte(cont), 0664)
 	if err != nil {
 		panic(err)
