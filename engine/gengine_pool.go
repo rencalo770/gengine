@@ -409,6 +409,43 @@ func (gp *GenginePool)ExecuteRulesWithStopTag(reqName string, req interface{}, r
 	return nil
 }
 
+func (gp *GenginePool)ExecuteRulesWithMultiInputAndStopTag(data map[string]interface{}, stag *Stag) error {
+
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil
+	}
+
+	gw,e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e
+	}
+	//release resource
+	defer gp.putGengineLocked(gw)
+
+	if gp.execModel == 1 { //sort
+		// when some rule execute error ,it will continue to execute last
+		e := gw.gengine.ExecuteWithStopTagDirect(gw.rulebuilder, true, stag)
+		return e
+	}
+
+	if gp.execModel == 2 { //concurrent
+		gw.gengine.ExecuteConcurrent(gw.rulebuilder)
+		return nil
+	}
+
+	if gp.execModel == 3 { //mix
+		gw.gengine.ExecuteMixModelWithStopTagDirect(gw.rulebuilder, stag)
+		return nil
+	}
+
+	return nil
+}
+
+
+
+
 /**
 see ExecuteSelectedRules in gengine.go
 */
