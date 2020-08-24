@@ -1,7 +1,10 @@
 # Gengine
 - [简体中文](README_zh.md)
 
-## doc
+## English Doc
+- https://rencalo770.github.io/gengine_en
+
+## Chinese Doc
 - https://rencalo770.github.io/gengine_doc
 
 ## the rule engine based on golang 
