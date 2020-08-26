@@ -190,7 +190,7 @@ func (g *Gengine)ExecuteSelectedRules(rb * builder.RuleBuilder, names []string) 
 			rr:= ruleEntity
 			rules = append(rules, rr)
 		}else {
-			logrus.Errorf("no such rule named: %s", name)
+			logrus.Infof("no such rule named: %s", name)
 		}
 	}
 
@@ -225,7 +225,7 @@ func (g *Gengine)ExecuteSelectedRulesConcurrent(rb * builder.RuleBuilder, names 
 			rr:= ruleEntity
 			rules = append(rules, rr)
 		}else {
-			logrus.Errorf("no such rule named: %s", name)
+			logrus.Infof("no such rule named: %s", name)
 		}
 	}
 

@@ -232,6 +232,12 @@ func (gp *GenginePool)SetExecModel(execModel int) error {
 	return nil
 }
 
+//check the rule whether exist
+func (gp *GenginePool)IsExist(ruleName string) bool {
+	_,ok := gp.ruleBuilder.Kc.RuleEntities[ruleName]
+	return ok
+}
+
 func (gp *GenginePool)prepare(reqName string, req interface{}, respName string, resp interface{}) (*gengineWrapper ,error){
 	//get gengine resource
 	gw, e := gp.getGengine()
