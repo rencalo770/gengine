@@ -30,11 +30,11 @@ END
 
 `
 
-func Print(s string){
+func Print(s string) {
 	fmt.Println(s)
 }
 
-func Test_Priority(t *testing.T){
+func Test_Priority(t *testing.T) {
 	dataContext := context.NewDataContext()
 	dataContext.Add("Print", Print)
 
@@ -45,23 +45,18 @@ func Test_Priority(t *testing.T){
 	err := ruleBuilder.BuildRuleFromString(rule4)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 		start := time.Now().UnixNano()
 		err := eng.Execute(ruleBuilder, true)
 		end := time.Now().UnixNano()
-		if err != nil{
+		if err != nil {
 			logrus.Errorf("execute rule error: %v", err)
 		}
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 	}
 }
-
-
-
-
-

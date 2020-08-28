@@ -6,10 +6,10 @@ import (
 )
 
 type MethodCall struct {
-	MethodName       string
-	MethodArgs       *Args
+	MethodName string
+	MethodArgs *Args
 	//knowledgeContext *context.KnowledgeContext
-	dataCtx          *context.DataContext
+	dataCtx *context.DataContext
 }
 
 func (mc *MethodCall) Initialize(dataCtx *context.DataContext) {
@@ -21,7 +21,7 @@ func (mc *MethodCall) Initialize(dataCtx *context.DataContext) {
 }
 
 func (mc *MethodCall) AcceptArgs(funcArg *Args) error {
-	if mc.MethodArgs == nil{
+	if mc.MethodArgs == nil {
 		mc.MethodArgs = funcArg
 		return nil
 	}

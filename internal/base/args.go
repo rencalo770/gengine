@@ -5,9 +5,9 @@ import (
 )
 
 type Args struct {
-	ArgList          []*Arg
-//	knowledgeContext *KnowledgeContext
-	dataCtx          *context.DataContext
+	ArgList []*Arg
+	//	knowledgeContext *KnowledgeContext
+	dataCtx *context.DataContext
 }
 
 func (as *Args) Initialize(dc *context.DataContext) {
@@ -54,7 +54,7 @@ func (as *Args) AcceptConstant(cons *Constant) error {
 
 func (as *Args) AcceptMapVar(mapVar *MapVar) error {
 	holder := &Arg{
-		MapVar:           mapVar,
+		MapVar: mapVar,
 	}
 	as.ArgList = append(as.ArgList, holder)
 	return nil
@@ -74,4 +74,3 @@ func (as *Args) Evaluate(Vars map[string]interface{}) ([]interface{}, error) {
 	}
 	return retVal, nil
 }
-

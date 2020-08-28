@@ -15,7 +15,7 @@ type AS struct {
 	MM [4]int
 }
 
-const a_1  =`
+const a_1 = `
 rule "array test" "m dec"
 begin
 
@@ -40,7 +40,6 @@ println("AAA[1]---->",AAA[1])
 end
 `
 
-
 func Test_Array(t *testing.T) {
 	AS := &AS{
 		MI: &[3]int{},
@@ -54,12 +53,12 @@ func Test_Array(t *testing.T) {
 	AAA = [2]int{1, 2}
 
 	dataContext := context.NewDataContext()
-	dataContext.Add("PrintName",fmt.Println)
+	dataContext.Add("PrintName", fmt.Println)
 	dataContext.Add("AS", AS)
 	//single array inject, must be ptr
 	dataContext.Add("AA", &AA)
 	dataContext.Add("AAA", AAA)
-	dataContext.Add("println",fmt.Println)
+	dataContext.Add("println", fmt.Println)
 
 	//init rule engine
 	ruleBuilder := builder.NewRuleBuilder(dataContext)
@@ -69,19 +68,19 @@ func Test_Array(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(a_1)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 		start := time.Now().UnixNano()
 		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 		err := eng.Execute(ruleBuilder, true)
 		end := time.Now().UnixNano()
-		if err != nil{
+		if err != nil {
 			logrus.Errorf("execute rule error: %v", err)
 		}
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 	}
 }

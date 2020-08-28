@@ -62,21 +62,21 @@ func difference(slice1, slice2 []string) []string {
 
 func Test_sets(t *testing.T) {
 
-	s1 :=[]string {"saa", "sss", "xxxx"}
-	s2 :=[]string {"sa1", "sss2", "xxxx"}
+	s1 := []string{"saa", "sss", "xxxx"}
+	s2 := []string{"sa1", "sss2", "xxxx"}
 
-/*	s3 := union(s1, s2)
-	for _,v := range s3 {
-		println(v)
-	}*/
+	/*	s3 := union(s1, s2)
+		for _,v := range s3 {
+			println(v)
+		}*/
 
-/*	s4 := intersect(s1, s2)
-	for _,v := range s4 {
-		println(v)
-	}*/
+	/*	s4 := intersect(s1, s2)
+		for _,v := range s4 {
+			println(v)
+		}*/
 
-	s5 :=difference(s1, s2)
-	for _,v := range s5 {
+	s5 := difference(s1, s2)
+	for _, v := range s5 {
 		println(v)
 	}
 }
@@ -87,7 +87,6 @@ type Data struct {
 	S3 []string
 }
 
-
 const rule = `
 rule "测试交叉并" "rule desc"
 begin
@@ -95,7 +94,7 @@ data.S3 = difference(data.S1, data.S2)
 end
 `
 
-func exec(){
+func exec() {
 
 	data := &Data{
 		S1: []string{"111", "2222", "333"},
@@ -106,8 +105,8 @@ func exec(){
 	dataContext := context.NewDataContext()
 	dataContext.Add("data", data)
 	dataContext.Add("union", union)
-	dataContext.Add("intersect",intersect)
-	dataContext.Add("difference",difference)
+	dataContext.Add("intersect", intersect)
+	dataContext.Add("difference", difference)
 
 	//init rule engine
 	ruleBuilder := builder.NewRuleBuilder(dataContext)
@@ -117,33 +116,29 @@ func exec(){
 	err := ruleBuilder.BuildRuleFromString(rule)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 
 		start := time.Now().UnixNano()
 		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 		err := eng.Execute(ruleBuilder, true)
 
-		for _,v := range data.S3 {
+		for _, v := range data.S3 {
 			println(v)
 		}
 		end := time.Now().UnixNano()
-		if err != nil{
+		if err != nil {
 			logrus.Errorf("execute rule error: %v", err)
 		}
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 	}
 }
 
-
-
-func Test_engine(t *testing.T){
-exec()
+func Test_engine(t *testing.T) {
+	exec()
 
 }
-
-

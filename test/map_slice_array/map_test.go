@@ -16,7 +16,7 @@ type MS struct {
 	MIS map[int]string
 }
 
-const m_1  =`
+const m_1 = `
 rule "map test" "m dec"
 begin
 
@@ -64,10 +64,10 @@ func Test_m1(t *testing.T) {
 	}
 
 	var MM map[int]int
-	MM = map[int]int{1:1000,2:1000}
+	MM = map[int]int{1: 1000, 2: 1000}
 
 	var MMM map[int]int
-	MMM = map[int]int{1:1000,2:1000}
+	MMM = map[int]int{1: 1000, 2: 1000}
 
 	dataContext := context.NewDataContext()
 	dataContext.Add("MS", MS)
@@ -75,8 +75,7 @@ func Test_m1(t *testing.T) {
 	dataContext.Add("MM", &MM)
 
 	dataContext.Add("MMM", MMM)
-	dataContext.Add("println",fmt.Println)
-
+	dataContext.Add("println", fmt.Println)
 
 	//init rule engine
 	ruleBuilder := builder.NewRuleBuilder(dataContext)
@@ -86,23 +85,20 @@ func Test_m1(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(m_1)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 		start := time.Now().UnixNano()
 		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 		err := eng.Execute(ruleBuilder, true)
 		end := time.Now().UnixNano()
-		if err != nil{
+		if err != nil {
 			logrus.Errorf("execute rule error: %v", err)
 		}
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 	}
-
-
 
 }

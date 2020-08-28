@@ -10,7 +10,7 @@ type Animal struct {
 	Name string
 }
 
-func copyRuleBuilder(src , dst interface{}) error{
+func copyRuleBuilder(src, dst interface{}) error {
 	buf := new(bytes.Buffer)
 	if e := gob.NewEncoder(buf).Encode(src); e != nil {
 		return e
@@ -22,10 +22,9 @@ func Clone(a, b interface{}) error {
 
 	buff := new(bytes.Buffer)
 	e := gob.NewEncoder(buff).Encode(a)
-	e =gob.NewDecoder(buff).Decode(b)
+	e = gob.NewDecoder(buff).Decode(b)
 	return e
 }
-
 
 func Test_copy(t *testing.T) {
 
@@ -33,7 +32,7 @@ func Test_copy(t *testing.T) {
 	var B Animal
 
 	e := Clone(animal, &B)
-	if e!=nil {
+	if e != nil {
 		panic(e)
 	}
 
@@ -45,17 +44,13 @@ func Test_copy(t *testing.T) {
 
 func Test_1_copy(t *testing.T) {
 
-/*	a1 := []int16{1}
-	copy(a1, a1[1:])
-	a1 = a1[:1-1]
-	println(fmt.Sprintf("%+v", a1))*/
-var s []int
-println(len(s))
-s = append(s, 1)
-println(len(s))
-
+	/*	a1 := []int16{1}
+		copy(a1, a1[1:])
+		a1 = a1[:1-1]
+		println(fmt.Sprintf("%+v", a1))*/
+	var s []int
+	println(len(s))
+	s = append(s, 1)
+	println(len(s))
 
 }
-
-
-

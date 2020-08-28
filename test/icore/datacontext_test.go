@@ -12,7 +12,6 @@ type P struct {
 	Sx []int
 }
 
-
 func Test_in_DataContext(t *testing.T) {
 	dataContext := context.NewDataContext()
 
@@ -22,25 +21,21 @@ func Test_in_DataContext(t *testing.T) {
 
 	p := &P{
 		Mx: make(map[string]string),
-		Ax: [3]int{1,2,3},
-		Sx: []int{7,8,9},
+		Ax: [3]int{1, 2, 3},
+		Sx: []int{7, 8, 9},
 	}
 	p.Mx["hello"] = "world"
 	dataContext.Add("P", p)
-
-
 
 	value_1, e := dataContext.GetValue(vm, "P.Mx")
 	if e != nil {
 		panic(e)
 	}
 
-
 	//map
 	println(reflect.TypeOf(value_1).String())
 	println(reflect.ValueOf(value_1).MapIndex(reflect.ValueOf("hello")).String())
 	println("---------------")
-
 
 	//array
 	value_2, e := dataContext.GetValue(vm, "P.Ax")
@@ -60,33 +55,27 @@ func Test_in_DataContext(t *testing.T) {
 	println(reflect.ValueOf(value_3).Index(1).Int())
 	println("---------------")
 
-
 }
-
 
 func Test_in_Var(t *testing.T) {
 
 	dataContext := context.NewDataContext()
 
 	var vm = make(map[string]interface{})
-	vm["mx"] = map[string]string{"hello":"world"}
-	vm["ax"] = [3]int{1,2,3}
-	vm["sx"] = []int{7,8,9}
+	vm["mx"] = map[string]string{"hello": "world"}
+	vm["ax"] = [3]int{1, 2, 3}
+	vm["sx"] = []int{7, 8, 9}
 	//dataContext.Add("P", )
-
-
 
 	value_1, e := dataContext.GetValue(vm, "mx")
 	if e != nil {
 		panic(e)
 	}
 
-
 	//map
 	println(reflect.TypeOf(value_1).String())
 	println(reflect.ValueOf(value_1).MapIndex(reflect.ValueOf("hello")).String())
 	println("---------------")
-
 
 	//array
 	value_2, e := dataContext.GetValue(vm, "ax")
@@ -106,10 +95,7 @@ func Test_in_Var(t *testing.T) {
 	println(reflect.ValueOf(value_3).Index(1).Int())
 	println("---------------")
 
-
 	var x int
 	println(x)
-
-
 
 }

@@ -10,13 +10,12 @@ import (
 	"sort"
 )
 
-
 type RuleBuilder struct {
 	Kc *base.KnowledgeContext
 	Dc *context.DataContext
 }
 
-func NewRuleBuilder(dc *context.DataContext)*RuleBuilder{
+func NewRuleBuilder(dc *context.DataContext) *RuleBuilder {
 	kc := base.NewKnowledgeContext()
 	return &RuleBuilder{
 		Kc: kc,
@@ -24,7 +23,7 @@ func NewRuleBuilder(dc *context.DataContext)*RuleBuilder{
 	}
 }
 
-func (builder *RuleBuilder) BuildRuleFromString(ruleString string) error{
+func (builder *RuleBuilder) BuildRuleFromString(ruleString string) error {
 	//forbidden old rules in context
 	builder.Kc.ClearRules()
 
@@ -40,7 +39,7 @@ func (builder *RuleBuilder) BuildRuleFromString(ruleString string) error{
 	psr.AddErrorListener(errListener)
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Primary())
 
-	if  len(errListener.GrammarErrors) > 0 {
+	if len(errListener.GrammarErrors) > 0 {
 		builder.Kc.ClearRules()
 		return errors.Errorf("%+v", errListener.GrammarErrors)
 	}
@@ -51,12 +50,12 @@ func (builder *RuleBuilder) BuildRuleFromString(ruleString string) error{
 	}
 
 	//initial
-	for _,v := range builder.Kc.RuleEntities {
+	for _, v := range builder.Kc.RuleEntities {
 		v.Initialize(builder.Dc)
 	}
 
 	//sort
-	for _,v := range builder.Kc.RuleEntities {
+	for _, v := range builder.Kc.RuleEntities {
 		builder.Kc.SortRules = append(builder.Kc.SortRules, v)
 	}
 	if len(builder.Kc.SortRules) > 1 {

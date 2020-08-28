@@ -7,30 +7,28 @@ import (
 )
 
 type ElseIfStmt struct {
-	Expression       *Expression
-	StatementList    *Statements
-//	knowledgeContext *KnowledgeContext
-	dataCtx          *context.DataContext
+	Expression    *Expression
+	StatementList *Statements
+	//	knowledgeContext *KnowledgeContext
+	dataCtx *context.DataContext
 }
 
-
 func (ef *ElseIfStmt) Evaluate(Vars map[string]interface{}) (interface{}, error) {
-	it ,err := ef.Expression.Evaluate(Vars)
+	it, err := ef.Expression.Evaluate(Vars)
 	if err != nil {
 		return nil, err
 	}
 
 	if reflect.ValueOf(it).Bool() {
-		if ef.StatementList == nil{
-			return nil,nil
-		}else {
+		if ef.StatementList == nil {
+			return nil, nil
+		} else {
 			return ef.StatementList.Evaluate(Vars)
 		}
-	}else {
-		return nil,nil
+	} else {
+		return nil, nil
 	}
 }
-
 
 func (ef *ElseIfStmt) Initialize(dc *context.DataContext) {
 	ef.dataCtx = dc
@@ -44,8 +42,7 @@ func (ef *ElseIfStmt) Initialize(dc *context.DataContext) {
 	}
 }
 
-
-func (ef *ElseIfStmt)AcceptExpression(expr *Expression) error{
+func (ef *ElseIfStmt) AcceptExpression(expr *Expression) error {
 
 	if ef.Expression == nil {
 		ef.Expression = expr
@@ -54,8 +51,7 @@ func (ef *ElseIfStmt)AcceptExpression(expr *Expression) error{
 	return errors.New("ElseIfStmt's Expression set twice!")
 }
 
-
-func (ef *ElseIfStmt)AcceptStatements(stmts *Statements)error{
+func (ef *ElseIfStmt) AcceptStatements(stmts *Statements) error {
 	if ef.StatementList == nil {
 		ef.StatementList = stmts
 		return nil

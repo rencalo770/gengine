@@ -15,8 +15,8 @@ func Test_conext(t *testing.T) {
 	cancal()
 	select {
 	default:
-	println("111111")
-	case <- ctx.Done():
+		println("111111")
+	case <-ctx.Done():
 		lock.Unlock()
 		println("xxxxx")
 	}
@@ -25,5 +25,5 @@ func Test_conext(t *testing.T) {
 	time.Sleep(5 * time.Second)
 	//ctx.Done()
 	println("done")
-	time.Sleep(5* time.Second)
+	time.Sleep(5 * time.Second)
 }

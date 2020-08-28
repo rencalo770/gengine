@@ -35,7 +35,7 @@ begin
 end
 `
 
-func Test_Multi(t *testing.T){
+func Test_Multi(t *testing.T) {
 	user := &User{
 		Name: "Calo",
 		Age:  0,
@@ -48,26 +48,25 @@ func Test_Multi(t *testing.T){
 	//init rule engine
 	ruleBuilder := builder.NewRuleBuilder(dataContext)
 
-
 	start1 := time.Now().UnixNano()
 	err := ruleBuilder.BuildRuleFromString(rule1) //string(bs)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 
 		start := time.Now().UnixNano()
-		err := eng.Execute(ruleBuilder,true)
+		err := eng.Execute(ruleBuilder, true)
 		println(user.Age)
 		end := time.Now().UnixNano()
-		if err != nil{
+		if err != nil {
 			logrus.Errorf("execute rule error: %v", err)
 		}
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 		logrus.Infof("user.Age=%d,Name=%s,Male=%t", user.Age, user.Name, user.Male)
 	}
 }
@@ -83,9 +82,9 @@ func Test_Read(t*testing.T){
 
 }
 */
-func Test_Write(t *testing.T){
+func Test_Write(t *testing.T) {
 
-	r :=`rule "TTTTTTT" "我可以的"  salience 0
+	r := `rule "TTTTTTT" "我可以的"  salience 0
 		begin
 		if 7 == User.GetNum(7){
 			User.Age = User.GetNum(89767) + 10000000
@@ -97,14 +96,13 @@ func Test_Write(t *testing.T){
 `
 
 	var buffer bytes.Buffer
-	for i := 0;i < 100; i++ {
+	for i := 0; i < 100; i++ {
 		i2 := strconv.Itoa(i)
 		rep := strings.Replace(r, "TTTTTTT", "姓名测试"+i2, -1)
 		buffer.WriteString(rep)
 	}
 
 	cont := buffer.String()
-
 
 	fileName := "/tmp/file"
 	err := ioutil.WriteFile(fileName, []byte(cont), 0664)

@@ -9,19 +9,17 @@ type Req struct {
 	//Data string
 }
 
-func GetPool(req *Req){
+func GetPool(req *Req) {
 
 	println("succ")
 }
 
-
-
-func Test_vz(t *testing.T)  {
+func Test_vz(t *testing.T) {
 
 	var x interface{}
 	x = GetPool
 
-	req:= &Req{}
+	req := &Req{}
 	var y interface{}
 	y = req
 
@@ -29,10 +27,7 @@ func Test_vz(t *testing.T)  {
 	v := reflect.ValueOf(x)
 	args := make([]reflect.Value, 0)
 
-
 	values := append(args, reflect.ValueOf(y))
 
 	v.Call(values)
 }
-
-

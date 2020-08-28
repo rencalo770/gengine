@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-const rule_else_if_test =`
+const rule_else_if_test = `
 rule "elseif_test" "test"
 begin
 
@@ -33,7 +33,7 @@ end
 func Test_elseif(t *testing.T) {
 
 	dataContext := context.NewDataContext()
-	dataContext.Add("println",fmt.Println)
+	dataContext.Add("println", fmt.Println)
 
 	//init rule engine
 	ruleBuilder := builder.NewRuleBuilder(dataContext)
@@ -43,20 +43,20 @@ func Test_elseif(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(rule_else_if_test)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 
 		start := time.Now().UnixNano()
 		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 		err := eng.Execute(ruleBuilder, true)
 		end := time.Now().UnixNano()
-		if err != nil{
+		if err != nil {
 			logrus.Errorf("execute rule error: %v", err)
 		}
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 	}
 }

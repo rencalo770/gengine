@@ -5,9 +5,9 @@ import (
 )
 
 type Constant struct {
-	ConstantValue    interface{}
-//	knowledgeContext *KnowledgeContext
-	dataCtx          *context.DataContext
+	ConstantValue interface{}
+	//	knowledgeContext *KnowledgeContext
+	dataCtx *context.DataContext
 }
 
 func (cons *Constant) AcceptString(str string) error {
@@ -29,7 +29,7 @@ func (cons *Constant) AcceptInteger(i64 int64) error {
 }
 
 //receive rule's name
-func (cons *Constant)AcceptName(name string) error{
+func (cons *Constant) AcceptName(name string) error {
 	cons.ConstantValue = name
 	return nil
 }

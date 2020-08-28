@@ -10,9 +10,9 @@ import (
 )
 
 type DataContext struct {
-	lock  sync.Mutex
+	lock    sync.Mutex
 	lockMap sync.Mutex
-	base  map[string]interface{}
+	base    map[string]interface{}
 }
 
 func NewDataContext() *DataContext {
@@ -23,24 +23,24 @@ func NewDataContext() *DataContext {
 	return dc
 }
 
-func (dc *DataContext)loadInnerUDF(){
+func (dc *DataContext) loadInnerUDF() {
 	strconv := &define.StrconvWrapper{}
 	dc.Add("strconv", strconv)
 }
 
-func (dc *DataContext)Add(key string, obj interface{})  {
+func (dc *DataContext) Add(key string, obj interface{}) {
 	dc.lockMap.Lock()
 	dc.base[key] = obj
 	dc.lockMap.Unlock()
 }
 
-func (dc *DataContext)Get(key string) (interface{}, error){
+func (dc *DataContext) Get(key string) (interface{}, error) {
 	dc.lockMap.Lock()
 	v := dc.base[key]
 	dc.lockMap.Unlock()
-	if v != nil{
+	if v != nil {
 		return v, nil
-	}else {
+	} else {
 		return nil, errors.Errorf("not Found key :%s ", key)
 	}
 }
@@ -48,29 +48,29 @@ func (dc *DataContext)Get(key string) (interface{}, error){
 /**
 execute the injected functions
 function execute supply multi return values, but simplify ,just return one value
- */
-func(dc *DataContext)ExecFunc(funcName string, parameters []interface{}) (interface{}, error) {
+*/
+func (dc *DataContext) ExecFunc(funcName string, parameters []interface{}) (interface{}, error) {
 	dc.lockMap.Lock()
 	v := dc.base[funcName]
 	dc.lockMap.Unlock()
 
-	if v != nil{
+	if v != nil {
 		f, params := core.ParamsTypeChange(v, parameters)
 		if f == nil {
 			return nil, errors.Errorf("Can't find %s in DataContext[when use it, please set it before]!", funcName)
 		}
 		fun := reflect.ValueOf(f)
 		args := make([]reflect.Value, 0)
-		for _, param :=range params  {
+		for _, param := range params {
 			args = append(args, reflect.ValueOf(param))
 		}
 		res := fun.Call(args)
 		raw, e := core.GetRawTypeValue(res)
 		if e != nil {
-			return nil,e
+			return nil, e
 		}
 		return raw, nil
-	}else {
+	} else {
 		return nil, errors.New("no such data found in DataContext!")
 	}
 }
@@ -78,8 +78,8 @@ func(dc *DataContext)ExecFunc(funcName string, parameters []interface{}) (interf
 /**
 execute the struct's functions
 function execute supply multi return values, but simplify ,just return one value
- */
-func (dc *DataContext)ExecMethod(methodName string, args []interface{} ) (interface{}, error) {
+*/
+func (dc *DataContext) ExecMethod(methodName string, args []interface{}) (interface{}, error) {
 	structAndMethod := strings.Split(methodName, ".")
 	//Dimit rule
 	if len(structAndMethod) != 2 {
@@ -97,13 +97,13 @@ func (dc *DataContext)ExecMethod(methodName string, args []interface{} ) (interf
 		}
 		return res, nil
 	}
-	return nil, errors.Errorf("Not found method: %s",methodName)
+	return nil, errors.Errorf("Not found method: %s", methodName)
 }
 
 /**
 get the value user set
- */
-func (dc *DataContext)GetValue(Vars map[string]interface{}, variable string)(interface{}, error){
+*/
+func (dc *DataContext) GetValue(Vars map[string]interface{}, variable string) (interface{}, error) {
 	if strings.Contains(variable, ".") {
 		//in dataContext
 		structAndField := strings.Split(variable, ".")
@@ -116,30 +116,30 @@ func (dc *DataContext)GetValue(Vars map[string]interface{}, variable string)(int
 		v := dc.base[structAndField[0]]
 		dc.lockMap.Unlock()
 
-		if v != nil{
+		if v != nil {
 			return core.GetStructAttributeValue(v, structAndField[1])
 		}
 
 		//for return struct or struct ptr
-		if obj,ok := Vars[structAndField[0]];ok{
+		if obj, ok := Vars[structAndField[0]]; ok {
 			return core.GetStructAttributeValue(obj, structAndField[1])
 		}
-	}else {
+	} else {
 		//user set
 		dc.lockMap.Lock()
 		v := dc.base[variable]
 		dc.lockMap.Unlock()
 
-		if v != nil{
-			return v,nil
+		if v != nil {
+			return v, nil
 		}
 		//in RuleEntity
 		return Vars[variable], nil
 	}
-	return nil, errors.Errorf("Did not found variable : %s ",variable)
+	return nil, errors.Errorf("Did not found variable : %s ", variable)
 }
 
-func (dc *DataContext) SetValue(Vars map[string]interface{}  ,variable string, newValue interface{}) error {
+func (dc *DataContext) SetValue(Vars map[string]interface{}, variable string, newValue interface{}) error {
 	if strings.Contains(variable, ".") {
 		structAndField := strings.Split(variable, ".")
 		//Dimit rule
@@ -154,7 +154,7 @@ func (dc *DataContext) SetValue(Vars map[string]interface{}  ,variable string, n
 		if v != nil {
 			return core.SetAttributeValue(v, structAndField[1], newValue)
 		}
-	}else {
+	} else {
 		//in RuleEntity
 		dc.lock.Lock()
 		Vars[variable] = newValue
@@ -164,7 +164,7 @@ func (dc *DataContext) SetValue(Vars map[string]interface{}  ,variable string, n
 	return errors.New("setValue not found error.")
 }
 
-func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, mapVarStrkey, mapVarVarkey  string , mapVarIntkey int64, newValue interface{}) error{
+func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, mapVarStrkey, mapVarVarkey string, mapVarIntkey int64, newValue interface{}) error {
 
 	//value is map or slice or array
 	value, e := dc.GetValue(Vars, mapVarName)
@@ -181,7 +181,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 	inTypeName := ""
 	if strings.HasPrefix(typeName, "*") {
 		ptr = true
-		inTypeName =  strings.ReplaceAll(typeName, "*","")
+		inTypeName = strings.ReplaceAll(typeName, "*", "")
 		typeName = inTypeName
 	}
 
@@ -190,21 +190,21 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 		typeNum = 1
 		start := strings.Index(typeName, "[")
 		end := strings.Index(typeName, "]")
-		keyType =  typeName[start + 1 : end]
+		keyType = typeName[start+1 : end]
 		valueType = strings.Trim(typeName[end+1:], " ")
-	}else if strings.HasPrefix(typeName, "[]") {
+	} else if strings.HasPrefix(typeName, "[]") {
 		//slice
 		typeNum = 2
 		valueType = strings.ReplaceAll(strings.ReplaceAll(typeName, "[]", ""), " ", "")
-	}else {
+	} else {
 		//array
 		typeNum = 3
-		valueType = typeName[strings.Index(typeName, "]") + 1: ]
+		valueType = typeName[strings.Index(typeName, "]")+1:]
 	}
 
 	if ptr {
 		//single map should be ptr
-		if typeNum == 1{
+		if typeNum == 1 {
 			if len(mapVarVarkey) > 0 {
 				key, e := dc.GetValue(Vars, mapVarVarkey)
 				if e != nil {
@@ -229,7 +229,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 					return e
 				}
 				reflect.ValueOf(value).Elem().SetMapIndex(reflect.ValueOf(mapVarStrkey), reflect.ValueOf(wantedValue))
-				return  nil
+				return nil
 			}
 
 			//int key
@@ -247,7 +247,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 
 		//slice
 		if typeNum == 2 {
-			if len(mapVarVarkey) > 0  {
+			if len(mapVarVarkey) > 0 {
 				key, e := dc.GetValue(Vars, mapVarVarkey)
 				if e != nil {
 					return e
@@ -266,7 +266,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 				}
 				reflect.ValueOf(value).Elem().Index(int(mapVarIntkey)).Set(reflect.ValueOf(wantedValue))
 				return nil
-			}else {
+			} else {
 				return errors.New("Slice or Array index  must be non-negative!")
 			}
 		}
@@ -274,7 +274,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 		if typeNum == 3 {
 			if strings.Contains(mapVarName, ".") {
 
-				splits := strings.Split(mapVarName,".")
+				splits := strings.Split(mapVarName, ".")
 				stru, e := dc.Get(splits[0])
 				if e != nil {
 					return e
@@ -284,7 +284,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 				var arr reflect.Value
 				if strings.HasPrefix(struType, "*") {
 					arr = reflect.ValueOf(stru).Elem().FieldByName(splits[1])
-				}else {
+				} else {
 					arr = reflect.ValueOf(stru).FieldByName(splits[1])
 				}
 
@@ -302,7 +302,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 					return nil
 				}
 
-				if mapVarIntkey >=0 {
+				if mapVarIntkey >= 0 {
 					wantedValue, e := core.GetWantedValue(newValue, valueType)
 					if e != nil {
 						return e
@@ -310,11 +310,11 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 
 					arr.Elem().Index(int(mapVarIntkey)).Set(reflect.ValueOf(wantedValue))
 					return nil
-				}else {
+				} else {
 					return errors.New("Slice index must be bigger than 0!")
 				}
 
-			}else {
+			} else {
 
 				if len(mapVarVarkey) > 0 {
 					key, e := dc.GetValue(Vars, mapVarVarkey)
@@ -330,7 +330,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 					return nil
 				}
 
-				if mapVarIntkey >=0 {
+				if mapVarIntkey >= 0 {
 					wantedValue, e := core.GetWantedValue(newValue, valueType)
 					if e != nil {
 						return e
@@ -338,21 +338,21 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 
 					reflect.ValueOf(value).Elem().Index(int(mapVarIntkey)).Set(reflect.ValueOf(wantedValue))
 					return nil
-				}else {
+				} else {
 					return errors.New("Slice index must be bigger than 0!")
 				}
 			}
 		}
 
-	}else {
+	} else {
 
 		// map in pointer-struct
-		if  typeNum == 1 {
+		if typeNum == 1 {
 
 			if strings.Contains(mapVarName, ".") {
 
 				splits := strings.Split(mapVarName, ".")
-				stru,err := dc.Get(splits[0])
+				stru, err := dc.Get(splits[0])
 				if err != nil {
 					return errors.Errorf("Not Found struct :%s", stru)
 				}
@@ -396,7 +396,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 				reflect.ValueOf(value).SetMapIndex(reflect.ValueOf(wantedKey), reflect.ValueOf(wantedValue))
 				return nil
 
-			}else {
+			} else {
 				return errors.New("SetMapVarValue Only support directly-Pointer-Map or Map in Pointer-struct!")
 			}
 		}
@@ -420,7 +420,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 					return nil
 				}
 
-				if mapVarIntkey >=0 {
+				if mapVarIntkey >= 0 {
 					wantedValue, e := core.GetWantedValue(newValue, valueType)
 					if e != nil {
 						return e
@@ -428,11 +428,11 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 
 					reflect.ValueOf(value).Index(int(mapVarIntkey)).Set(reflect.ValueOf(wantedValue))
 					return nil
-				}else {
+				} else {
 					return errors.New("Slice index must be bigger than 0!")
 				}
 
-			}else {
+			} else {
 				return errors.New("SetMapVarValue Only support directly-Pointer-Slice or Slice in Pointer-struct!")
 			}
 		}
@@ -441,7 +441,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 		if typeNum == 3 {
 			if strings.Contains(mapVarName, ".") {
 
-				splits := strings.Split(mapVarName,".")
+				splits := strings.Split(mapVarName, ".")
 				stru, e := dc.Get(splits[0])
 				if e != nil {
 					return e
@@ -451,7 +451,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 				var arr reflect.Value
 				if strings.HasPrefix(struType, "*") {
 					arr = reflect.ValueOf(stru).Elem().FieldByName(splits[1])
-				}else {
+				} else {
 					return errors.New("struct with Array must be pointer-struct, or you can't change Array's value!")
 				}
 
@@ -469,7 +469,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 					return nil
 				}
 
-				if mapVarIntkey >=0 {
+				if mapVarIntkey >= 0 {
 					wantedValue, e := core.GetWantedValue(newValue, valueType)
 					if e != nil {
 						return e
@@ -477,11 +477,11 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 
 					arr.Index(int(mapVarIntkey)).Set(reflect.ValueOf(wantedValue))
 					return nil
-				}else {
+				} else {
 					return errors.New("Slice index must be bigger than 0!")
 				}
 
-			}else {
+			} else {
 				return errors.New("SetMapVarValue Only support directly-Pointer-Array or Array in Pointer-struct!")
 			}
 		}
@@ -489,6 +489,6 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 	return errors.New("SetMapVarValue Only support directly-Pointer-Map, directly-Pointer-Slice and directly-Pointer-Array or Map, Slice and Array in Pointer-Struct!")
 }
 
-func (dc *DataContext)makeArray(value interface{})  {
+func (dc *DataContext) makeArray(value interface{}) {
 
 }

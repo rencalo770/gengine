@@ -10,14 +10,13 @@ import (
 	"time"
 )
 
-
 type MapArray struct {
 	Mx map[string]bool
 	Ax [3]int
 	Sx []string
 }
 
-const ma_rule  =`
+const ma_rule = `
 rule "测试规则" "rule desc"
 begin
   
@@ -81,18 +80,16 @@ begin
 end
 `
 
-
 func Test_map_array(t *testing.T) {
 
 	Ma := &MapArray{
 		Mx: map[string]bool{"hello": true},
-		Ax : [3]int{1000,20000,300},
+		Ax: [3]int{1000, 20000, 300},
 		Sx: []string{"jjj", "lll", "kkkk"},
 	}
 
-
 	dataContext := context.NewDataContext()
-	dataContext.Add("PrintName",fmt.Println)
+	dataContext.Add("PrintName", fmt.Println)
 	dataContext.Add("Ma", Ma)
 
 	//init rule engine
@@ -103,22 +100,20 @@ func Test_map_array(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(ma_rule)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 		start := time.Now().UnixNano()
 		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 		err := eng.Execute(ruleBuilder, true)
 		end := time.Now().UnixNano()
-		if err != nil{
+		if err != nil {
 			logrus.Errorf("execute rule error: %v", err)
 		}
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 	}
-
 
 }

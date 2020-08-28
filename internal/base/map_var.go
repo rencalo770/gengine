@@ -10,12 +10,12 @@ import (
 
 //support map or array
 type MapVar struct {
-	Name string  // map name
+	Name   string // map name
 	Intkey int64  // array index
 	Strkey string // map key
 	Varkey string // array index or map key
-//	knowledgeContext *KnowledgeContext
-	dataCtx          *context.DataContext
+	//	knowledgeContext *KnowledgeContext
+	dataCtx *context.DataContext
 }
 
 func (m *MapVar) Initialize(dc *context.DataContext) {
@@ -26,7 +26,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 
 	value, e := m.dataCtx.GetValue(Vars, m.Name)
 	if e != nil {
-		return nil,e
+		return nil, e
 	}
 	typeName := reflect.TypeOf(value).String()
 
@@ -34,7 +34,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	if strings.HasPrefix(typeName, "map") {
 
 		typeStr := reflect.TypeOf(value).String()
-		keyType := typeStr[strings.Index(typeStr, "[") + 1: strings.Index(typeStr, "]")]
+		keyType := typeStr[strings.Index(typeStr, "[")+1 : strings.Index(typeStr, "]")]
 
 		if len(m.Varkey) > 0 {
 			key, e := m.dataCtx.GetValue(Vars, m.Varkey)
@@ -63,7 +63,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	}
 
 	//slice or array
-	if strings.HasPrefix(typeName, "[]") || (strings.HasPrefix(typeName, "[") && strings.Index(typeName,"]") != 1){
+	if strings.HasPrefix(typeName, "[]") || (strings.HasPrefix(typeName, "[") && strings.Index(typeName, "]") != 1) {
 		if len(m.Varkey) > 0 {
 			wantedKey, e := m.dataCtx.GetValue(Vars, m.Varkey)
 			if e != nil {
@@ -74,7 +74,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 
 		if m.Intkey >= 0 {
 			return reflect.ValueOf(value).Index(int(m.Intkey)).Interface(), nil
-		}else {
+		} else {
 			return nil, errors.New("Slice or Array index must be non-negative!")
 		}
 	}
@@ -82,7 +82,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	//pointer map
 	if strings.HasPrefix(typeName, "*map[") {
 		typeStr := reflect.TypeOf(value).String()
-		keyType := typeStr[strings.Index(typeStr, "[") + 1: strings.Index(typeStr, "]")]
+		keyType := typeStr[strings.Index(typeStr, "[")+1 : strings.Index(typeStr, "]")]
 
 		if len(m.Varkey) > 0 {
 			key, e := m.dataCtx.GetValue(Vars, m.Varkey)
@@ -108,7 +108,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	}
 
 	//pointer slice or pointer array
-	if strings.HasPrefix(typeName, "*[]") || (strings.HasPrefix(typeName, "*[") && strings.Index(typeName,"]") != 2){
+	if strings.HasPrefix(typeName, "*[]") || (strings.HasPrefix(typeName, "*[") && strings.Index(typeName, "]") != 2) {
 
 		if len(m.Varkey) > 0 {
 			wantedKey, e := m.dataCtx.GetValue(Vars, m.Varkey)
@@ -120,7 +120,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 
 		if m.Intkey >= 0 {
 			return reflect.ValueOf(value).Elem().Index(int(m.Intkey)).Interface(), nil
-		}else {
+		} else {
 			return nil, errors.New("Slice or Array index must be non-negative!")
 		}
 	}
@@ -128,7 +128,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	return nil, errors.New("Evaluate MapVarValue Only support directly-Pointer-Map, directly-Pointer-Slice and directly-Pointer-Array  or Map, Slice and Array in Pointer-Struct!")
 }
 
-func (m *MapVar)AcceptVariable(name string) error{
+func (m *MapVar) AcceptVariable(name string) error {
 	if len(m.Name) == 0 {
 		m.Name = name
 		return nil
@@ -141,12 +141,12 @@ func (m *MapVar)AcceptVariable(name string) error{
 	return errors.New("MapVar's Varkey set three times!")
 }
 
-func (m *MapVar)AcceptInteger(i64 int64)  error{
+func (m *MapVar) AcceptInteger(i64 int64) error {
 	m.Intkey = i64
 	return nil
 }
 
-func (m *MapVar)AcceptString(str string) error  {
+func (m *MapVar) AcceptString(str string) error {
 	if len(m.Strkey) == 0 {
 		m.Strkey = str
 		return nil

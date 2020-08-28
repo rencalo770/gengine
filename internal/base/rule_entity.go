@@ -6,13 +6,13 @@ import (
 )
 
 type RuleEntity struct {
-	RuleName         string
-	Salience         int64
-	RuleDescription  string
-	RuleContent      *RuleContent
-//	knowledgeContext *KnowledgeContext
-	dataCtx          *context.DataContext
-	Vars             map[string]interface{}  //belongs to current rule,rule execute finish, it will be clear
+	RuleName        string
+	Salience        int64
+	RuleDescription string
+	RuleContent     *RuleContent
+	//	knowledgeContext *KnowledgeContext
+	dataCtx *context.DataContext
+	Vars    map[string]interface{} //belongs to current rule,rule execute finish, it will be clear
 }
 
 func (r *RuleEntity) AcceptString(s string) error {
@@ -25,7 +25,7 @@ func (r *RuleEntity) AcceptString(s string) error {
 		r.RuleDescription = s
 		return nil
 	}
-	return errors.Errorf("value = %s set twice!",s)
+	return errors.Errorf("value = %s set twice!", s)
 }
 
 func (r *RuleEntity) AcceptInteger(val int64) error {
@@ -47,6 +47,6 @@ func (r *RuleEntity) Execute() error {
 	return r.RuleContent.Execute(r.Vars)
 }
 
-func (r *RuleEntity)clearMap()  {
+func (r *RuleEntity) clearMap() {
 	r.Vars = make(map[string]interface{})
 }

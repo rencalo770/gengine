@@ -10,30 +10,29 @@ import (
 
 // when you use NewGenginePool, you just think of it as the connection pool of mysql, the higher QPS you want to support, the more resource you need to give
 type GenginePool struct {
-	runningLock      sync.Mutex
-	freeGengines     []*gengineWrapper
-	ruleBuilder      *builder.RuleBuilder
-	execModel        int
-	apis    map[string]interface{}
+	runningLock  sync.Mutex
+	freeGengines []*gengineWrapper
+	ruleBuilder  *builder.RuleBuilder
+	execModel    int
+	apis         map[string]interface{}
 
 	additionLock     sync.Mutex
 	additionGengines []*gengineWrapper
 	additionNum      int64
 	additionCount    int64
 
+	updateLock sync.Mutex
+	version    int
+	clear      bool //whether rules has been cleared ，if true it means there is no rules in gengine
 
-	updateLock       sync.Mutex
-	version          int
-	clear            bool  //whether rules has been cleared ，if true it means there is no rules in gengine
-
-	getEngineLock  sync.RWMutex //just one can get this lock
+	getEngineLock sync.RWMutex //just one can get this lock
 }
 
 type gengineWrapper struct {
 	rulebuilder *builder.RuleBuilder
 	gengine     *Gengine
 	version     int
-	addition    bool  // when gengine resource is not enough and poollength >  minPool  and  poollength < maxPool, new gengine will be create, and it will be tagged addition=true; when poollength <  minPool it will be tagged addition=false
+	addition    bool // when gengine resource is not enough and poollength >  minPool  and  poollength < maxPool, new gengine will be create, and it will be tagged addition=true; when poollength <  minPool it will be tagged addition=false
 }
 
 //poolLen  -> gengine pool length to init
@@ -45,9 +44,9 @@ type gengineWrapper struct {
 // best practise：
 // when the has cost-time operate in your rule or you want to support high concurrency(> 200000QPS) , please set poolMinLen bigger Appropriately
 // when you use NewGenginePool,you just think of it as the connection pool of mysql, the higher QPS you want to support, the more resource you need to give
-func NewGenginePool(poolMinLen ,poolMaxLen int64, em int, rulesStr string, apiOuter map[string]interface{}) (*GenginePool, error){
+func NewGenginePool(poolMinLen, poolMaxLen int64, em int, rulesStr string, apiOuter map[string]interface{}) (*GenginePool, error) {
 
-	if !(0 < poolMinLen && poolMinLen  < poolMaxLen) {
+	if !(0 < poolMinLen && poolMinLen < poolMaxLen) {
 		return nil, errors.New("pool length must be bigger than 0, and poolMaxLen must bigger than poolMinLen")
 	}
 
@@ -62,36 +61,36 @@ func NewGenginePool(poolMinLen ,poolMaxLen int64, em int, rulesStr string, apiOu
 
 	v := 0
 	fg := make([]*gengineWrapper, poolMinLen)
-	for i := int64(0); i < poolMinLen; i ++ {
-		dstRb,e := copyRuleBuilder(srcRb)
-		if  e != nil{
+	for i := int64(0); i < poolMinLen; i++ {
+		dstRb, e := copyRuleBuilder(srcRb)
+		if e != nil {
 			return nil, e
 		}
 		fg[i] = &gengineWrapper{
-		 	rulebuilder : dstRb,
-		 	gengine     : NewGengine(),
-		 	version     : v,
-		 	addition    : false,
+			rulebuilder: dstRb,
+			gengine:     NewGengine(),
+			version:     v,
+			addition:    false,
 		}
 	}
 
 	p := &GenginePool{
-		ruleBuilder      : srcRb,
-		freeGengines     : fg,
-		apis             : apiOuter,
-		execModel        : em,
-		version          : v,
-		additionNum      : poolMaxLen - poolMinLen,
-		additionCount    : 0,
-		clear            : false,
+		ruleBuilder:   srcRb,
+		freeGengines:  fg,
+		apis:          apiOuter,
+		execModel:     em,
+		version:       v,
+		additionNum:   poolMaxLen - poolMinLen,
+		additionCount: 0,
+		clear:         false,
 	}
 	return p, nil
 }
 
-func getRuleBuilder(rulesStr string, apiOuter map[string]interface{}) (*builder.RuleBuilder, error){
+func getRuleBuilder(rulesStr string, apiOuter map[string]interface{}) (*builder.RuleBuilder, error) {
 	dataContext := context.NewDataContext()
 	if apiOuter != nil {
-		for k,v :=range apiOuter{
+		for k, v := range apiOuter {
 			dataContext.Add(k, v)
 		}
 	}
@@ -100,7 +99,7 @@ func getRuleBuilder(rulesStr string, apiOuter map[string]interface{}) (*builder.
 
 	// some rules need to build
 	if rulesStr != "" {
-		if e := rb.BuildRuleFromString(rulesStr); e != nil{
+		if e := rb.BuildRuleFromString(rulesStr); e != nil {
 			rb.Kc.ClearRules()
 			return nil, errors.Errorf("build rule from string err: %+v", e)
 		}
@@ -109,19 +108,19 @@ func getRuleBuilder(rulesStr string, apiOuter map[string]interface{}) (*builder.
 	return rb, nil
 }
 
-func copyRuleBuilder(src *builder.RuleBuilder) (*builder.RuleBuilder, error){
+func copyRuleBuilder(src *builder.RuleBuilder) (*builder.RuleBuilder, error) {
 	if src == nil {
 		return nil, errors.New("src ruleBuilder is nil!")
 	}
 	r1 := *src
-	rb:= &r1
+	rb := &r1
 	return rb, nil
 }
 
 // if there is no enough gengine source, no request will take a lock
-func (gp *GenginePool)getGengine() (*gengineWrapper, error){
+func (gp *GenginePool) getGengine() (*gengineWrapper, error) {
 
-	for{
+	for {
 		gp.getEngineLock.Lock()
 		//check if there has enough resource in pool
 		numFree := len(gp.freeGengines)
@@ -133,7 +132,7 @@ func (gp *GenginePool)getGengine() (*gengineWrapper, error){
 
 			gp.runningLock.Unlock()
 			gp.getEngineLock.Unlock()
-			return gw,nil
+			return gw, nil
 		}
 
 		//check if there has addition resource
@@ -141,28 +140,28 @@ func (gp *GenginePool)getGengine() (*gengineWrapper, error){
 		if freeAddition > 0 {
 			gp.additionLock.Lock()
 			gw := gp.additionGengines[0]
-			copy(gp.additionGengines,gp.additionGengines[:1])
+			copy(gp.additionGengines, gp.additionGengines[:1])
 			gp.additionGengines = gp.additionGengines[:freeAddition-1]
 
 			gp.additionLock.Unlock()
 			gp.getEngineLock.Unlock()
-			return gw,nil
+			return gw, nil
 		}
 
 		//we can create a new gengine
 		if gp.additionCount < gp.additionNum {
-			gp.additionCount ++
-			dstRb,e := copyRuleBuilder(gp.ruleBuilder)
+			gp.additionCount++
+			dstRb, e := copyRuleBuilder(gp.ruleBuilder)
 			if e != nil {
-				gp.additionCount --
+				gp.additionCount--
 				gp.getEngineLock.Unlock()
-				return nil,e
-			}else {
+				return nil, e
+			} else {
 				gw := &gengineWrapper{
-					rulebuilder : dstRb,
-					gengine     : NewGengine(),
-					version     : gp.version,
-					addition    : true,
+					rulebuilder: dstRb,
+					gengine:     NewGengine(),
+					version:     gp.version,
+					addition:    true,
 				}
 				gp.getEngineLock.Unlock()
 				return gw, nil
@@ -173,7 +172,7 @@ func (gp *GenginePool)getGengine() (*gengineWrapper, error){
 }
 
 // return gengine resource to pool
-func (gp *GenginePool)putGengineLocked(gw *gengineWrapper){
+func (gp *GenginePool) putGengineLocked(gw *gengineWrapper) {
 	//addition resource
 	if gw.addition {
 		gp.additionLock.Lock()
@@ -181,7 +180,7 @@ func (gp *GenginePool)putGengineLocked(gw *gengineWrapper){
 			gp.additionGengines = append(gp.additionGengines, gw)
 		}
 		gp.additionLock.Unlock()
-	}else {
+	} else {
 		gp.runningLock.Lock()
 		gp.freeGengines = append(gp.freeGengines, gw)
 		gp.runningLock.Unlock()
@@ -194,16 +193,16 @@ func (gp *GenginePool)putGengineLocked(gw *gengineWrapper){
 // this is very different from connection pool,
 //connection pool just need to init once
 //while gengine pool need to update the rules whenever the user want to init
-func (gp *GenginePool)UpdatePooledRules(ruleStr string) error{
+func (gp *GenginePool) UpdatePooledRules(ruleStr string) error {
 	gp.updateLock.Lock()
 	rb, e := getRuleBuilder(ruleStr, gp.apis)
 	if e != nil {
 		//update rules failed
 		gp.updateLock.Unlock()
 		return e
-	}else {
+	} else {
 		//update rules success
-		gp.version ++
+		gp.version++
 		gp.ruleBuilder = rb
 		gp.clear = false
 		gp.updateLock.Unlock()
@@ -212,35 +211,35 @@ func (gp *GenginePool)UpdatePooledRules(ruleStr string) error{
 }
 
 //clear all rules in engine in pool
-func (gp *GenginePool)ClearPoolRules(){
+func (gp *GenginePool) ClearPoolRules() {
 	gp.updateLock.Lock()
 	gp.ruleBuilder.Kc.ClearRules()
 	gp.clear = true
 	gp.updateLock.Unlock()
 }
 
-func (gp *GenginePool)SetExecModel(execModel int) error {
+func (gp *GenginePool) SetExecModel(execModel int) error {
 	gp.updateLock.Lock()
 	defer gp.updateLock.Unlock()
-	if execModel != 1 && execModel !=2 && execModel != 3 {
+	if execModel != 1 && execModel != 2 && execModel != 3 {
 		return errors.Errorf("exec model must be 1 or 2 or 3), now it is %d", execModel)
-	}else {
+	} else {
 		gp.execModel = execModel
 	}
 	return nil
 }
 
 //check the rule whether exist
-func (gp *GenginePool)IsExist(ruleName string) bool {
-	_,ok := gp.ruleBuilder.Kc.RuleEntities[ruleName]
+func (gp *GenginePool) IsExist(ruleName string) bool {
+	_, ok := gp.ruleBuilder.Kc.RuleEntities[ruleName]
 	return ok
 }
 
-func (gp *GenginePool)prepare(reqName string, req interface{}, respName string, resp interface{}) (*gengineWrapper ,error){
+func (gp *GenginePool) prepare(reqName string, req interface{}, respName string, resp interface{}) (*gengineWrapper, error) {
 	//get gengine resource
 	gw, e := gp.getGengine()
 	if e != nil {
-		return nil,e
+		return nil, e
 	}
 
 	//version is old, need to update
@@ -264,11 +263,11 @@ func (gp *GenginePool)prepare(reqName string, req interface{}, respName string, 
 	return gw, nil
 }
 
-func (gp *GenginePool)prepareWithMultiInput(data map[string]interface{}) (*gengineWrapper ,error){
+func (gp *GenginePool) prepareWithMultiInput(data map[string]interface{}) (*gengineWrapper, error) {
 	//get gengine resource
 	gw, e := gp.getGengine()
 	if e != nil {
-		return nil,e
+		return nil, e
 	}
 
 	//version is old, need to update
@@ -282,22 +281,22 @@ func (gp *GenginePool)prepareWithMultiInput(data map[string]interface{}) (*gengi
 		gw.version = gp.version
 	}
 
-	for  k, v := range data {
+	for k, v := range data {
 		//user should not inject "" string or nil value
 		if k != "" && v != nil {
 			gw.rulebuilder.Dc.Add(k, v)
-		}else {
+		} else {
 			logrus.Error("you should not input null string or nil value")
 		}
 	}
-	
+
 	return gw, nil
 }
 
 //execute rules as the user set execute model when init or update
 //req, it is better to be ptr, or you will not get changed data
 //resp, it is better to be ptr, or you will not get changed dat
-func (gp *GenginePool)ExecuteRules(reqName string, req interface{}, respName string, resp interface{}) error{
+func (gp *GenginePool) ExecuteRules(reqName string, req interface{}, respName string, resp interface{}) error {
 
 	//rules has bean cleared
 	if gp.clear {
@@ -305,7 +304,7 @@ func (gp *GenginePool)ExecuteRules(reqName string, req interface{}, respName str
 		return nil
 	}
 
-	gw,e := gp.prepare(reqName, req, respName, resp)
+	gw, e := gp.prepare(reqName, req, respName, resp)
 	if e != nil {
 		return e
 	}
@@ -336,7 +335,7 @@ user can input more data to use in engine
 
 it is no difference with ExecuteRules, you just can inject more data use this api
 */
-func  (gp *GenginePool)ExecuteRulesWithMultiInput(data map[string]interface{}) error{
+func (gp *GenginePool) ExecuteRulesWithMultiInput(data map[string]interface{}) error {
 
 	//rules has bean cleared
 	if gp.clear {
@@ -344,7 +343,7 @@ func  (gp *GenginePool)ExecuteRulesWithMultiInput(data map[string]interface{}) e
 		return nil
 	}
 
-	gw,e := gp.prepareWithMultiInput(data)
+	gw, e := gp.prepareWithMultiInput(data)
 	if e != nil {
 		return e
 	}
@@ -379,7 +378,7 @@ if you want to know more about stag, to see the note above every method in Gengi
 */
 //req, it is better to be ptr, or you will not get changed data
 //resp, it is better to be ptr, or you will not get changed data
-func (gp *GenginePool)ExecuteRulesWithStopTag(reqName string, req interface{}, respName string, resp interface{}, stag *Stag) error {
+func (gp *GenginePool) ExecuteRulesWithStopTag(reqName string, req interface{}, respName string, resp interface{}, stag *Stag) error {
 
 	//rules has bean cleared
 	if gp.clear {
@@ -387,7 +386,7 @@ func (gp *GenginePool)ExecuteRulesWithStopTag(reqName string, req interface{}, r
 		return nil
 	}
 
-	gw,e := gp.prepare(reqName, req, respName, resp)
+	gw, e := gp.prepare(reqName, req, respName, resp)
 	if e != nil {
 		return e
 	}
@@ -413,7 +412,7 @@ func (gp *GenginePool)ExecuteRulesWithStopTag(reqName string, req interface{}, r
 	return nil
 }
 
-func (gp *GenginePool)ExecuteRulesWithMultiInputAndStopTag(data map[string]interface{}, stag *Stag) error {
+func (gp *GenginePool) ExecuteRulesWithMultiInputAndStopTag(data map[string]interface{}, stag *Stag) error {
 
 	//rules has bean cleared
 	if gp.clear {
@@ -421,7 +420,7 @@ func (gp *GenginePool)ExecuteRulesWithMultiInputAndStopTag(data map[string]inter
 		return nil
 	}
 
-	gw,e := gp.prepareWithMultiInput(data)
+	gw, e := gp.prepareWithMultiInput(data)
 	if e != nil {
 		return e
 	}
@@ -446,14 +445,11 @@ func (gp *GenginePool)ExecuteRulesWithMultiInputAndStopTag(data map[string]inter
 
 	return nil
 }
-
-
-
 
 /**
 see ExecuteSelectedRules in gengine.go
 */
-func  (gp *GenginePool)ExecuteSelectedRulesWithMultiInput(data map[string]interface{}, names []string) error{
+func (gp *GenginePool) ExecuteSelectedRulesWithMultiInput(data map[string]interface{}, names []string) error {
 
 	//rules has bean cleared
 	if gp.clear {
@@ -461,7 +457,7 @@ func  (gp *GenginePool)ExecuteSelectedRulesWithMultiInput(data map[string]interf
 		return nil
 	}
 
-	gw,e := gp.prepareWithMultiInput(data)
+	gw, e := gp.prepareWithMultiInput(data)
 	if e != nil {
 		return e
 	}
@@ -472,11 +468,10 @@ func  (gp *GenginePool)ExecuteSelectedRulesWithMultiInput(data map[string]interf
 	return nil
 }
 
-
 /**
 see ExecuteSelectedRulesConcurrent in gengine.go
 */
-func  (gp *GenginePool)ExecuteSelectedRulesConcurrentWithMultiInput(data map[string]interface{}, names []string) error{
+func (gp *GenginePool) ExecuteSelectedRulesConcurrentWithMultiInput(data map[string]interface{}, names []string) error {
 
 	//rules has bean cleared
 	if gp.clear {
@@ -484,7 +479,7 @@ func  (gp *GenginePool)ExecuteSelectedRulesConcurrentWithMultiInput(data map[str
 		return nil
 	}
 
-	gw,e := gp.prepareWithMultiInput(data)
+	gw, e := gp.prepareWithMultiInput(data)
 	if e != nil {
 		return e
 	}

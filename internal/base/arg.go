@@ -6,13 +6,13 @@ import (
 )
 
 type Arg struct {
-	Constant         *Constant
-	Variable         string
-	FunctionCall     *FunctionCall
-	MethodCall       *MethodCall
-	MapVar           *MapVar
+	Constant     *Constant
+	Variable     string
+	FunctionCall *FunctionCall
+	MethodCall   *MethodCall
+	MapVar       *MapVar
 	//knowledgeContext *KnowledgeContext
-	dataCtx          *context.DataContext
+	dataCtx *context.DataContext
 }
 
 func (a *Arg) Initialize(dc *context.DataContext) {

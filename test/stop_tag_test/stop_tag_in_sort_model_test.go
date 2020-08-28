@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-const sort_rule  = `
+const sort_rule = `
 rule "whitelist" "use in white list pass" salience 10
 BEGIN
     if InWhitelist(User.UserNo) {
@@ -42,7 +42,6 @@ func InBlacklist(uid int) bool {
 	return false
 }
 
-
 type User struct {
 	UserNo int
 }
@@ -50,10 +49,9 @@ type User struct {
 func Test_stop_tag_in_sort_model(t *testing.T) {
 
 	dataContext := context.NewDataContext()
-	dataContext.Add("InWhitelist",InWhitelist)
-	dataContext.Add("InBlacklist",InBlacklist)
-	dataContext.Add("println",fmt.Println)
-
+	dataContext.Add("InWhitelist", InWhitelist)
+	dataContext.Add("InBlacklist", InBlacklist)
+	dataContext.Add("println", fmt.Println)
 
 	//init rule engine
 	ruleBuilder := builder.NewRuleBuilder(dataContext)
@@ -67,14 +65,12 @@ func Test_stop_tag_in_sort_model(t *testing.T) {
 	stag := &engine.Stag{StopTag: false}
 	dataContext.Add("stag", stag)
 
-	user := &User{UserNo: 10}  // change this to test different conditions
-	dataContext.Add("User",user)
+	user := &User{UserNo: 10} // change this to test different conditions
+	dataContext.Add("User", user)
 
 	eng := engine.NewGengine()
 	e2 := eng.ExecuteWithStopTagDirect(ruleBuilder, true, stag)
-	if e2 != nil{
+	if e2 != nil {
 		panic(e2)
 	}
 }
-
-

@@ -24,19 +24,19 @@ type Stag struct {
 sort execute model
 
 	when b is true it means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
- */
+*/
 func (g *Gengine) Execute(rb *builder.RuleBuilder, b bool) error {
 	if len(rb.Kc.RuleEntities) == 0 {
 		return nil
 	}
 
-	for _,r := range rb.Kc.SortRules{
+	for _, r := range rb.Kc.SortRules {
 		err := r.Execute()
 		if err != nil {
 			if b {
-				logrus.Errorf("rule: %s executed, error: %+v ",r.RuleName, err)
+				logrus.Errorf("rule: %s executed, error: %+v ", r.RuleName, err)
 			} else {
-				return errors.Errorf("rule: %s executed, error: %+v ",r.RuleName, err)
+				return errors.Errorf("rule: %s executed, error: %+v ", r.RuleName, err)
 			}
 		}
 	}
@@ -53,19 +53,19 @@ sTag is a struct given by user, and user can use it  to control rules execute be
 
 it used in this scene:
 where some high priority rules execute finished, you don't want to execute to the last rules, you can use sTag to control it out of gengine
- */
+*/
 func (g *Gengine) ExecuteWithStopTagDirect(rb *builder.RuleBuilder, b bool, sTag *Stag) error {
 	if len(rb.Kc.RuleEntities) == 0 {
 		return nil
 	}
 
-	for _,r := range rb.Kc.SortRules{
+	for _, r := range rb.Kc.SortRules {
 		err := r.Execute()
 		if err != nil {
 			if b {
-				logrus.Errorf("rule: %s executed, error: %+v ",r.RuleName, err)
+				logrus.Errorf("rule: %s executed, error: %+v ", r.RuleName, err)
 			} else {
-				return errors.Errorf("rule: %s executed, error: %+v ",r.RuleName, err)
+				return errors.Errorf("rule: %s executed, error: %+v ", r.RuleName, err)
 			}
 		}
 
@@ -76,17 +76,15 @@ func (g *Gengine) ExecuteWithStopTagDirect(rb *builder.RuleBuilder, b bool, sTag
 	return nil
 }
 
-
-
 /*
  concurrent execute model
  in this mode, it will not consider the priority  and not consider err control
- */
-func (g *Gengine) ExecuteConcurrent(rb * builder.RuleBuilder){
+*/
+func (g *Gengine) ExecuteConcurrent(rb *builder.RuleBuilder) {
 	if len(rb.Kc.RuleEntities) >= 1 {
 		var wg sync.WaitGroup
 		wg.Add(len(rb.Kc.RuleEntities))
-		for _,r := range rb.Kc.RuleEntities {
+		for _, r := range rb.Kc.RuleEntities {
 			rr := r
 			go func() {
 				e := rr.Execute()
@@ -99,7 +97,6 @@ func (g *Gengine) ExecuteConcurrent(rb * builder.RuleBuilder){
 		wg.Wait()
 	}
 }
-
 
 /*
  mix model to execute rules
@@ -107,21 +104,21 @@ func (g *Gengine) ExecuteConcurrent(rb * builder.RuleBuilder){
  in this mode, it will not consider the priority，and it also concurrently to execute rules
  first to execute the most high priority rule，then concurrently to execute last rules without consider the priority
 */
-func (g *Gengine) ExecuteMixModel(rb * builder.RuleBuilder){
+func (g *Gengine) ExecuteMixModel(rb *builder.RuleBuilder) {
 	rules := rb.Kc.SortRules
 	if len(rules) > 0 {
 		e := rules[0].Execute()
 		if e != nil {
-			logrus.Errorf("the most high priority rule: [%s]  exe err:%+v",rules[0].RuleName, e)
+			logrus.Errorf("the most high priority rule: [%s]  exe err:%+v", rules[0].RuleName, e)
 		}
-	}else{
+	} else {
 		return
 	}
 
 	if (len(rules) - 1) >= 1 {
 		var wg sync.WaitGroup
 		wg.Add(len(rules) - 1)
-		for _,r := range rules[1:] {
+		for _, r := range rules[1:] {
 			rr := r
 			go func() {
 				e := rr.Execute()
@@ -134,7 +131,6 @@ func (g *Gengine) ExecuteMixModel(rb * builder.RuleBuilder){
 		wg.Wait()
 	}
 }
-
 
 /**
  mix execute model
@@ -148,16 +144,16 @@ stopTag is a name given by user, and user can use it  to control rules execute b
 it used in this scene:
 where the first rule execute finished, you don't want to execute to the last rules, you can use sTag to control it out of gengine
 
- */
-func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb * builder.RuleBuilder, sTag *Stag){
+*/
+func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb *builder.RuleBuilder, sTag *Stag) {
 
 	rules := rb.Kc.SortRules
 	if len(rules) > 0 {
 		e := rules[0].Execute()
 		if e != nil {
-			logrus.Errorf("the most high priority rule: [%s]  exe err:%+v",rules[0].RuleName, e)
+			logrus.Errorf("the most high priority rule: [%s]  exe err:%+v", rules[0].RuleName, e)
 		}
-	}else{
+	} else {
 		return
 	}
 
@@ -165,7 +161,7 @@ func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb * builder.RuleBuilder, sTa
 		if (len(rules) - 1) >= 1 {
 			var wg sync.WaitGroup
 			wg.Add(len(rules) - 1)
-			for _,r := range rules[1:] {
+			for _, r := range rules[1:] {
 				rr := r
 				go func() {
 					e := rr.Execute()
@@ -183,13 +179,13 @@ func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb * builder.RuleBuilder, sTa
 /**
 user can choose specified name rules to run with sort
 */
-func (g *Gengine)ExecuteSelectedRules(rb * builder.RuleBuilder, names []string)  {
+func (g *Gengine) ExecuteSelectedRules(rb *builder.RuleBuilder, names []string) {
 	rules := []*base.RuleEntity{}
-	for _, name :=range names {
-		if ruleEntity, ok := rb.Kc.RuleEntities[name];ok{
-			rr:= ruleEntity
+	for _, name := range names {
+		if ruleEntity, ok := rb.Kc.RuleEntities[name]; ok {
+			rr := ruleEntity
 			rules = append(rules, rr)
-		}else {
+		} else {
 			logrus.Infof("no such rule named: %s", name)
 		}
 	}
@@ -198,14 +194,14 @@ func (g *Gengine)ExecuteSelectedRules(rb * builder.RuleBuilder, names []string) 
 		return
 	}
 
-	if len(rules) >=2 {
+	if len(rules) >= 2 {
 		sort.SliceStable(rules, func(i, j int) bool {
 			return rules[i].Salience > rules[j].Salience
 		})
 	}
 
-	for  _,rule := range rules  {
-		rr:= rule
+	for _, rule := range rules {
+		rr := rule
 		e := rr.Execute()
 		if e != nil {
 			logrus.Errorf("execute rule :%s, err:%+v", rr.RuleName, e)
@@ -213,18 +209,17 @@ func (g *Gengine)ExecuteSelectedRules(rb * builder.RuleBuilder, names []string) 
 	}
 }
 
-
 /**
 user can choose specified name rules to concurrent run
- */
-func (g *Gengine)ExecuteSelectedRulesConcurrent(rb * builder.RuleBuilder, names []string)  {
+*/
+func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names []string) {
 
 	rules := []*base.RuleEntity{}
-	for _,name :=range names {
-		if ruleEntity,ok := rb.Kc.RuleEntities[name];ok{
-			rr:= ruleEntity
+	for _, name := range names {
+		if ruleEntity, ok := rb.Kc.RuleEntities[name]; ok {
+			rr := ruleEntity
 			rules = append(rules, rr)
-		}else {
+		} else {
 			logrus.Infof("no such rule named: %s", name)
 		}
 	}
@@ -243,7 +238,7 @@ func (g *Gengine)ExecuteSelectedRulesConcurrent(rb * builder.RuleBuilder, names 
 
 	var wg sync.WaitGroup
 	wg.Add(len(rules))
-	for _,r := range rules {
+	for _, r := range rules {
 		rr := r
 		go func() {
 			e := rr.Execute()

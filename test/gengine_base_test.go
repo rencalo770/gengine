@@ -16,15 +16,15 @@ type User struct {
 	Male bool
 }
 
-func (u *User)GetNum(i int64) int64 {
+func (u *User) GetNum(i int64) int64 {
 	return i
 }
 
-func (u *User)Print(s string){
+func (u *User) Print(s string) {
 	fmt.Println(s)
 }
 
-func (u *User)Say(){
+func (u *User) Say() {
 	fmt.Println("hello world")
 }
 
@@ -69,25 +69,26 @@ begin
 		}
 
 		if true{}else{}
-end`)
+end`
+)
 
-func Hello()  {
+func Hello() {
 	fmt.Println("hello")
 }
 
-func PrintReal(real float64){
+func PrintReal(real float64) {
 	fmt.Println(real)
 }
 
-func exe(user *User){
+func exe(user *User) {
 	dataContext := context.NewDataContext()
 	//inject struct
 	dataContext.Add("User", user)
 	//rename and inject
-	dataContext.Add("Sout",fmt.Println)
+	dataContext.Add("Sout", fmt.Println)
 	//直接注入函数
-	dataContext.Add("Hello",Hello)
-	dataContext.Add("PrintReal",PrintReal)
+	dataContext.Add("Hello", Hello)
+	dataContext.Add("PrintReal", PrintReal)
 
 	//init rule engine
 	ruleBuilder := builder.NewRuleBuilder(dataContext)
@@ -97,26 +98,26 @@ func exe(user *User){
 	err := ruleBuilder.BuildRuleFromString(base_rule)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 
 		start := time.Now().UnixNano()
 		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 		err := eng.Execute(ruleBuilder, true)
 		end := time.Now().UnixNano()
-		if err != nil{
+		if err != nil {
 			logrus.Errorf("execute rule error: %v", err)
 		}
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 		logrus.Infof("user.Age=%d,Name=%s,Male=%t", user.Age, user.Name, user.Male)
 	}
 }
 
-func Test_Base(t *testing.T){
+func Test_Base(t *testing.T) {
 	user := &User{
 		Name: "Calo",
 		Age:  0,

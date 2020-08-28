@@ -6,13 +6,13 @@ import (
 )
 
 type Statement struct {
-	IfStmt           *IfStmt
-	MethodCall       *MethodCall
-	FunctionCall     *FunctionCall
-	Assignment       *Assignment
-	ConcStatement    *ConcStatement
-//	knowledgeContext *KnowledgeContext
-	dataCtx          *context.DataContext
+	IfStmt        *IfStmt
+	MethodCall    *MethodCall
+	FunctionCall  *FunctionCall
+	Assignment    *Assignment
+	ConcStatement *ConcStatement
+	//	knowledgeContext *KnowledgeContext
+	dataCtx *context.DataContext
 }
 
 func (s *Statement) Evaluate(Vars map[string]interface{}) (interface{}, error) {
@@ -64,7 +64,7 @@ func (s *Statement) Initialize(dc *context.DataContext) {
 	}
 }
 
-func (s *Statement)AcceptFunctionCall(funcCall *FunctionCall) error  {
+func (s *Statement) AcceptFunctionCall(funcCall *FunctionCall) error {
 	if s.FunctionCall == nil {
 		s.FunctionCall = funcCall
 		return nil
@@ -72,8 +72,7 @@ func (s *Statement)AcceptFunctionCall(funcCall *FunctionCall) error  {
 	return errors.New("FunctionCall already defined!")
 }
 
-
-func (s *Statement)AcceptMethodCall(methodCall *MethodCall) error{
+func (s *Statement) AcceptMethodCall(methodCall *MethodCall) error {
 	if s.MethodCall == nil {
 		s.MethodCall = methodCall
 		return nil

@@ -22,9 +22,10 @@ BEGIN
 		}else{
 			User.Name = "yyyy"
 		}
-END`)
+END`
+)
 
-func Test_grammar(t *testing.T)  {
+func Test_grammar(t *testing.T) {
 	in := antlr.NewInputStream(rule3)
 	lexer := parser.NewgengineLexer(in)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
@@ -40,7 +41,7 @@ func Test_grammar(t *testing.T)  {
 	}
 }
 
-func Test_base_msg(t *testing.T){
+func Test_base_msg(t *testing.T) {
 
 	dataContext := context.NewDataContext()
 	//init rule engine
@@ -53,7 +54,7 @@ func Test_base_msg(t *testing.T){
 	}
 
 	rule := ruleBuilder.Kc.RuleEntities
-	for k, v :=range rule{
+	for k, v := range rule {
 		fmt.Println(k)
 		fmt.Println(v.RuleName)
 		fmt.Println(v.RuleDescription)
@@ -64,8 +65,8 @@ func Test_base_msg(t *testing.T){
 
 /**
 测试语法错误
- */
-func Test_err(t *testing.T){
+*/
+func Test_err(t *testing.T) {
 
 	in := antlr.NewInputStream(rule3)
 	lexer := parser.NewgengineLexer(in)

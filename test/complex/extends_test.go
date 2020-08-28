@@ -20,13 +20,13 @@ begin
 end
 `
 
-func exe(father *Father){
+func exe(father *Father) {
 
 	dataContext := context.NewDataContext()
 	//inject struct
 	dataContext.Add("Father", father)
 	//rename and inject
-	dataContext.Add("Sout",fmt.Println)
+	dataContext.Add("Sout", fmt.Println)
 
 	//init rule engine
 	ruleBuilder := builder.NewRuleBuilder(dataContext)
@@ -36,24 +36,23 @@ func exe(father *Father){
 	err := ruleBuilder.BuildRuleFromString(ext_rule)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 
 		start := time.Now().UnixNano()
 		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 		err := eng.Execute(ruleBuilder, true)
 		end := time.Now().UnixNano()
-		if err != nil{
+		if err != nil {
 			logrus.Errorf("execute rule error: %v", err)
 		}
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 	}
 }
-
 
 func Test_ext(t *testing.T) {
 	father := &Father{

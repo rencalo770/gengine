@@ -3,6 +3,7 @@
 package parser // gengine
 
 import "github.com/antlr/antlr4/runtime/Go/antlr"
+
 // A complete Visitor for a parse tree produced by gengineParser.
 type gengineVisitor interface {
 	antlr.ParseTreeVisitor
@@ -108,5 +109,4 @@ type gengineVisitor interface {
 
 	// Visit a parse tree produced by gengineParser#atName.
 	VisitAtName(ctx *AtNameContext) interface{}
-
 }

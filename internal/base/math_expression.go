@@ -7,13 +7,13 @@ import (
 )
 
 type MathExpression struct {
-	MathExpressionLeft       *MathExpression
-	MathPmOperator           string
-	MathMdOperator           string
-	MathExpressionRight      *MathExpression
-	ExpressionAtom           *ExpressionAtom
-//	knowledgeContext         *KnowledgeContext
-	dataCtx                  *context.DataContext
+	MathExpressionLeft  *MathExpression
+	MathPmOperator      string
+	MathMdOperator      string
+	MathExpressionRight *MathExpression
+	ExpressionAtom      *ExpressionAtom
+	//	knowledgeContext         *KnowledgeContext
+	dataCtx *context.DataContext
 }
 
 func (e *MathExpression) AcceptMathExpression(atom *MathExpression) error {
@@ -21,13 +21,12 @@ func (e *MathExpression) AcceptMathExpression(atom *MathExpression) error {
 		e.MathExpressionLeft = atom
 		return nil
 	}
-	if e.MathExpressionRight == nil{
+	if e.MathExpressionRight == nil {
 		e.MathExpressionRight = atom
 		return nil
 	}
 	return errors.New("expressionAtom set twice")
 }
-
 
 func (e *MathExpression) Initialize(dc *context.DataContext) {
 	e.dataCtx = dc
@@ -45,14 +44,13 @@ func (e *MathExpression) Initialize(dc *context.DataContext) {
 	}
 }
 
-func (e *MathExpression) AcceptExpressionAtom(atom *ExpressionAtom) error{
+func (e *MathExpression) AcceptExpressionAtom(atom *ExpressionAtom) error {
 	if e.ExpressionAtom == nil {
 		e.ExpressionAtom = atom
 		return nil
 	}
 	return errors.New("ExpressionAtom already set twice!")
 }
-
 
 func (e *MathExpression) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 
@@ -92,5 +90,3 @@ func (e *MathExpression) Evaluate(Vars map[string]interface{}) (interface{}, err
 	}
 	return nil, errors.Errorf("MathExpression calculate evaluate error: %s, %s", e.MathPmOperator, e.MathPmOperator)
 }
-
-

@@ -6,11 +6,6 @@ type GengineParserVisitor struct {
 	parser.BasegengineVisitor
 }
 
-func NewGengineParserVisitor() *GengineParserVisitor{
+func NewGengineParserVisitor() *GengineParserVisitor {
 	return &GengineParserVisitor{}
 }
-
-
-
-
-

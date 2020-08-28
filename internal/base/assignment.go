@@ -7,11 +7,11 @@ import (
 
 // := or =
 type Assignment struct {
-	Variable         string
-	MapVar           *MapVar
-	MathExpression   *MathExpression
-//	knowledgeContext *KnowledgeContext
-	dataCtx          *context.DataContext
+	Variable       string
+	MapVar         *MapVar
+	MathExpression *MathExpression
+	//	knowledgeContext *KnowledgeContext
+	dataCtx *context.DataContext
 }
 
 func (a *Assignment) Evaluate(Vars map[string]interface{}) (interface{}, error) {
@@ -31,7 +31,7 @@ func (a *Assignment) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 	if a.MapVar != nil {
 		err := a.dataCtx.SetMapVarValue(Vars, a.MapVar.Name, a.MapVar.Strkey, a.MapVar.Varkey, a.MapVar.Intkey, v)
 		if err != nil {
-			return nil,err
+			return nil, err
 		}
 	}
 
@@ -41,7 +41,7 @@ func (a *Assignment) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 func (a *Assignment) Initialize(dc *context.DataContext) {
 	a.dataCtx = dc
 
-	if a.MathExpression != nil{
+	if a.MathExpression != nil {
 		a.MathExpression.Initialize(dc)
 	}
 
@@ -50,7 +50,7 @@ func (a *Assignment) Initialize(dc *context.DataContext) {
 	}
 }
 
-func (a *Assignment)AcceptMathExpression(me *MathExpression) error{
+func (a *Assignment) AcceptMathExpression(me *MathExpression) error {
 	if a.MathExpression == nil {
 		a.MathExpression = me
 		return nil
@@ -58,7 +58,7 @@ func (a *Assignment)AcceptMathExpression(me *MathExpression) error{
 	return errors.New("MathExpression already set twice!")
 }
 
-func (a *Assignment)AcceptVariable(name string) error{
+func (a *Assignment) AcceptVariable(name string) error {
 	if len(a.Variable) == 0 {
 		a.Variable = name
 		return nil

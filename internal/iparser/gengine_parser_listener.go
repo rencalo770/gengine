@@ -13,9 +13,9 @@ import (
 
 func NewGengineParserListener(ctx *base.KnowledgeContext) *GengineParserListener {
 	return &GengineParserListener{
-		Stack:         stack.New(),
+		Stack:            stack.New(),
 		KnowledgeContext: ctx,
-		ParseErrors:   make([]string, 0),
+		ParseErrors:      make([]string, 0),
 	}
 }
 
@@ -24,18 +24,18 @@ type GengineParserListener struct {
 	ParseErrors []string
 
 	KnowledgeContext *base.KnowledgeContext
-	Stack *stack.Stack
-	ruleName      string
+	Stack            *stack.Stack
+	ruleName         string
 }
 
-func (g *GengineParserListener)AddError(e error)  {
+func (g *GengineParserListener) AddError(e error) {
 	g.ParseErrors = append(g.ParseErrors, e.Error())
 }
 
 func (g *GengineParserListener) VisitTerminal(node antlr.TerminalNode) {}
 
 func (g *GengineParserListener) VisitErrorNode(node antlr.ErrorNode) {
-	g.AddError(errors.Errorf("cannot recognize '"+ node.GetText()+ "' "))
+	g.AddError(errors.Errorf("cannot recognize '" + node.GetText() + "' "))
 }
 
 func (g *GengineParserListener) EnterEveryRule(ctx antlr.ParserRuleContext) {}
@@ -394,7 +394,7 @@ func (g *GengineParserListener) ExitBooleanLiteral(ctx *parser.BooleanLiteralCon
 	}
 	cons := g.Stack.Peek().(*base.Constant)
 	b, e := strconv.ParseBool(ctx.GetText())
-	if e != nil{
+	if e != nil {
 		g.AddError(e)
 		return
 	}
@@ -433,7 +433,7 @@ func (g *GengineParserListener) ExitIfStmt(ctx *parser.IfStmtContext) {
 	statement.IfStmt = ifStmt
 }
 
-func (g *GengineParserListener)EnterStatement(ctx *parser.StatementContext){
+func (g *GengineParserListener) EnterStatement(ctx *parser.StatementContext) {
 	if len(g.ParseErrors) > 0 {
 		return
 	}
@@ -441,7 +441,7 @@ func (g *GengineParserListener)EnterStatement(ctx *parser.StatementContext){
 	g.Stack.Push(statement)
 }
 
-func (g *GengineParserListener)ExitStatement(ctx *parser.StatementContext){
+func (g *GengineParserListener) ExitStatement(ctx *parser.StatementContext) {
 	if len(g.ParseErrors) > 0 {
 		return
 	}
@@ -450,7 +450,7 @@ func (g *GengineParserListener)ExitStatement(ctx *parser.StatementContext){
 	statements.StatementList = append(statements.StatementList, statement)
 }
 
-func(g *GengineParserListener)EnterStatements(ctx *parser.StatementsContext){
+func (g *GengineParserListener) EnterStatements(ctx *parser.StatementsContext) {
 	if len(g.ParseErrors) > 0 {
 		return
 	}
@@ -460,7 +460,7 @@ func(g *GengineParserListener)EnterStatements(ctx *parser.StatementsContext){
 	g.Stack.Push(statements)
 }
 
-func(g *GengineParserListener)ExitStatements(ctx *parser.StatementsContext){
+func (g *GengineParserListener) ExitStatements(ctx *parser.StatementsContext) {
 	if len(g.ParseErrors) > 0 {
 		return
 	}
@@ -472,16 +472,16 @@ func(g *GengineParserListener)ExitStatements(ctx *parser.StatementsContext){
 	}
 }
 
-func (g *GengineParserListener)EnterAssignOperator(ctx *parser.AssignOperatorContext) {}
+func (g *GengineParserListener) EnterAssignOperator(ctx *parser.AssignOperatorContext) {}
 
-func (g *GengineParserListener)ExitAssignOperator(ctx *parser.AssignOperatorContext) {}
+func (g *GengineParserListener) ExitAssignOperator(ctx *parser.AssignOperatorContext) {}
 
-func (g *GengineParserListener)EnterSetOperator(ctx *parser.SetOperatorContext) {}
+func (g *GengineParserListener) EnterSetOperator(ctx *parser.SetOperatorContext) {}
 
-func (g *GengineParserListener)ExitSetOperator(ctx *parser.SetOperatorContext) {}
+func (g *GengineParserListener) ExitSetOperator(ctx *parser.SetOperatorContext) {}
 
 func (g *GengineParserListener) EnterElseIfStmt(ctx *parser.ElseIfStmtContext) {
-	if len(g.ParseErrors) > 0{
+	if len(g.ParseErrors) > 0 {
 		return
 	}
 	elseIfStmt := &base.ElseIfStmt{}
@@ -497,15 +497,15 @@ func (g *GengineParserListener) ExitElseIfStmt(ctx *parser.ElseIfStmtContext) {
 	ifStmt.ElseIfStmtList = append(ifStmt.ElseIfStmtList, elseIfStmt)
 }
 
-func (g *GengineParserListener)EnterElseStmt(ctx *parser.ElseStmtContext){
-	if len(g.ParseErrors) > 0{
+func (g *GengineParserListener) EnterElseStmt(ctx *parser.ElseStmtContext) {
+	if len(g.ParseErrors) > 0 {
 		return
 	}
 	elseStmt := &base.ElseStmt{}
 	g.Stack.Push(elseStmt)
 }
 
-func (g *GengineParserListener)ExitElseStmt(ctx *parser.ElseStmtContext){
+func (g *GengineParserListener) ExitElseStmt(ctx *parser.ElseStmtContext) {
 	if len(g.ParseErrors) > 0 {
 		return
 	}
@@ -514,12 +514,12 @@ func (g *GengineParserListener)ExitElseStmt(ctx *parser.ElseStmtContext){
 	ifStmt.ElseStmt = elseStmt
 }
 
-func (g *GengineParserListener) ExitInteger(ctx *parser.IntegerContext)  {
+func (g *GengineParserListener) ExitInteger(ctx *parser.IntegerContext) {
 	if len(g.ParseErrors) > 0 {
 		return
 	}
-	val,err := strconv.ParseInt(ctx.GetText(),10,64)
-	if err !=nil {
+	val, err := strconv.ParseInt(ctx.GetText(), 10, 64)
+	if err != nil {
 		g.AddError(err)
 		return
 	}
@@ -544,7 +544,7 @@ func (g *GengineParserListener) ExitAtName(ctx *parser.AtNameContext) {
 	}
 }
 
-func (g *GengineParserListener) EnterMapVar(ctx *parser.MapVarContext)  {
+func (g *GengineParserListener) EnterMapVar(ctx *parser.MapVarContext) {
 	if len(g.ParseErrors) > 0 {
 		return
 	}

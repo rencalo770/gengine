@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-const mix_rule  = `
+const mix_rule = `
 rule "the most import rule" "use in white list pass" salience 1000
 BEGIN
     if InWhitelist(User.UserNo) {
@@ -34,6 +34,7 @@ BEGIN
 	println("the sub import rule 3")
 END
 `
+
 func InWhitelist(uid int) bool {
 	if uid > 100 {
 		return true
@@ -48,7 +49,6 @@ func InBlacklist(uid int) bool {
 	return false
 }
 
-
 type User struct {
 	UserNo int
 }
@@ -56,9 +56,9 @@ type User struct {
 func Test_stop_tag_in_mix_model(t *testing.T) {
 
 	dataContext := context.NewDataContext()
-	dataContext.Add("InWhitelist",InWhitelist)
-	dataContext.Add("InBlacklist",InBlacklist)
-	dataContext.Add("println",fmt.Println)
+	dataContext.Add("InWhitelist", InWhitelist)
+	dataContext.Add("InBlacklist", InBlacklist)
+	dataContext.Add("println", fmt.Println)
 
 	ruleBuilder := builder.NewRuleBuilder(dataContext)
 
@@ -71,11 +71,9 @@ func Test_stop_tag_in_mix_model(t *testing.T) {
 	stag := &engine.Stag{StopTag: false}
 	dataContext.Add("stag", stag)
 
-	user := &User{UserNo: 1000}  // change this to test different conditions
-	dataContext.Add("User",user)
+	user := &User{UserNo: 1000} // change this to test different conditions
+	dataContext.Add("User", user)
 
 	eng := engine.NewGengine()
 	eng.ExecuteMixModelWithStopTagDirect(ruleBuilder, stag)
 }
-
-

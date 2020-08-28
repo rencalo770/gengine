@@ -5,10 +5,10 @@ import (
 )
 
 type FunctionCall struct {
-	FunctionName      string
-	FunctionArgs      *Args
-//	knowledgeContext  *KnowledgeContext
-	dataCtx           *context.DataContext
+	FunctionName string
+	FunctionArgs *Args
+	//	knowledgeContext  *KnowledgeContext
+	dataCtx *context.DataContext
 }
 
 func (fc *FunctionCall) AcceptArgs(funcArg *Args) error {

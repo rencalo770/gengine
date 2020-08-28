@@ -6,18 +6,17 @@ import (
 )
 
 type ExpressionAtom struct {
-	Variable            string
-	Constant            *Constant
-	FunctionCall        *FunctionCall
-	MethodCall          *MethodCall
-	MapVar              *MapVar
+	Variable     string
+	Constant     *Constant
+	FunctionCall *FunctionCall
+	MethodCall   *MethodCall
+	MapVar       *MapVar
 	//knowledgeContext    *KnowledgeContext
-	dataCtx             *context.DataContext
+	dataCtx *context.DataContext
 }
 
-
 func (e *ExpressionAtom) Initialize(dc *context.DataContext) {
-//	e.knowledgeContext = kc
+	//	e.knowledgeContext = kc
 	e.dataCtx = dc
 
 	if e.Constant != nil {
@@ -37,7 +36,7 @@ func (e *ExpressionAtom) Initialize(dc *context.DataContext) {
 	}
 }
 
-func (e *ExpressionAtom)AcceptVariable(name string) error {
+func (e *ExpressionAtom) AcceptVariable(name string) error {
 	if len(e.Variable) == 0 {
 		e.Variable = name
 		return nil
@@ -45,15 +44,15 @@ func (e *ExpressionAtom)AcceptVariable(name string) error {
 	return errors.New("Variable already defined")
 }
 
-func (e *ExpressionAtom)AcceptConstant(cons *Constant) error {
-	if e.Constant == nil{
+func (e *ExpressionAtom) AcceptConstant(cons *Constant) error {
+	if e.Constant == nil {
 		e.Constant = cons
 		return nil
 	}
 	return errors.New("Constant already defined")
 }
 
-func (e *ExpressionAtom)AcceptFunctionCall(funcCall *FunctionCall) error  {
+func (e *ExpressionAtom) AcceptFunctionCall(funcCall *FunctionCall) error {
 	if e.FunctionCall == nil {
 		e.FunctionCall = funcCall
 		return nil
@@ -61,7 +60,7 @@ func (e *ExpressionAtom)AcceptFunctionCall(funcCall *FunctionCall) error  {
 	return errors.New("FunctionCall already defined")
 }
 
-func (e *ExpressionAtom)AcceptMethodCall(methodCall *MethodCall) error{
+func (e *ExpressionAtom) AcceptMethodCall(methodCall *MethodCall) error {
 	if e.MethodCall == nil {
 		e.MethodCall = methodCall
 		return nil
@@ -69,14 +68,13 @@ func (e *ExpressionAtom)AcceptMethodCall(methodCall *MethodCall) error{
 	return errors.New("MethodCall already defined")
 }
 
-func (e *ExpressionAtom)AcceptMapVar(mapVar *MapVar) error{
+func (e *ExpressionAtom) AcceptMapVar(mapVar *MapVar) error {
 	if e.MapVar == nil {
 		e.MapVar = mapVar
 		return nil
 	}
 	return errors.New("MapVar already defined")
 }
-
 
 func (e *ExpressionAtom) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	if len(e.Variable) > 0 {
@@ -87,10 +85,9 @@ func (e *ExpressionAtom) Evaluate(Vars map[string]interface{}) (interface{}, err
 		return e.FunctionCall.Evaluate(Vars)
 	} else if e.MethodCall != nil {
 		return e.MethodCall.Evaluate(Vars)
-	}else if e.MapVar != nil {
+	} else if e.MapVar != nil {
 		return e.MapVar.Evaluate(Vars)
 	}
 	//todo
 	return nil, errors.New("ExpressionAtom Evaluate error!")
 }
-

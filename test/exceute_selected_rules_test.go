@@ -28,7 +28,7 @@ BEGIN
 END
 `
 
-func Test_selected_sort(t *testing.T){
+func Test_selected_sort(t *testing.T) {
 	dataContext := context.NewDataContext()
 	dataContext.Add("Print", Print)
 
@@ -39,20 +39,20 @@ func Test_selected_sort(t *testing.T){
 	err := ruleBuilder.BuildRuleFromString(rule5)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 		start := time.Now().UnixNano()
-		eng.ExecuteSelectedRules(ruleBuilder, []string{"444","555","111","222", "333"})
+		eng.ExecuteSelectedRules(ruleBuilder, []string{"444", "555", "111", "222", "333"})
 		end := time.Now().UnixNano()
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 	}
 }
 
-func Test_selected_concurrent(t *testing.T){
+func Test_selected_concurrent(t *testing.T) {
 	dataContext := context.NewDataContext()
 	dataContext.Add("Print", Print)
 
@@ -63,27 +63,15 @@ func Test_selected_concurrent(t *testing.T){
 	err := ruleBuilder.BuildRuleFromString(rule5)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 		start := time.Now().UnixNano()
-		eng.ExecuteSelectedRulesConcurrent(ruleBuilder, []string{"444","111","222","777"})
+		eng.ExecuteSelectedRulesConcurrent(ruleBuilder, []string{"444", "111", "222", "777"})
 		end := time.Now().UnixNano()
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-

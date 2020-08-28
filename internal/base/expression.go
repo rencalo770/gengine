@@ -7,30 +7,30 @@ import (
 )
 
 var TypeMap = map[string]string{
-	"int"   : "int",
-	"int8"  : "int8" ,
-	"int16" : "int16" ,
-	"int32" : "int32" ,
-	"int64" : "int64" ,
-	"uint"  : "uint" ,
-	"uint8"  : "uint8",
-	"uint16"  : "uint16",
-	"uint32"  : "uint32",
-	"uint64"  : "uint64",
-	"float32" :"float32",
-	"float64" :"float64",
+	"int":     "int",
+	"int8":    "int8",
+	"int16":   "int16",
+	"int32":   "int32",
+	"int64":   "int64",
+	"uint":    "uint",
+	"uint8":   "uint8",
+	"uint16":  "uint16",
+	"uint32":  "uint32",
+	"uint64":  "uint64",
+	"float32": "float32",
+	"float64": "float64",
 }
 
 type Expression struct {
-	ExpressionLeft         *Expression
-	ExpressionRight        *Expression
-	ExpressionAtom     	   *ExpressionAtom
-	MathExpression         *MathExpression
-	LogicalOperator        string
-	ComparisonOperator     string
-	NotOperator            string
+	ExpressionLeft     *Expression
+	ExpressionRight    *Expression
+	ExpressionAtom     *ExpressionAtom
+	MathExpression     *MathExpression
+	LogicalOperator    string
+	ComparisonOperator string
+	NotOperator        string
 	//knowledgeContext       *KnowledgeContext
-	dataCtx                *context.DataContext
+	dataCtx *context.DataContext
 }
 
 func (e *Expression) Initialize(dc *context.DataContext) {
@@ -52,7 +52,7 @@ func (e *Expression) Initialize(dc *context.DataContext) {
 	}
 }
 
-func (e *Expression) AcceptExpressionAtom(atom *ExpressionAtom) error{
+func (e *Expression) AcceptExpressionAtom(atom *ExpressionAtom) error {
 	if e.ExpressionAtom == nil {
 		e.ExpressionAtom = atom
 		return nil
@@ -68,7 +68,7 @@ func (e *Expression) AcceptMathExpression(atom *MathExpression) error {
 	return errors.New(" Expression's MathExpression set twice")
 }
 
-func(e *Expression)AcceptExpression(expression *Expression) error{
+func (e *Expression) AcceptExpression(expression *Expression) error {
 	if e.ExpressionLeft == nil {
 		e.ExpressionLeft = expression
 		return nil
@@ -97,18 +97,17 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 	if e.ExpressionAtom != nil {
 		evl, err := e.ExpressionAtom.Evaluate(Vars)
 		if err != nil {
-			return nil,err
+			return nil, err
 		}
 		atom = evl
 	}
-
 
 	var b interface{}
 	if e.ExpressionRight == nil {
 		if e.ExpressionLeft != nil {
 			left, err := e.ExpressionLeft.Evaluate(Vars)
 			if err != nil {
-				return nil,err
+				return nil, err
 			}
 			b = left
 		}
@@ -131,20 +130,20 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 		flv := reflect.ValueOf(lv)
 		frv := reflect.ValueOf(rv)
 
-		if reflect.TypeOf(lv).String() == "bool" &&  reflect.TypeOf(rv).String() == "bool"  {
-			if e.LogicalOperator == "&&"  {
+		if reflect.TypeOf(lv).String() == "bool" && reflect.TypeOf(rv).String() == "bool" {
+			if e.LogicalOperator == "&&" {
 				b = flv.Bool() && frv.Bool()
 			}
 			if e.LogicalOperator == "||" {
 				b = flv.Bool() || frv.Bool()
 			}
-		}else {
-			return nil, errors.Errorf(" || or && can't be used between %s and %s",flv.Kind().String(), frv.Kind().String())
+		} else {
+			return nil, errors.Errorf(" || or && can't be used between %s and %s", flv.Kind().String(), frv.Kind().String())
 		}
 	}
 
 	// == > < != >= <=  just only to be used between number and number, string and string, bool and bool
-	if e.ComparisonOperator != ""{
+	if e.ComparisonOperator != "" {
 
 		lv, err := e.ExpressionLeft.Evaluate(Vars)
 		if err != nil {
@@ -190,11 +189,11 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 		}
 
 		//data compare
-		if  l, ok1 := TypeMap[tlv]; ok1{
-			if r, ok2 := TypeMap[trv]; ok2{
+		if l, ok1 := TypeMap[tlv]; ok1 {
+			if r, ok2 := TypeMap[trv]; ok2 {
 				var ll float64
 				switch l {
-				case "int", "int8","int16","int32","int64":
+				case "int", "int8", "int16", "int32", "int64":
 					ll = float64(flv.Int())
 					break
 				case "uint", "uint8", "uint16", "uint32", "uint64":
@@ -207,7 +206,7 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 
 				var rr float64
 				switch r {
-				case "int", "int8","int16","int32","int64":
+				case "int", "int8", "int16", "int32", "int64":
 					rr = float64(frv.Int())
 					break
 				case "uint", "uint8", "uint16", "uint32", "uint64":
@@ -259,11 +258,11 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 		}
 	}
 
-	LAST:
+LAST:
 	if e.NotOperator == "!" {
 
 		if math != nil {
-			return !reflect.ValueOf(math).Bool(),nil
+			return !reflect.ValueOf(math).Bool(), nil
 		}
 
 		if atom != nil {
@@ -288,4 +287,3 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 	}
 	return nil, errors.New("evaluate Expression err!")
 }
-

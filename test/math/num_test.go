@@ -10,11 +10,11 @@ import (
 )
 
 type Entity struct {
-	Score int32
+	Score  int32
 	Height float64
 }
 
-const num_rule  =`
+const num_rule = `
 
 rule "rule name" "rule desc"
 begin
@@ -23,12 +23,12 @@ entity.Height = 1.68
 end
 `
 
-func exec_num(){
+func exec_num() {
 
 	entity := &Entity{Score: 0}
 
 	dataContext := context.NewDataContext()
-	dataContext.Add("entity",entity)
+	dataContext.Add("entity", entity)
 
 	//init rule engine
 	ruleBuilder := builder.NewRuleBuilder(dataContext)
@@ -38,11 +38,11 @@ func exec_num(){
 	err := ruleBuilder.BuildRuleFromString(num_rule)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 
 		start := time.Now().UnixNano()
@@ -51,20 +51,13 @@ func exec_num(){
 		end := time.Now().UnixNano()
 		println(entity.Score)
 		println(entity.Height)
-		if err != nil{
+		if err != nil {
 			logrus.Errorf("execute rule error: %v", err)
 		}
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 	}
 }
 
-func Test_num(t *testing.T){
+func Test_num(t *testing.T) {
 	exec_num()
 }
-
-
-
-
-
-
-

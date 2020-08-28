@@ -7,32 +7,32 @@ import (
 )
 
 type IfStmt struct {
-	Expression       *Expression
-	StatementList    *Statements
-	ElseIfStmtList   []*ElseIfStmt
-	ElseStmt         *ElseStmt
+	Expression     *Expression
+	StatementList  *Statements
+	ElseIfStmtList []*ElseIfStmt
+	ElseStmt       *ElseStmt
 	//knowledgeContext *KnowledgeContext
-	dataCtx          *context.DataContext
+	dataCtx *context.DataContext
 }
 
 func (i *IfStmt) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 
-	it ,err := i.Expression.Evaluate(Vars)
+	it, err := i.Expression.Evaluate(Vars)
 	if err != nil {
 		return nil, err
 	}
 
 	if reflect.ValueOf(it).Bool() {
-		if i.StatementList == nil{
-			return nil,nil
-		}else {
+		if i.StatementList == nil {
+			return nil, nil
+		} else {
 			return i.StatementList.Evaluate(Vars)
 		}
 
-	}else {
+	} else {
 
 		if i.ElseIfStmtList != nil {
-			for _,elseIfStmt := range i.ElseIfStmtList {
+			for _, elseIfStmt := range i.ElseIfStmtList {
 				v, err := elseIfStmt.Expression.Evaluate(Vars)
 				if err != nil {
 					return nil, err
@@ -48,10 +48,10 @@ func (i *IfStmt) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 			}
 		}
 
-		if i.ElseStmt != nil{
+		if i.ElseStmt != nil {
 			return i.ElseStmt.Evaluate(Vars)
-		}else {
-			return nil,nil
+		} else {
+			return nil, nil
 		}
 	}
 }
@@ -67,7 +67,7 @@ func (i *IfStmt) Initialize(dc *context.DataContext) {
 	}
 
 	if i.ElseIfStmtList != nil {
-		for _,elseIfStmt := range i.ElseIfStmtList{
+		for _, elseIfStmt := range i.ElseIfStmtList {
 			elseIfStmt.Initialize(dc)
 		}
 	}
@@ -77,7 +77,7 @@ func (i *IfStmt) Initialize(dc *context.DataContext) {
 	}
 }
 
-func (i *IfStmt)AcceptExpression(expr *Expression) error{
+func (i *IfStmt) AcceptExpression(expr *Expression) error {
 	if i.Expression == nil {
 		i.Expression = expr
 		return nil
@@ -85,7 +85,7 @@ func (i *IfStmt)AcceptExpression(expr *Expression) error{
 	return errors.New("IfStmt Expression set twice!")
 }
 
-func (i *IfStmt)AcceptStatements(stmts *Statements)error{
+func (i *IfStmt) AcceptStatements(stmts *Statements) error {
 	if i.StatementList == nil {
 		i.StatementList = stmts
 		return nil

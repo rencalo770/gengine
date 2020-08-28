@@ -10,7 +10,6 @@ import (
 	"time"
 )
 
-
 // in golang
 //-------- just not want to lost data, if the transformation will not lose data, it will transfer success ,else it will be failed  -------------------------
 func Test_Type(t *testing.T) {
@@ -25,9 +24,8 @@ func Test_Type(t *testing.T) {
 	//x2 = 7.1
 	println(x2)
 
-
-	y :=-12.4
-	var x3  = int64(y) //transfer success, but lose data
+	y := -12.4
+	var x3 = int64(y) //transfer success, but lose data
 	var x4 = int64(11)
 	var x5 float64
 	x5 = float64(x3) + float64(x4)
@@ -61,8 +59,8 @@ func Test_Type(t *testing.T) {
 
 //
 type IntNum struct {
-	Int int
-	Int8 int8
+	Int   int
+	Int8  int8
 	Int16 int16
 	Int32 int32
 	Int64 int64
@@ -74,8 +72,8 @@ type FloatNum struct {
 }
 
 type UintNum struct {
-	Uint uint
-	Uint8 uint8
+	Uint   uint
+	Uint8  uint8
 	Uint16 uint16
 	Uint32 uint32
 	Uint64 uint64
@@ -90,20 +88,21 @@ FloatNum.Float32 = 100 //right
 println(FloatNum.Float32)
 end
 `
+
 func Test_math(t *testing.T) {
 	math_exec()
 }
 
-func math_exec(){
+func math_exec() {
 
-	IntNum :=&IntNum{}
+	IntNum := &IntNum{}
 	FloatNum := &FloatNum{}
-	UintNum  := &UintNum{}
+	UintNum := &UintNum{}
 
 	dataContext := context.NewDataContext()
-	dataContext.Add("IntNum",IntNum)
-	dataContext.Add("FloatNum",FloatNum)
-	dataContext.Add("UintNum",UintNum)
+	dataContext.Add("IntNum", IntNum)
+	dataContext.Add("FloatNum", FloatNum)
+	dataContext.Add("UintNum", UintNum)
 	dataContext.Add("println", fmt.Println)
 
 	//init rule engine
@@ -114,20 +113,20 @@ func math_exec(){
 	err := ruleBuilder.BuildRuleFromString(math_rule)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 
 		start := time.Now().UnixNano()
 		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 		err := eng.Execute(ruleBuilder, true)
 		end := time.Now().UnixNano()
-		if err != nil{
+		if err != nil {
 			logrus.Errorf("execute rule error: %v", err)
 		}
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 	}
 }

@@ -1,6 +1,6 @@
 package complex
 
 type Man struct {
-	Eat string
+	Eat   string
 	Drink string
 }

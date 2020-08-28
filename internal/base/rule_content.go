@@ -6,14 +6,14 @@ import (
 )
 
 type RuleContent struct {
-	Statements        *Statements
-//	knowledgeContext  *KnowledgeContext
-	dataCtx           *context.DataContext
+	Statements *Statements
+	//	knowledgeContext  *KnowledgeContext
+	dataCtx *context.DataContext
 }
 
 func (t *RuleContent) Initialize(dc *context.DataContext) {
 	t.dataCtx = dc
-	if t.Statements!=nil {
+	if t.Statements != nil {
 		t.Statements.Initialize(dc)
 	}
 }
@@ -26,12 +26,10 @@ func (t *RuleContent) Execute(Vars map[string]interface{}) error {
 	return nil
 }
 
-func (t *RuleContent)AcceptStatements(stmts *Statements)error {
-	if t.Statements == nil{
+func (t *RuleContent) AcceptStatements(stmts *Statements) error {
+	if t.Statements == nil {
 		t.Statements = stmts
 		return nil
 	}
 	return errors.New("RuleContent's statements set twice.")
 }
-
-

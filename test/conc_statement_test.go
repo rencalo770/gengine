@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-const rule_conc_statement  = `
+const rule_conc_statement = `
 rule "conc_test" "test" 
 begin
 	conc  { // this should be used in time-consuming operation, such as the operation contains network connection (get data from remote based on network) 
@@ -27,14 +27,14 @@ begin
 end
 `
 
-func Sout(str string)  {
-	println("----",str)
+func Sout(str string) {
+	println("----", str)
 }
 
 func Test_conc_statement(t *testing.T) {
 
 	dataContext := context.NewDataContext()
-	dataContext.Add("println",fmt.Println)
+	dataContext.Add("println", fmt.Println)
 	dataContext.Add("sout", Sout)
 
 	//init rule engine
@@ -45,23 +45,21 @@ func Test_conc_statement(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(rule_conc_statement)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
-	if err != nil{
+	if err != nil {
 		logrus.Errorf("err:%s ", err)
-	}else{
+	} else {
 		eng := engine.NewGengine()
 
 		start := time.Now().UnixNano()
 		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 		err := eng.Execute(ruleBuilder, true)
 		end := time.Now().UnixNano()
-		if err != nil{
+		if err != nil {
 			logrus.Errorf("execute rule error: %v", err)
 		}
-		logrus.Infof("execute rule cost %d ns",end-start)
+		logrus.Infof("execute rule cost %d ns", end-start)
 	}
 
-
 }
-
