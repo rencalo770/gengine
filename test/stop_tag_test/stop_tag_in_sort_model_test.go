@@ -2,7 +2,6 @@ package stop_tag_test
 
 import (
 	"fmt"
-	"gengine/base"
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
@@ -57,8 +56,7 @@ func Test_stop_tag_in_sort_model(t *testing.T) {
 
 
 	//init rule engine
-	knowledgeContext := base.NewKnowledgeContext()
-	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
+	ruleBuilder := builder.NewRuleBuilder(dataContext)
 
 	e1 := ruleBuilder.BuildRuleFromString(sort_rule)
 	if e1 != nil {

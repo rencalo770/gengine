@@ -10,7 +10,7 @@ type RuleEntity struct {
 	Salience         int64
 	RuleDescription  string
 	RuleContent      *RuleContent
-	knowledgeContext *KnowledgeContext
+//	knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
 	Vars             map[string]interface{}  //belongs to current rule,rule execute finish, it will be clear
 }
@@ -33,12 +33,11 @@ func (r *RuleEntity) AcceptInteger(val int64) error {
 	return nil
 }
 
-func (r *RuleEntity) Initialize(kc *KnowledgeContext,  dc *context.DataContext) {
-	r.knowledgeContext = kc
+func (r *RuleEntity) Initialize(dc *context.DataContext) {
 	r.dataCtx = dc
 
 	if r.RuleContent != nil {
-		r.RuleContent.Initialize(kc, dc)
+		r.RuleContent.Initialize(dc)
 	}
 }
 

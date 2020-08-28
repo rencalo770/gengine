@@ -10,29 +10,28 @@ type ConcStatement struct {
 	Assignments      []*Assignment
 	FunctionCalls    []*FunctionCall
 	MethodCalls      []*MethodCall
-	knowledgeContext *KnowledgeContext
+//	knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
 }
 
-func (cs *ConcStatement) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
-	cs.knowledgeContext = kc
+func (cs *ConcStatement) Initialize(dc *context.DataContext) {
 	cs.dataCtx = dc
 
 	if len(cs.Assignments) > 0 {
 		for   _, assignment :=range cs.Assignments {
-			assignment.Initialize(kc, dc)
+			assignment.Initialize(dc)
 		}
 	}
 
 	if len(cs.FunctionCalls) > 0 {
 		for _,fu := range cs.FunctionCalls {
-			fu.Initialize(kc, dc)
+			fu.Initialize(dc)
 		}
 	}
 
 	if len(cs.MethodCalls) > 0{
 		for  _, m := range cs.MethodCalls {
-			m.Initialize(kc, dc)
+			m.Initialize(dc)
 		}
 	}
 

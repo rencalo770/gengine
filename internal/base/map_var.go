@@ -14,12 +14,11 @@ type MapVar struct {
 	Intkey int64  // array index
 	Strkey string // map key
 	Varkey string // array index or map key
-	knowledgeContext *KnowledgeContext
+//	knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
 }
 
-func (m *MapVar) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
-	m.knowledgeContext = kc
+func (m *MapVar) Initialize(dc *context.DataContext) {
 	m.dataCtx = dc
 }
 

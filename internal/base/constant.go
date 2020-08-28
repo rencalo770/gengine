@@ -6,7 +6,7 @@ import (
 
 type Constant struct {
 	ConstantValue    interface{}
-	knowledgeContext *KnowledgeContext
+//	knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
 }
 
@@ -15,8 +15,7 @@ func (cons *Constant) AcceptString(str string) error {
 	return nil
 }
 
-func (cons *Constant) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
-	cons.knowledgeContext = kc
+func (cons *Constant) Initialize(dc *context.DataContext) {
 	cons.dataCtx = dc
 }
 

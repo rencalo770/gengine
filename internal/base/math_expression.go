@@ -12,7 +12,7 @@ type MathExpression struct {
 	MathMdOperator           string
 	MathExpressionRight      *MathExpression
 	ExpressionAtom           *ExpressionAtom
-	knowledgeContext         *KnowledgeContext
+//	knowledgeContext         *KnowledgeContext
 	dataCtx                  *context.DataContext
 }
 
@@ -29,20 +29,19 @@ func (e *MathExpression) AcceptMathExpression(atom *MathExpression) error {
 }
 
 
-func (e *MathExpression) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
-	e.knowledgeContext = kc
+func (e *MathExpression) Initialize(dc *context.DataContext) {
 	e.dataCtx = dc
 
 	if e.MathExpressionLeft != nil {
-		e.MathExpressionLeft.Initialize(kc, dc)
+		e.MathExpressionLeft.Initialize(dc)
 	}
 
 	if e.MathExpressionRight != nil {
-		e.MathExpressionRight.Initialize(kc, dc)
+		e.MathExpressionRight.Initialize(dc)
 	}
 
 	if e.ExpressionAtom != nil {
-		e.ExpressionAtom.Initialize(kc, dc)
+		e.ExpressionAtom.Initialize(dc)
 	}
 }
 

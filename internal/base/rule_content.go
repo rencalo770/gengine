@@ -7,15 +7,14 @@ import (
 
 type RuleContent struct {
 	Statements        *Statements
-	knowledgeContext  *KnowledgeContext
+//	knowledgeContext  *KnowledgeContext
 	dataCtx           *context.DataContext
 }
 
-func (t *RuleContent) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
-	t.knowledgeContext = kc
+func (t *RuleContent) Initialize(dc *context.DataContext) {
 	t.dataCtx = dc
 	if t.Statements!=nil {
-		t.Statements.Initialize(kc, dc)
+		t.Statements.Initialize(dc)
 	}
 }
 

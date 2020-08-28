@@ -8,16 +8,15 @@ import (
 type MethodCall struct {
 	MethodName       string
 	MethodArgs       *Args
-	knowledgeContext *KnowledgeContext
+	//knowledgeContext *context.KnowledgeContext
 	dataCtx          *context.DataContext
 }
 
-func (mc *MethodCall) Initialize(ctx *KnowledgeContext, dataCtx *context.DataContext) {
-	mc.knowledgeContext = ctx
+func (mc *MethodCall) Initialize(dataCtx *context.DataContext) {
 	mc.dataCtx = dataCtx
 
 	if mc.MethodArgs != nil {
-		mc.MethodArgs.Initialize(ctx, dataCtx)
+		mc.MethodArgs.Initialize(dataCtx)
 	}
 }
 

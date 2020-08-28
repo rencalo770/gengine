@@ -11,26 +11,25 @@ type Arg struct {
 	FunctionCall     *FunctionCall
 	MethodCall       *MethodCall
 	MapVar           *MapVar
-	knowledgeContext *KnowledgeContext
+	//knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
 }
 
-func (a *Arg) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
+func (a *Arg) Initialize(dc *context.DataContext) {
 
-	a.knowledgeContext = kc
 	a.dataCtx = dc
 
 	if a.Constant != nil {
-		a.Constant.Initialize(kc, dc)
+		a.Constant.Initialize(dc)
 	}
 	if a.FunctionCall != nil {
-		a.FunctionCall.Initialize(kc, dc)
+		a.FunctionCall.Initialize(dc)
 	}
 	if a.MethodCall != nil {
-		a.MethodCall.Initialize(kc, dc)
+		a.MethodCall.Initialize(dc)
 	}
 	if a.MapVar != nil {
-		a.MapVar.Initialize(kc, dc)
+		a.MapVar.Initialize(dc)
 	}
 
 }

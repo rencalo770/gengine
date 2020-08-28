@@ -10,7 +10,7 @@ type Assignment struct {
 	Variable         string
 	MapVar           *MapVar
 	MathExpression   *MathExpression
-	knowledgeContext *KnowledgeContext
+//	knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
 }
 
@@ -38,16 +38,15 @@ func (a *Assignment) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 	return nil, nil
 }
 
-func (a *Assignment) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
-	a.knowledgeContext = kc
+func (a *Assignment) Initialize(dc *context.DataContext) {
 	a.dataCtx = dc
 
 	if a.MathExpression != nil{
-		a.MathExpression.Initialize(kc, dc)
+		a.MathExpression.Initialize(dc)
 	}
 
 	if a.MapVar != nil {
-		a.MapVar.Initialize(kc, dc)
+		a.MapVar.Initialize(dc)
 	}
 }
 

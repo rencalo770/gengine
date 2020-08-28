@@ -11,7 +11,7 @@ type IfStmt struct {
 	StatementList    *Statements
 	ElseIfStmtList   []*ElseIfStmt
 	ElseStmt         *ElseStmt
-	knowledgeContext *KnowledgeContext
+	//knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
 }
 
@@ -56,25 +56,24 @@ func (i *IfStmt) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	}
 }
 
-func (i *IfStmt) Initialize(kc *KnowledgeContext,  dc *context.DataContext) {
-	i.knowledgeContext = kc
+func (i *IfStmt) Initialize(dc *context.DataContext) {
 	i.dataCtx = dc
 
 	if i.Expression != nil {
-		i.Expression.Initialize(kc, dc)
+		i.Expression.Initialize(dc)
 	}
 	if i.StatementList != nil {
-		i.StatementList.Initialize(kc, dc)
+		i.StatementList.Initialize(dc)
 	}
 
 	if i.ElseIfStmtList != nil {
 		for _,elseIfStmt := range i.ElseIfStmtList{
-			elseIfStmt.Initialize(kc, dc)
+			elseIfStmt.Initialize(dc)
 		}
 	}
 
 	if i.ElseStmt != nil {
-		i.ElseStmt.Initialize(kc, dc)
+		i.ElseStmt.Initialize(dc)
 	}
 }
 

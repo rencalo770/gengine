@@ -11,29 +11,29 @@ type ExpressionAtom struct {
 	FunctionCall        *FunctionCall
 	MethodCall          *MethodCall
 	MapVar              *MapVar
-	knowledgeContext    *KnowledgeContext
+	//knowledgeContext    *KnowledgeContext
 	dataCtx             *context.DataContext
 }
 
 
-func (e *ExpressionAtom) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
-	e.knowledgeContext = kc
+func (e *ExpressionAtom) Initialize(dc *context.DataContext) {
+//	e.knowledgeContext = kc
 	e.dataCtx = dc
 
 	if e.Constant != nil {
-		e.Constant.Initialize(kc, dc)
+		e.Constant.Initialize(dc)
 	}
 
 	if e.FunctionCall != nil {
-		e.FunctionCall.Initialize(kc, dc)
+		e.FunctionCall.Initialize(dc)
 	}
 
 	if e.MethodCall != nil {
-		e.MethodCall.Initialize(kc, dc)
+		e.MethodCall.Initialize(dc)
 	}
 
 	if e.MapVar != nil {
-		e.MapVar.Initialize(kc, dc)
+		e.MapVar.Initialize(dc)
 	}
 }
 

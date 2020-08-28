@@ -2,7 +2,6 @@ package test
 
 import (
 	"fmt"
-	"gengine/base"
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
@@ -39,15 +38,14 @@ func Test_conc_statement(t *testing.T) {
 	dataContext.Add("sout", Sout)
 
 	//init rule engine
-	knowledgeContext := base.NewKnowledgeContext()
-	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
+	ruleBuilder := builder.NewRuleBuilder(dataContext)
 
 	//resolve rules from string
 	start1 := time.Now().UnixNano()
 	err := ruleBuilder.BuildRuleFromString(rule_conc_statement)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
 
 	if err != nil{
 		logrus.Errorf("err:%s ", err)

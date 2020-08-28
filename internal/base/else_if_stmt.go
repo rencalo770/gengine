@@ -9,7 +9,7 @@ import (
 type ElseIfStmt struct {
 	Expression       *Expression
 	StatementList    *Statements
-	knowledgeContext *KnowledgeContext
+//	knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
 }
 
@@ -32,16 +32,15 @@ func (ef *ElseIfStmt) Evaluate(Vars map[string]interface{}) (interface{}, error)
 }
 
 
-func (ef *ElseIfStmt) Initialize(kc *KnowledgeContext,  dc *context.DataContext) {
-	ef.knowledgeContext = kc
+func (ef *ElseIfStmt) Initialize(dc *context.DataContext) {
 	ef.dataCtx = dc
 
 	if ef.Expression != nil {
-		ef.Expression.Initialize(kc, dc)
+		ef.Expression.Initialize(dc)
 	}
 
 	if ef.StatementList != nil {
-		ef.StatementList.Initialize(kc, dc)
+		ef.StatementList.Initialize(dc)
 	}
 }
 

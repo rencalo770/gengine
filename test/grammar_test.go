@@ -2,11 +2,11 @@ package test
 
 import (
 	"fmt"
-	"gengine/base"
 	"gengine/builder"
 	"gengine/context"
-	parser "gengine/iantlr/alr"
-	"gengine/iparser"
+	"gengine/internal/base"
+	parser "gengine/internal/iantlr/alr"
+	"gengine/internal/iparser"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirupsen/logrus"
 	"testing"
@@ -44,8 +44,7 @@ func Test_base_msg(t *testing.T){
 
 	dataContext := context.NewDataContext()
 	//init rule engine
-	knowledgeContext := base.NewKnowledgeContext()
-	ruleBuilder := builder.NewRuleBuilder(knowledgeContext,dataContext)
+	ruleBuilder := builder.NewRuleBuilder(dataContext)
 
 	//读取规则
 	err := ruleBuilder.BuildRuleFromString(rule3)
@@ -53,7 +52,7 @@ func Test_base_msg(t *testing.T){
 		logrus.Errorf("______%v", err)
 	}
 
-	rule := knowledgeContext.RuleEntities
+	rule := ruleBuilder.Kc.RuleEntities
 	for k, v :=range rule{
 		fmt.Println(k)
 		fmt.Println(v.RuleName)

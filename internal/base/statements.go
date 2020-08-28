@@ -6,7 +6,7 @@ import (
 
 type Statements struct {
 	StatementList    []*Statement
-	knowledgeContext *KnowledgeContext
+//	knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
 }
 
@@ -20,13 +20,12 @@ func (s *Statements) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 	return nil, nil
 }
 
-func (s *Statements) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
-	s.knowledgeContext = kc
+func (s *Statements) Initialize(dc *context.DataContext) {
 	s.dataCtx = dc
 
 	if s.StatementList != nil {
 		for _, val := range s.StatementList{
-			val.Initialize(kc, dc)
+			val.Initialize(dc)
 		}
 	}
 }

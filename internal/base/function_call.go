@@ -7,7 +7,7 @@ import (
 type FunctionCall struct {
 	FunctionName      string
 	FunctionArgs      *Args
-	knowledgeContext  *KnowledgeContext
+//	knowledgeContext  *KnowledgeContext
 	dataCtx           *context.DataContext
 }
 
@@ -16,12 +16,11 @@ func (fc *FunctionCall) AcceptArgs(funcArg *Args) error {
 	return nil
 }
 
-func (fc *FunctionCall) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
-	fc.knowledgeContext = kc
+func (fc *FunctionCall) Initialize(dc *context.DataContext) {
 	fc.dataCtx = dc
 
 	if fc.FunctionArgs != nil {
-		fc.FunctionArgs.Initialize(kc, dc)
+		fc.FunctionArgs.Initialize(dc)
 	}
 }
 

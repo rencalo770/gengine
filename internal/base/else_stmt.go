@@ -7,7 +7,7 @@ import (
 
 type ElseStmt struct {
 	StatementList    *Statements
-	knowledgeContext *KnowledgeContext
+//	knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
 }
 
@@ -24,11 +24,10 @@ func (e *ElseStmt) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	}
 }
 
-func (e *ElseStmt) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
-	e.knowledgeContext = kc
+func (e *ElseStmt) Initialize(dc *context.DataContext) {
 	e.dataCtx = dc
 	if e.StatementList != nil {
-		e.StatementList.Initialize(kc, dc)
+		e.StatementList.Initialize(dc)
 	}
 }
 

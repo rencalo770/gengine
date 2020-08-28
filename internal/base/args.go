@@ -6,17 +6,16 @@ import (
 
 type Args struct {
 	ArgList          []*Arg
-	knowledgeContext *KnowledgeContext
+//	knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
 }
 
-func (as *Args) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
-	as.knowledgeContext = kc
+func (as *Args) Initialize(dc *context.DataContext) {
 	as.dataCtx = dc
 
 	if as.ArgList != nil {
 		for _, val := range as.ArgList {
-			val.Initialize(kc, dc)
+			val.Initialize(dc)
 		}
 	}
 }

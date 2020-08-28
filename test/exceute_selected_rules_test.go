@@ -1,7 +1,6 @@
 package test
 
 import (
-	"gengine/base"
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
@@ -34,14 +33,13 @@ func Test_selected_sort(t *testing.T){
 	dataContext.Add("Print", Print)
 
 	//init rule engine
-	knowledgeContext := base.NewKnowledgeContext()
-	ruleBuilder := builder.NewRuleBuilder(knowledgeContext,dataContext)
+	ruleBuilder := builder.NewRuleBuilder(dataContext)
 
 	start1 := time.Now().UnixNano()
 	err := ruleBuilder.BuildRuleFromString(rule5)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
 
 	if err != nil{
 		logrus.Errorf("err:%s ", err)
@@ -59,14 +57,13 @@ func Test_selected_concurrent(t *testing.T){
 	dataContext.Add("Print", Print)
 
 	//init rule engine
-	knowledgeContext := base.NewKnowledgeContext()
-	ruleBuilder := builder.NewRuleBuilder(knowledgeContext,dataContext)
+	ruleBuilder := builder.NewRuleBuilder(dataContext)
 
 	start1 := time.Now().UnixNano()
 	err := ruleBuilder.BuildRuleFromString(rule5)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
 
 	if err != nil{
 		logrus.Errorf("err:%s ", err)

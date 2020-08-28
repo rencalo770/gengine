@@ -2,7 +2,7 @@ package map_slice_array
 
 import (
 	"fmt"
-	"gengine/base"
+	"gengine/internal/base"
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
@@ -80,15 +80,14 @@ func Test_m1(t *testing.T) {
 
 
 	//init rule engine
-	knowledgeContext := base.NewKnowledgeContext()
-	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
+	ruleBuilder := builder.NewRuleBuilder(dataContext)
 
 	//读取规则
 	start1 := time.Now().UnixNano()
 	err := ruleBuilder.BuildRuleFromString(m_1)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
 
 
 	if err != nil{

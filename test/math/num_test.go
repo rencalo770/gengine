@@ -1,7 +1,6 @@
 package math
 
 import (
-	"gengine/base"
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
@@ -32,15 +31,14 @@ func exec_num(){
 	dataContext.Add("entity",entity)
 
 	//init rule engine
-	knowledgeContext := base.NewKnowledgeContext()
-	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
+	ruleBuilder := builder.NewRuleBuilder(dataContext)
 
 	//读取规则
 	start1 := time.Now().UnixNano()
 	err := ruleBuilder.BuildRuleFromString(num_rule)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(knowledgeContext.RuleEntities), end1-start1 )
+	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1 )
 
 	if err != nil{
 		logrus.Errorf("err:%s ", err)

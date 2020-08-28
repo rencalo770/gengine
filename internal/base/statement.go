@@ -11,7 +11,7 @@ type Statement struct {
 	FunctionCall     *FunctionCall
 	Assignment       *Assignment
 	ConcStatement    *ConcStatement
-	knowledgeContext *KnowledgeContext
+//	knowledgeContext *KnowledgeContext
 	dataCtx          *context.DataContext
 }
 
@@ -40,28 +40,27 @@ func (s *Statement) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 	return nil,errors.New("Statement evaluate error!")
 }
 
-func (s *Statement) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
-	s.knowledgeContext = kc
+func (s *Statement) Initialize(dc *context.DataContext) {
 	s.dataCtx = dc
 
 	if s.IfStmt != nil {
-		s.IfStmt.Initialize(kc, dc)
+		s.IfStmt.Initialize(dc)
 	}
 
 	if s.FunctionCall != nil {
-		s.FunctionCall.Initialize(kc, dc)
+		s.FunctionCall.Initialize(dc)
 	}
 
 	if s.MethodCall != nil {
-		s.MethodCall.Initialize(kc, dc)
+		s.MethodCall.Initialize(dc)
 	}
 
 	if s.Assignment != nil {
-		s.Assignment.Initialize(kc, dc)
+		s.Assignment.Initialize(dc)
 	}
 
 	if s.ConcStatement != nil {
-		s.ConcStatement.Initialize(kc, dc)
+		s.ConcStatement.Initialize(dc)
 	}
 }
 

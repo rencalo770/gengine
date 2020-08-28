@@ -1,9 +1,7 @@
 package stop_tag
 
-
 import (
 	"fmt"
-	"gengine/base"
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
@@ -62,8 +60,7 @@ func Test_stop_tag_in_mix_model(t *testing.T) {
 	dataContext.Add("InBlacklist",InBlacklist)
 	dataContext.Add("println",fmt.Println)
 
-	knowledgeContext := base.NewKnowledgeContext()
-	ruleBuilder := builder.NewRuleBuilder(knowledgeContext, dataContext)
+	ruleBuilder := builder.NewRuleBuilder(dataContext)
 
 	e1 := ruleBuilder.BuildRuleFromString(mix_rule)
 	if e1 != nil {

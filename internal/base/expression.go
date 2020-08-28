@@ -29,27 +29,26 @@ type Expression struct {
 	LogicalOperator        string
 	ComparisonOperator     string
 	NotOperator            string
-	knowledgeContext       *KnowledgeContext
+	//knowledgeContext       *KnowledgeContext
 	dataCtx                *context.DataContext
 }
 
-func (e *Expression) Initialize(kc *KnowledgeContext, dc *context.DataContext) {
-	e.knowledgeContext = kc
+func (e *Expression) Initialize(dc *context.DataContext) {
 	e.dataCtx = dc
 
 	if e.ExpressionLeft != nil {
-		e.ExpressionLeft.Initialize(kc, dc)
+		e.ExpressionLeft.Initialize(dc)
 	}
 	if e.ExpressionRight != nil {
-		e.ExpressionRight.Initialize(kc, dc)
+		e.ExpressionRight.Initialize(dc)
 	}
 
 	if e.ExpressionAtom != nil {
-		e.ExpressionAtom.Initialize(kc, dc)
+		e.ExpressionAtom.Initialize(dc)
 	}
 
 	if e.MathExpression != nil {
-		e.MathExpression.Initialize(kc, dc)
+		e.MathExpression.Initialize(dc)
 	}
 }
 
