@@ -9,7 +9,6 @@ import (
 type ElseIfStmt struct {
 	Expression    *Expression
 	StatementList *Statements
-	//	knowledgeContext *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

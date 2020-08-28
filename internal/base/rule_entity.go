@@ -10,7 +10,6 @@ type RuleEntity struct {
 	Salience        int64
 	RuleDescription string
 	RuleContent     *RuleContent
-	//	knowledgeContext *KnowledgeContext
 	dataCtx *context.DataContext
 	Vars    map[string]interface{} //belongs to current rule,rule execute finish, it will be clear
 }

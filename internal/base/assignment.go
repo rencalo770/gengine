@@ -10,7 +10,6 @@ type Assignment struct {
 	Variable       string
 	MapVar         *MapVar
 	MathExpression *MathExpression
-	//	knowledgeContext *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

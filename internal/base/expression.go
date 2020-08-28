@@ -29,7 +29,6 @@ type Expression struct {
 	LogicalOperator    string
 	ComparisonOperator string
 	NotOperator        string
-	//knowledgeContext       *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

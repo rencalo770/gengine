@@ -11,7 +11,6 @@ type IfStmt struct {
 	StatementList  *Statements
 	ElseIfStmtList []*ElseIfStmt
 	ElseStmt       *ElseStmt
-	//knowledgeContext *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

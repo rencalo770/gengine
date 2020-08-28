@@ -8,7 +8,6 @@ import (
 type MethodCall struct {
 	MethodName string
 	MethodArgs *Args
-	//knowledgeContext *context.KnowledgeContext
 	dataCtx *context.DataContext
 }
 

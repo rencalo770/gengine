@@ -7,7 +7,6 @@ import (
 
 type RuleContent struct {
 	Statements *Statements
-	//	knowledgeContext  *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

@@ -12,7 +12,6 @@ type MathExpression struct {
 	MathMdOperator      string
 	MathExpressionRight *MathExpression
 	ExpressionAtom      *ExpressionAtom
-	//	knowledgeContext         *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

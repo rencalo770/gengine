@@ -6,7 +6,6 @@ import (
 
 type Constant struct {
 	ConstantValue interface{}
-	//	knowledgeContext *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

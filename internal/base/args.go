@@ -6,7 +6,6 @@ import (
 
 type Args struct {
 	ArgList []*Arg
-	//	knowledgeContext *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

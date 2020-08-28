@@ -7,7 +7,6 @@ import (
 
 type ElseStmt struct {
 	StatementList *Statements
-	//	knowledgeContext *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

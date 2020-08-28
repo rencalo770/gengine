@@ -10,7 +10,6 @@ type ConcStatement struct {
 	Assignments   []*Assignment
 	FunctionCalls []*FunctionCall
 	MethodCalls   []*MethodCall
-	//	knowledgeContext *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

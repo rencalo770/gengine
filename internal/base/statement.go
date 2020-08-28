@@ -11,7 +11,6 @@ type Statement struct {
 	FunctionCall  *FunctionCall
 	Assignment    *Assignment
 	ConcStatement *ConcStatement
-	//	knowledgeContext *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

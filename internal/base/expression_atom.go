@@ -11,7 +11,6 @@ type ExpressionAtom struct {
 	FunctionCall *FunctionCall
 	MethodCall   *MethodCall
 	MapVar       *MapVar
-	//knowledgeContext    *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

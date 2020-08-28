@@ -7,7 +7,6 @@ import (
 type FunctionCall struct {
 	FunctionName string
 	FunctionArgs *Args
-	//	knowledgeContext  *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

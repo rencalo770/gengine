@@ -6,7 +6,6 @@ import (
 
 type Statements struct {
 	StatementList []*Statement
-	//	knowledgeContext *KnowledgeContext
 	dataCtx *context.DataContext
 }
 

@@ -14,7 +14,6 @@ type MapVar struct {
 	Intkey int64  // array index
 	Strkey string // map key
 	Varkey string // array index or map key
-	//	knowledgeContext *KnowledgeContext
 	dataCtx *context.DataContext
 }
 
