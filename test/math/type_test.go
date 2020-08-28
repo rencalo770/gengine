@@ -2,7 +2,6 @@ package math
 
 import (
 	"fmt"
-	"gengine/internal/base"
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
