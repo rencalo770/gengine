@@ -1,9 +1,9 @@
 package engine
 
 import (
-	"gengine/base"
 	"gengine/builder"
-	"gengine/core/errors"
+	"gengine/internal/base"
+	"gengine/internal/core/errors"
 	"github.com/sirupsen/logrus"
 	"sort"
 	"sync"

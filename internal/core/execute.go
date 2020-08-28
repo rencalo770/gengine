@@ -2,7 +2,7 @@ package core
 
 import (
 	"fmt"
-	"gengine/core/errors"
+	errors2 "gengine/internal/core/errors"
 	"reflect"
 	"strings"
 )
@@ -69,7 +69,7 @@ func GetRawTypeValue(rs []reflect.Value) (interface{},error){
 		case reflect.Slice, reflect.Map, reflect.Array:
 			return rs[0].Interface(),nil
 		default:
-			return nil, errors.Errorf("Can't be handled type: %s", rs[0].Kind().String())
+			return nil, errors2.Errorf("Can't be handled type: %s", rs[0].Kind().String())
 		}
 	}
 }
@@ -155,7 +155,7 @@ func SetAttributeValue(obj interface{}, fieldName string, value interface{}) err
 	}
 
 	if field == reflect.ValueOf(nil) {
-		return errors.Errorf("struct has no this field: %s", fieldName)
+		return errors2.Errorf("struct has no this field: %s", fieldName)
 	}
 
 	if field.CanSet() {
@@ -204,10 +204,10 @@ func SetAttributeValue(obj interface{}, fieldName string, value interface{}) err
 			field.Set(reflect.ValueOf(value))
 			break
 		default:
-			return errors.Errorf("%s:%s", "Not support type", field.Type().Kind().String())
+			return errors2.Errorf("%s:%s", "Not support type", field.Type().Kind().String())
 		}
 	} else {
-		return errors.Errorf("%s:%s","can not set field type", field.Type().Kind().String())
+		return errors2.Errorf("%s:%s","can not set field type", field.Type().Kind().String())
 	}
 	return nil
 }

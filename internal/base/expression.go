@@ -2,7 +2,7 @@ package base
 
 import (
 	"gengine/context"
-	"gengine/core/errors"
+	"gengine/internal/core/errors"
 	"reflect"
 )
 
@@ -184,7 +184,7 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 				b = flv.String() <= frv.String()
 				break
 			default:
-				return nil,errors.Errorf("Can't be recognized ComparisonOperator: %s", e.ComparisonOperator)
+				return nil, errors.Errorf("Can't be recognized ComparisonOperator: %s", e.ComparisonOperator)
 			}
 			goto LAST
 		}
@@ -238,7 +238,7 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 					b = ll <= rr
 					break
 				default:
-					return nil,errors.Errorf("Can't be recognized ComparisonOperator: %s", e.ComparisonOperator)
+					return nil, errors.Errorf("Can't be recognized ComparisonOperator: %s", e.ComparisonOperator)
 				}
 			}
 			goto LAST
@@ -253,7 +253,7 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 				b = flv.Bool() != frv.Bool()
 				break
 			default:
-				return nil,errors.Errorf("Can't be recognized ComparisonOperator: %s", e.ComparisonOperator)
+				return nil, errors.Errorf("Can't be recognized ComparisonOperator: %s", e.ComparisonOperator)
 			}
 			goto LAST
 		}
@@ -286,6 +286,6 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 			return b, nil
 		}
 	}
-	return nil,errors.New("evaluate Expression err!")
+	return nil, errors.New("evaluate Expression err!")
 }
 

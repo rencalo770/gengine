@@ -2,7 +2,7 @@ package base
 
 import (
 	"gengine/context"
-	"gengine/core/errors"
+	"gengine/internal/core/errors"
 )
 
 // := or =

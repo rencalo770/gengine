@@ -2,7 +2,7 @@ package base
 
 import (
 	"gengine/context"
-	"gengine/core/errors"
+	"gengine/internal/core/errors"
 )
 
 type ElseStmt struct {
@@ -31,7 +31,7 @@ func (e *ElseStmt) Initialize(dc *context.DataContext) {
 	}
 }
 
-func (e *ElseStmt)AcceptStatements(stmts *Statements ) error {
+func (e *ElseStmt)AcceptStatements(stmts *Statements) error {
 	if e.StatementList  == nil {
 		e.StatementList = stmts
 		return nil

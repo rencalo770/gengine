@@ -2,8 +2,8 @@ package base
 
 import (
 	"gengine/context"
-	"gengine/core"
-	"gengine/core/errors"
+	"gengine/internal/core"
+	"gengine/internal/core/errors"
 )
 
 type MathExpression struct {

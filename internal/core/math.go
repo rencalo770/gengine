@@ -2,7 +2,7 @@ package core
 
 import (
 	"fmt"
-	"gengine/core/errors"
+	errors2 "gengine/internal/core/errors"
 	"reflect"
 	"strings"
 )
@@ -14,18 +14,18 @@ func Add(ax, bx interface{}) (interface{}, error){
 	bkind := b.Kind().String()
 
 	if !(strings.HasPrefix(akind,"int")|| (strings.HasPrefix(akind,"uint")) || (strings.HasPrefix(akind,"float")) || akind == "string") && !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float")) || bkind == "sting") {
-		return nil, errors.Errorf("ADD(+) can't be used between %s and %s", akind, bkind)
+		return nil, errors2.Errorf("ADD(+) can't be used between %s and %s", akind, bkind)
 	}
 	if akind == "string" && bkind == "string" {
 		//字符串相加
 		return fmt.Sprintf("%s%s", a.String(), b.String()), nil
 	}
 	if akind == "string" && bkind !="string"  {
-		return nil, errors.Errorf("ADD(+) can't be used between %s and %s", akind, bkind)
+		return nil, errors2.Errorf("ADD(+) can't be used between %s and %s", akind, bkind)
 	}
 
 	if akind != "string" && bkind == "string" {
-		return nil, errors.Errorf("ADD(+) can't be used between %s and %s", akind, bkind)
+		return nil, errors2.Errorf("ADD(+) can't be used between %s and %s", akind, bkind)
 	}
 
 	var afloat float64
@@ -59,7 +59,7 @@ func Sub(ax, bx interface{}) (interface{}, error){
 	bkind := b.Kind().String()
 
 	if !(strings.HasPrefix(akind,"int")|| (strings.HasPrefix(akind,"uint")) || (strings.HasPrefix(akind,"float"))) && !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float"))) {
-		return nil, errors.Errorf("SUB(-) can't be used between %s and %s", akind, bkind)
+		return nil, errors2.Errorf("SUB(-) can't be used between %s and %s", akind, bkind)
 	}
 
 	var afloat float64
@@ -94,7 +94,7 @@ func Mul(ax, bx interface{}) (interface{}, error){
 	bkind := b.Kind().String()
 
 	if !(strings.HasPrefix(akind,"int")|| (strings.HasPrefix(akind,"uint")) || (strings.HasPrefix(akind,"float"))) && !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float"))) {
-		return nil, errors.Errorf("Mul(*) can't be used between %s and %s", akind, bkind)
+		return nil, errors2.Errorf("Mul(*) can't be used between %s and %s", akind, bkind)
 	}
 
 	var afloat float64
@@ -129,7 +129,7 @@ func Div(ax, bx interface{}) (interface{}, error) {
 	bkind := b.Kind().String()
 
 	if !(strings.HasPrefix(akind,"int")|| (strings.HasPrefix(akind,"uint")) || (strings.HasPrefix(akind,"float"))) && !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float"))) {
-		return nil, errors.Errorf("DIV(/) can't be used between %s and %s", akind, bkind)
+		return nil, errors2.Errorf("DIV(/) can't be used between %s and %s", akind, bkind)
 	}
 
 	var afloat float64
@@ -155,7 +155,7 @@ func Div(ax, bx interface{}) (interface{}, error) {
 	}
 
 	if bfloat == 0 {
-		return nil, errors.New("DIV(/) can't be used to Div ZERO(0)!")
+		return nil, errors2.New("DIV(/) can't be used to Div ZERO(0)!")
 	}
 	return afloat / bfloat, nil
 }

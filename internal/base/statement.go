@@ -2,7 +2,7 @@ package base
 
 import (
 	"gengine/context"
-	"gengine/core/errors"
+	"gengine/internal/core/errors"
 )
 
 type Statement struct {
@@ -37,7 +37,7 @@ func (s *Statement) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		return s.ConcStatement.Evaluate(Vars)
 	}
 
-	return nil,errors.New("Statement evaluate error!")
+	return nil, errors.New("Statement evaluate error!")
 }
 
 func (s *Statement) Initialize(dc *context.DataContext) {

@@ -1,9 +1,9 @@
 package context
 
 import (
-	"gengine/core"
-	"gengine/core/errors"
-	"gengine/define"
+	"gengine/internal/core"
+	"gengine/internal/core/errors"
+	"gengine/internal/define"
 	"reflect"
 	"strings"
 	"sync"
@@ -83,7 +83,7 @@ func (dc *DataContext)ExecMethod(methodName string, args []interface{} ) (interf
 	structAndMethod := strings.Split(methodName, ".")
 	//Dimit rule
 	if len(structAndMethod) != 2 {
-		return nil,errors.Errorf("Not supported call, just support struct.method call, now length is %d", len(structAndMethod))
+		return nil, errors.Errorf("Not supported call, just support struct.method call, now length is %d", len(structAndMethod))
 	}
 
 	dc.lockMap.Lock()
@@ -109,7 +109,7 @@ func (dc *DataContext)GetValue(Vars map[string]interface{}, variable string)(int
 		structAndField := strings.Split(variable, ".")
 		//Dimit rule
 		if len(structAndField) != 2 {
-			return nil,errors.Errorf("Not supported Field, just support struct.field , now length is %d", len(structAndField))
+			return nil, errors.Errorf("Not supported Field, just support struct.field , now length is %d", len(structAndField))
 		}
 
 		dc.lockMap.Lock()

@@ -1,9 +1,9 @@
 package iparser
 
 import (
-	"gengine/base"
-	"gengine/core/errors"
-	parser "gengine/iantlr/alr"
+	"gengine/internal/base"
+	"gengine/internal/core/errors"
+	parser "gengine/internal/iantlr/alr"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/golang-collections/collections/stack"
 	"reflect"
@@ -472,13 +472,13 @@ func(g *GengineParserListener)ExitStatements(ctx *parser.StatementsContext){
 	}
 }
 
-func (g *GengineParserListener)EnterAssignOperator(ctx *parser.AssignOperatorContext)  {}
+func (g *GengineParserListener)EnterAssignOperator(ctx *parser.AssignOperatorContext) {}
 
-func (g *GengineParserListener)ExitAssignOperator(ctx *parser.AssignOperatorContext)  {}
+func (g *GengineParserListener)ExitAssignOperator(ctx *parser.AssignOperatorContext) {}
 
-func (g *GengineParserListener)EnterSetOperator(ctx *parser.SetOperatorContext){}
+func (g *GengineParserListener)EnterSetOperator(ctx *parser.SetOperatorContext) {}
 
-func (g *GengineParserListener)ExitSetOperator(ctx *parser.SetOperatorContext){}
+func (g *GengineParserListener)ExitSetOperator(ctx *parser.SetOperatorContext) {}
 
 func (g *GengineParserListener) EnterElseIfStmt(ctx *parser.ElseIfStmtContext) {
 	if len(g.ParseErrors) > 0{
@@ -529,7 +529,7 @@ func (g *GengineParserListener) ExitInteger(ctx *parser.IntegerContext)  {
 		g.AddError(err)
 	}
 }
-func (g *GengineParserListener) EnterInteger(ctx *parser.IntegerContext)  {}
+func (g *GengineParserListener) EnterInteger(ctx *parser.IntegerContext) {}
 
 func (g *GengineParserListener) EnterAtName(ctx *parser.AtNameContext) {}
 

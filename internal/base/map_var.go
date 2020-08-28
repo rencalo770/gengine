@@ -2,8 +2,8 @@ package base
 
 import (
 	"gengine/context"
-	"gengine/core"
-	"gengine/core/errors"
+	"gengine/internal/core"
+	"gengine/internal/core/errors"
 	"reflect"
 	"strings"
 )
@@ -125,7 +125,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		}
 	}
 
-	return nil,errors.New("Evaluate MapVarValue Only support directly-Pointer-Map, directly-Pointer-Slice and directly-Pointer-Array  or Map, Slice and Array in Pointer-Struct!")
+	return nil, errors.New("Evaluate MapVarValue Only support directly-Pointer-Map, directly-Pointer-Slice and directly-Pointer-Array  or Map, Slice and Array in Pointer-Struct!")
 }
 
 func (m *MapVar)AcceptVariable(name string) error{

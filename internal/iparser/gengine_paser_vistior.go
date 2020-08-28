@@ -1,6 +1,6 @@
 package iparser
 
-import parser "gengine/iantlr/alr"
+import parser "gengine/internal/iantlr/alr"
 
 type GengineParserVisitor struct {
 	parser.BasegengineVisitor

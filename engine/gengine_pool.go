@@ -1,10 +1,9 @@
 package engine
 
 import (
-	"gengine/base"
 	"gengine/builder"
 	"gengine/context"
-	"gengine/core/errors"
+	"gengine/internal/core/errors"
 	"github.com/sirupsen/logrus"
 	"sync"
 )
@@ -53,7 +52,7 @@ func NewGenginePool(poolMinLen ,poolMaxLen int64, em int, rulesStr string, apiOu
 	}
 
 	if em != 1 && em != 2 && em != 3 {
-		return nil,errors.Errorf("exec model must be 1 or 2 or 3), now it is %d", em)
+		return nil, errors.Errorf("exec model must be 1 or 2 or 3), now it is %d", em)
 	}
 
 	srcRb, e := getRuleBuilder(rulesStr, apiOuter)
@@ -97,13 +96,12 @@ func getRuleBuilder(rulesStr string, apiOuter map[string]interface{}) (*builder.
 		}
 	}
 
-	knowledgeContext := base.NewKnowledgeContext()
-	rb := builder.NewRuleBuilder(knowledgeContext, dataContext)
+	rb := builder.NewRuleBuilder(dataContext)
 
 	// some rules need to build
 	if rulesStr != "" {
 		if e := rb.BuildRuleFromString(rulesStr); e != nil{
-			knowledgeContext.ClearRules()
+			rb.Kc.ClearRules()
 			return nil, errors.Errorf("build rule from string err: %+v", e)
 		}
 	}

@@ -1,11 +1,11 @@
 package builder
 
 import (
-	"gengine/base"
 	"gengine/context"
-	"gengine/core/errors"
-	parser "gengine/iantlr/alr"
-	"gengine/iparser"
+	"gengine/internal/base"
+	"gengine/internal/core/errors"
+	parser "gengine/internal/iantlr/alr"
+	"gengine/internal/iparser"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"sort"
 )
@@ -16,7 +16,8 @@ type RuleBuilder struct {
 	Dc *context.DataContext
 }
 
-func NewRuleBuilder(kc *base.KnowledgeContext,dc *context.DataContext)*RuleBuilder{
+func NewRuleBuilder(dc *context.DataContext)*RuleBuilder{
+	kc := base.NewKnowledgeContext()
 	return &RuleBuilder{
 		Kc: kc,
 		Dc: dc,
@@ -51,7 +52,7 @@ func (builder *RuleBuilder) BuildRuleFromString(ruleString string) error{
 
 	//initial
 	for _,v := range builder.Kc.RuleEntities {
-		v.Initialize(builder.Kc, builder.Dc)
+		v.Initialize(builder.Dc)
 	}
 
 	//sort
