@@ -20,7 +20,7 @@ rule "array test" "m dec"
 begin
 
 a=1
-AS.MI[1] = 22
+AS.MI[1] = 22/3 + 1 -10*2 
 println("AS.MI[1]--->",AS.MI[1])
 println("AS.MI[a]--->",AS.MI[1])
 

@@ -27,7 +27,8 @@ println("MS.MII[-1]--->",MS.MII[-1])
 println("MS.MII[a]--->",MS.MII[a])
 
 b = "1"
-MS.MSI["1"] = 227289
+x = (227289 - 227288) * 10 - 20 * 3
+MS.MSI["1"] = x
 println("MS.MSI[\"1\"]--->",MS.MSI["1"])
 println("MS.MSI[b]---->", MS.MSI[b])
 

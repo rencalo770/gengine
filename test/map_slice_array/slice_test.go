@@ -20,7 +20,8 @@ rule "slice test" "slice dec"
 begin
 
 a = 1
-SS.MI[1] = 22
+//calculate
+SS.MI[1] = 22 + 2 - 5 * 6 / 3
 println("SS.MI[1]-----> ",SS.MI[1])
 println("SS.MI[a]-----> ",SS.MI[a])
 

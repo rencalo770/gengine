@@ -28,28 +28,48 @@ func Add(ax, bx interface{}) (interface{}, error) {
 		return nil, errors2.Errorf("ADD(+) can't be used between %s and %s", akind, bkind)
 	}
 
-	var afloat float64
 	if strings.HasPrefix(akind, "int") {
-		afloat = float64(a.Int())
-	}
-	if strings.HasPrefix(akind, "uint") {
-		afloat = float64(a.Uint())
-	}
-	if strings.HasPrefix(akind, "float") {
-		afloat = a.Float()
+		if strings.HasPrefix(bkind, "int") {
+			return  a.Int() + b.Int(), nil
+		}
+
+		if strings.HasPrefix(bkind, "uint") {
+			return a.Int() + int64(b.Uint()), nil
+		}
+
+		if strings.HasPrefix(bkind, "float") {
+			return float64(a.Int()) + b.Float(), nil
+		}
 	}
 
-	var bfloat float64
-	if strings.HasPrefix(bkind, "int") {
-		bfloat = float64(b.Int())
+	if strings.HasPrefix(akind, "uint") {
+		if strings.HasPrefix(bkind, "int") {
+			return  int64(a.Uint()) + b.Int(), nil
+		}
+
+		if strings.HasPrefix(bkind, "uint") {
+			return a.Uint() + b.Uint(), nil
+		}
+
+		if strings.HasPrefix(bkind, "float") {
+			return float64(a.Uint()) + b.Float(), nil
+		}
 	}
-	if strings.HasPrefix(bkind, "uint") {
-		bfloat = float64(b.Uint())
+
+	if strings.HasPrefix(akind, "float") {
+		if strings.HasPrefix(bkind, "int") {
+			return  a.Float() + float64(b.Int()), nil
+		}
+
+		if strings.HasPrefix(bkind, "uint") {
+			return a.Float() + float64(b.Uint()), nil
+		}
+
+		if strings.HasPrefix(bkind, "float") {
+			return a.Float() + b.Float(), nil
+		}
 	}
-	if strings.HasPrefix(bkind, "float") {
-		bfloat = b.Float()
-	}
-	return afloat + bfloat, nil
+	return nil, errors2.Errorf("ADD(+) can't be used between %s and %s", akind, bkind)
 }
 
 func Sub(ax, bx interface{}) (interface{}, error) {
@@ -62,29 +82,48 @@ func Sub(ax, bx interface{}) (interface{}, error) {
 		return nil, errors2.Errorf("SUB(-) can't be used between %s and %s", akind, bkind)
 	}
 
-	var afloat float64
 	if strings.HasPrefix(akind, "int") {
-		afloat = float64(a.Int())
+		if strings.HasPrefix(bkind, "int") {
+			return  a.Int() - b.Int(), nil
+		}
+
+		if strings.HasPrefix(bkind, "uint") {
+			return a.Int() - int64(b.Uint()), nil
+		}
+
+		if strings.HasPrefix(bkind, "float") {
+			return float64(a.Int()) - b.Float(), nil
+		}
 	}
+
 	if strings.HasPrefix(akind, "uint") {
-		afloat = float64(a.Uint())
+		if strings.HasPrefix(bkind, "int") {
+			return  int64(a.Uint()) - b.Int(), nil
+		}
+
+		if strings.HasPrefix(bkind, "uint") {
+			return a.Uint() - b.Uint(), nil
+		}
+
+		if strings.HasPrefix(bkind, "float") {
+			return float64(a.Uint()) - b.Float(), nil
+		}
 	}
+
 	if strings.HasPrefix(akind, "float") {
-		afloat = a.Float()
-	}
+		if strings.HasPrefix(bkind, "int") {
+			return  a.Float() - float64(b.Int()), nil
+		}
 
-	var bfloat float64
-	if strings.HasPrefix(bkind, "int") {
-		bfloat = float64(b.Int())
-	}
-	if strings.HasPrefix(bkind, "uint") {
-		bfloat = float64(b.Uint())
-	}
-	if strings.HasPrefix(bkind, "float") {
-		bfloat = b.Float()
-	}
+		if strings.HasPrefix(bkind, "uint") {
+			return a.Float() - float64(b.Uint()), nil
+		}
 
-	return afloat - bfloat, nil
+		if strings.HasPrefix(bkind, "float") {
+			return a.Float() - b.Float(), nil
+		}
+	}
+	return nil, errors2.Errorf("Sub(-) can't be used between %s and %s", akind, bkind)
 }
 
 func Mul(ax, bx interface{}) (interface{}, error) {
@@ -97,28 +136,48 @@ func Mul(ax, bx interface{}) (interface{}, error) {
 		return nil, errors2.Errorf("Mul(*) can't be used between %s and %s", akind, bkind)
 	}
 
-	var afloat float64
 	if strings.HasPrefix(akind, "int") {
-		afloat = float64(a.Int())
-	}
-	if strings.HasPrefix(akind, "uint") {
-		afloat = float64(a.Uint())
-	}
-	if strings.HasPrefix(akind, "float") {
-		afloat = a.Float()
+		if strings.HasPrefix(bkind, "int") {
+			return  a.Int() * b.Int(), nil
+		}
+
+		if strings.HasPrefix(bkind, "uint") {
+			return a.Int() * int64(b.Uint()), nil
+		}
+
+		if strings.HasPrefix(bkind, "float") {
+			return float64(a.Int()) * b.Float(), nil
+		}
 	}
 
-	var bfloat float64
-	if strings.HasPrefix(bkind, "int") {
-		bfloat = float64(b.Int())
+	if strings.HasPrefix(akind, "uint") {
+		if strings.HasPrefix(bkind, "int") {
+			return  int64(a.Uint()) * b.Int(), nil
+		}
+
+		if strings.HasPrefix(bkind, "uint") {
+			return a.Uint() * b.Uint(), nil
+		}
+
+		if strings.HasPrefix(bkind, "float") {
+			return float64(a.Uint()) * b.Float(), nil
+		}
 	}
-	if strings.HasPrefix(bkind, "uint") {
-		bfloat = float64(b.Uint())
+
+	if strings.HasPrefix(akind, "float") {
+		if strings.HasPrefix(bkind, "int") {
+			return  a.Float() * float64(b.Int()), nil
+		}
+
+		if strings.HasPrefix(bkind, "uint") {
+			return a.Float() * float64(b.Uint()), nil
+		}
+
+		if strings.HasPrefix(bkind, "float") {
+			return a.Float() * b.Float(), nil
+		}
 	}
-	if strings.HasPrefix(bkind, "float") {
-		bfloat = b.Float()
-	}
-	return afloat * bfloat, nil
+	return nil, errors2.Errorf("Mul(*) can't be used between %s and %s", akind, bkind)
 }
 
 func Div(ax, bx interface{}) (interface{}, error) {
@@ -131,30 +190,66 @@ func Div(ax, bx interface{}) (interface{}, error) {
 		return nil, errors2.Errorf("DIV(/) can't be used between %s and %s", akind, bkind)
 	}
 
-	var afloat float64
-	if strings.HasPrefix(akind, "int") {
-		afloat = float64(a.Int())
-	}
-	if strings.HasPrefix(akind, "uint") {
-		afloat = float64(a.Uint())
-	}
-	if strings.HasPrefix(akind, "float") {
-		afloat = a.Float()
-	}
-
-	var bfloat float64
 	if strings.HasPrefix(bkind, "int") {
-		bfloat = float64(b.Int())
+		bi := b.Int()
+		if bi == 0 {
+			return nil, errors2.New("DIV(/) can't be used to Div ZERO(0)!")
+		}
 	}
 	if strings.HasPrefix(bkind, "uint") {
-		bfloat = float64(b.Uint())
+		bu := b.Uint()
+		if bu == 0 {
+			return nil, errors2.New("DIV(/) can't be used to Div ZERO(0)!")
+		}
 	}
 	if strings.HasPrefix(bkind, "float") {
-		bfloat = b.Float()
+		bf := b.Float()
+		if bf == 0.0 {
+			return nil, errors2.New("DIV(/) can't be used to Div ZERO(0)!")
+		}
 	}
 
-	if bfloat == 0 {
-		return nil, errors2.New("DIV(/) can't be used to Div ZERO(0)!")
+
+	if strings.HasPrefix(akind, "int") {
+		if strings.HasPrefix(bkind, "int") {
+			return  a.Int() / b.Int(), nil
+		}
+
+		if strings.HasPrefix(bkind, "uint") {
+			return a.Int() / int64(b.Uint()), nil
+		}
+
+		if strings.HasPrefix(bkind, "float") {
+			return float64(a.Int()) / b.Float(), nil
+		}
 	}
-	return afloat / bfloat, nil
+
+	if strings.HasPrefix(akind, "uint") {
+		if strings.HasPrefix(bkind, "int") {
+			return  int64(a.Uint()) / b.Int(), nil
+		}
+
+		if strings.HasPrefix(bkind, "uint") {
+			return a.Uint() / b.Uint(), nil
+		}
+
+		if strings.HasPrefix(bkind, "float") {
+			return float64(a.Uint()) / b.Float(), nil
+		}
+	}
+
+	if strings.HasPrefix(akind, "float") {
+		if strings.HasPrefix(bkind, "int") {
+			return  a.Float() / float64(b.Int()), nil
+		}
+
+		if strings.HasPrefix(bkind, "uint") {
+			return a.Float() / float64(b.Uint()), nil
+		}
+
+		if strings.HasPrefix(bkind, "float") {
+			return a.Float() / b.Float(), nil
+		}
+	}
+	return nil, errors2.Errorf("Div(/) can't be used between %s and %s", akind, bkind)
 }

@@ -18,7 +18,7 @@ const num_rule = `
 
 rule "rule name" "rule desc"
 begin
-entity.Score = 100
+entity.Score = 100 + 12/3
 entity.Height = 1.68
 end
 `
