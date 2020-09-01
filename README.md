@@ -16,6 +16,9 @@
 - chinese article you can read:
  https://xie.infoq.cn/article/40bfff1fbca1867991a1453ac
 
+## tag v1.2.0
+-from version v1.2.0 , it needs you to make a little change to compatible old version, in detail, see:https://rencalo770.github.io/gengine_en/#/framework
+
 
 ## the execute model of rules
  ![avatar](exe_model.jpg)

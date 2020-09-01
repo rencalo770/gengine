@@ -12,6 +12,9 @@
 ## 设计思想
 可以看这篇文章: https://xie.infoq.cn/article/40bfff1fbca1867991a1453ac
 
+## tag版本v1.2.0
+- 从v1.2.0开始，你需要做一点小小的改动，才能让新版本兼容老的版本，具体实例请看这里：https://rencalo770.github.io/gengine_doc/#/framework
+
 ## 规则执行模式
  ![avatar](exe_model.jpg)
 
