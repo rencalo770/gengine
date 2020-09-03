@@ -55,11 +55,8 @@ func (dc *DataContext) ExecFunc(funcName string, parameters []interface{}) (inte
 	dc.lockMap.Unlock()
 
 	if v != nil {
-		f, params := core.ParamsTypeChange(v, parameters)
-		if f == nil {
-			return nil, errors.Errorf("Can't find %s in DataContext[when use it, please set it before]!", funcName)
-		}
-		fun := reflect.ValueOf(f)
+		params := core.ParamsTypeChange(v, parameters)
+		fun := reflect.ValueOf(v)
 		args := make([]reflect.Value, 0)
 		for _, param := range params {
 			args = append(args, reflect.ValueOf(param))
@@ -71,7 +68,7 @@ func (dc *DataContext) ExecFunc(funcName string, parameters []interface{}) (inte
 		}
 		return raw, nil
 	} else {
-		return nil, errors.New("no such data found in DataContext!")
+		return nil, errors.Errorf("%s NOT FOUND in DataContext!", funcName)
 	}
 }
 

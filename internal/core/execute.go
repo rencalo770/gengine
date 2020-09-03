@@ -11,12 +11,12 @@ func InvokeFunction(obj interface{}, methodName string, parameters []interface{}
 	objVal := reflect.ValueOf(obj)
 	fun := objVal.MethodByName(methodName).Interface()
 	//change type for base type params
-	funcVal, params := ParamsTypeChange(fun, parameters)
+	params := ParamsTypeChange(fun, parameters)
 	args := make([]reflect.Value, 0)
 	for _, param := range params {
 		args = append(args, reflect.ValueOf(param))
 	}
-	rs := reflect.ValueOf(funcVal).Call(args)
+	rs := reflect.ValueOf(fun).Call(args)
 	raw, e := GetRawTypeValue(rs)
 	if e != nil {
 		return nil, e
@@ -207,7 +207,7 @@ func SetAttributeValue(obj interface{}, fieldName string, value interface{}) err
 			return errors2.Errorf("%s:%s", "Not support type", field.Type().Kind().String())
 		}
 	} else {
-		return errors2.Errorf("%s:%s", "can not set field type", field.Type().Kind().String())
+		return errors2.Errorf("%s:%s", field.Type().Kind().String(), " must Be Assignable, it should be or be in addressable value!")
 	}
 	return nil
 }
@@ -221,9 +221,9 @@ const (
 /*
 number type exchange
 */
-func ParamsTypeChange(f interface{}, params []interface{}) (interface{}, []interface{}) {
+func ParamsTypeChange(f interface{}, params []interface{}) []interface{} {
 	tf := reflect.TypeOf(f)
-	if tf.Kind().String() == "ptr" {
+	if tf.Kind() == reflect.Ptr {
 		tf = tf.Elem()
 	}
 	plen := tf.NumIn()
@@ -353,7 +353,7 @@ func ParamsTypeChange(f interface{}, params []interface{}) (interface{}, []inter
 			continue
 		}
 	}
-	return f, params
+	return params
 }
 
 func getNumType(param interface{}) int {
