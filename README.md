@@ -1,5 +1,6 @@
 # Gengine
 - [简体中文](README_zh.md)
+- 使用交流QQ群号:1132683357
 
 ## English Doc
 - https://rencalo770.github.io/gengine_en
