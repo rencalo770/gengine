@@ -1,18 +1,20 @@
 package base
 
 import (
+	"fmt"
 	"gengine/context"
 	"gengine/internal/core"
 	"gengine/internal/core/errors"
 )
 
 type MathExpression struct {
+	SourceCode
 	MathExpressionLeft  *MathExpression
 	MathPmOperator      string
 	MathMdOperator      string
 	MathExpressionRight *MathExpression
 	ExpressionAtom      *ExpressionAtom
-	dataCtx *context.DataContext
+	dataCtx             *context.DataContext
 }
 
 func (e *MathExpression) AcceptMathExpression(atom *MathExpression) error {
@@ -73,19 +75,35 @@ func (e *MathExpression) Evaluate(Vars map[string]interface{}) (interface{}, err
 	}
 
 	if e.MathPmOperator == "+" {
-		return core.Add(lv, rv)
+		add, err := core.Add(lv, rv)
+		if err != nil {
+			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", e.LineNum, e.Column, e.Code, err))
+		}
+		return add, nil
 	}
 
 	if e.MathPmOperator == "-" {
-		return core.Sub(lv, rv)
+		sub, err := core.Sub(lv, rv)
+		if err != nil {
+			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", e.LineNum, e.Column, e.Code, err))
+		}
+		return sub, nil
 	}
 
 	if e.MathMdOperator == "*" {
-		return core.Mul(lv, rv)
+		mul, err := core.Mul(lv, rv)
+		if err != nil {
+			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", e.LineNum, e.Column, e.Code, err))
+		}
+		return mul, nil
 	}
 
 	if e.MathMdOperator == "/" {
-		return core.Div(lv, rv)
+		div, err := core.Div(lv, rv)
+		if err != nil {
+			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", e.LineNum, e.Column, e.Code, err))
+		}
+		return div, nil
 	}
-	return nil, errors.Errorf("MathExpression calculate evaluate error: %s, %s", e.MathPmOperator, e.MathPmOperator)
+	return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, MathExpression calculate evaluate error", e.LineNum, e.Column, e.Code))
 }

@@ -1,10 +1,11 @@
 package engine
 
 import (
+	"fmt"
 	"gengine/builder"
 	"gengine/context"
 	"gengine/internal/core/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/google/martian/log"
 	"sync"
 )
 
@@ -51,7 +52,7 @@ func NewGenginePool(poolMinLen, poolMaxLen int64, em int, rulesStr string, apiOu
 	}
 
 	if em != 1 && em != 2 && em != 3 {
-		return nil, errors.Errorf("exec model must be 1 or 2 or 3), now it is %d", em)
+		return nil, errors.New(fmt.Sprintf("exec model must be 1 or 2 or 3), now it is %d", em))
 	}
 
 	srcRb, e := getRuleBuilder(rulesStr, apiOuter)
@@ -101,7 +102,7 @@ func getRuleBuilder(rulesStr string, apiOuter map[string]interface{}) (*builder.
 	if rulesStr != "" {
 		if e := rb.BuildRuleFromString(rulesStr); e != nil {
 			rb.Kc.ClearRules()
-			return nil, errors.Errorf("build rule from string err: %+v", e)
+			return nil, errors.New(fmt.Sprintf("build rule from string err: %+v", e))
 		}
 	}
 
@@ -222,7 +223,7 @@ func (gp *GenginePool) SetExecModel(execModel int) error {
 	gp.updateLock.Lock()
 	defer gp.updateLock.Unlock()
 	if execModel != 1 && execModel != 2 && execModel != 3 {
-		return errors.Errorf("exec model must be 1 or 2 or 3), now it is %d", execModel)
+		return errors.New(fmt.Sprintf("exec model must be 1 or 2 or 3), now it is %d", execModel))
 	} else {
 		gp.execModel = execModel
 	}
@@ -286,7 +287,7 @@ func (gp *GenginePool) prepareWithMultiInput(data map[string]interface{}) (*geng
 		if k != "" && v != nil {
 			gw.rulebuilder.Dc.Add(k, v)
 		} else {
-			logrus.Error("you should not input null string or nil value")
+			log.Errorf("you should not input null string or nil value")
 		}
 	}
 

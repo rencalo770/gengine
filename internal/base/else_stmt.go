@@ -7,7 +7,7 @@ import (
 
 type ElseStmt struct {
 	StatementList *Statements
-	dataCtx *context.DataContext
+	dataCtx       *context.DataContext
 }
 
 func (e *ElseStmt) Evaluate(Vars map[string]interface{}) (interface{}, error) {

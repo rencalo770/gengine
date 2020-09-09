@@ -6,7 +6,7 @@ import (
 
 type Statements struct {
 	StatementList []*Statement
-	dataCtx *context.DataContext
+	dataCtx       *context.DataContext
 }
 
 func (s *Statements) Evaluate(Vars map[string]interface{}) (interface{}, error) {

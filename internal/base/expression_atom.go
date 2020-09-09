@@ -6,16 +6,16 @@ import (
 )
 
 type ExpressionAtom struct {
+	SourceCode
 	Variable     string
 	Constant     *Constant
 	FunctionCall *FunctionCall
 	MethodCall   *MethodCall
 	MapVar       *MapVar
-	dataCtx *context.DataContext
+	dataCtx      *context.DataContext
 }
 
 func (e *ExpressionAtom) Initialize(dc *context.DataContext) {
-	//	e.knowledgeContext = kc
 	e.dataCtx = dc
 
 	if e.Constant != nil {

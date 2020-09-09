@@ -9,7 +9,7 @@ import (
 type ElseIfStmt struct {
 	Expression    *Expression
 	StatementList *Statements
-	dataCtx *context.DataContext
+	dataCtx       *context.DataContext
 }
 
 func (ef *ElseIfStmt) Evaluate(Vars map[string]interface{}) (interface{}, error) {

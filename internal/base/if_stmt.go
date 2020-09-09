@@ -11,7 +11,7 @@ type IfStmt struct {
 	StatementList  *Statements
 	ElseIfStmtList []*ElseIfStmt
 	ElseStmt       *ElseStmt
-	dataCtx *context.DataContext
+	dataCtx        *context.DataContext
 }
 
 func (i *IfStmt) Evaluate(Vars map[string]interface{}) (interface{}, error) {

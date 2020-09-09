@@ -11,7 +11,7 @@ type Statement struct {
 	FunctionCall  *FunctionCall
 	Assignment    *Assignment
 	ConcStatement *ConcStatement
-	dataCtx *context.DataContext
+	dataCtx       *context.DataContext
 }
 
 func (s *Statement) Evaluate(Vars map[string]interface{}) (interface{}, error) {

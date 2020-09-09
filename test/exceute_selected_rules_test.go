@@ -4,7 +4,8 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
-	"github.com/sirupsen/logrus"
+	"github.com/google/martian/log"
+
 	"testing"
 	"time"
 )
@@ -39,16 +40,16 @@ func Test_selected_sort(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(rule5)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1)
+	log.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
 	if err != nil {
-		logrus.Errorf("err:%s ", err)
+		log.Errorf("err:%s ", err)
 	} else {
 		eng := engine.NewGengine()
 		start := time.Now().UnixNano()
 		eng.ExecuteSelectedRules(ruleBuilder, []string{"444", "555", "111", "222", "333"})
 		end := time.Now().UnixNano()
-		logrus.Infof("execute rule cost %d ns", end-start)
+		log.Infof("execute rule cost %d ns", end-start)
 	}
 }
 
@@ -63,15 +64,15 @@ func Test_selected_concurrent(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(rule5)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1)
+	log.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
 	if err != nil {
-		logrus.Errorf("err:%s ", err)
+		log.Errorf("err:%s ", err)
 	} else {
 		eng := engine.NewGengine()
 		start := time.Now().UnixNano()
 		eng.ExecuteSelectedRulesConcurrent(ruleBuilder, []string{"444", "111", "222", "777"})
 		end := time.Now().UnixNano()
-		logrus.Infof("execute rule cost %d ns", end-start)
+		log.Infof("execute rule cost %d ns", end-start)
 	}
 }

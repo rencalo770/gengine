@@ -2,7 +2,7 @@ package core
 
 import (
 	"fmt"
-	errors2 "gengine/internal/core/errors"
+	"gengine/internal/core/errors"
 	"reflect"
 	"strings"
 )
@@ -63,13 +63,16 @@ func GetRawTypeValue(rs []reflect.Value) (interface{}, error) {
 		case reflect.Struct:
 			return rs[0].Interface(), nil
 		case reflect.Ptr:
+			if rs[0].IsNil() {
+				return nil, nil
+			}
 			newPtr := reflect.New(rs[0].Elem().Type())
 			newPtr.Elem().Set(rs[0].Elem())
 			return newPtr.Interface(), nil
 		case reflect.Slice, reflect.Map, reflect.Array:
 			return rs[0].Interface(), nil
 		default:
-			return nil, errors2.Errorf("Can't be handled type: %s", rs[0].Kind().String())
+			return nil, errors.New(fmt.Sprintf("Can't be handled type: %s", rs[0].Kind().String()))
 		}
 	}
 }
@@ -155,7 +158,7 @@ func SetAttributeValue(obj interface{}, fieldName string, value interface{}) err
 	}
 
 	if field == reflect.ValueOf(nil) {
-		return errors2.Errorf("struct has no this field: %s", fieldName)
+		return errors.New(fmt.Sprintf("struct has no this field: %s", fieldName))
 	}
 
 	if field.CanSet() {
@@ -204,10 +207,10 @@ func SetAttributeValue(obj interface{}, fieldName string, value interface{}) err
 			field.Set(reflect.ValueOf(value))
 			break
 		default:
-			return errors2.Errorf("%s:%s", "Not support type", field.Type().Kind().String())
+			return errors.New(fmt.Sprintf("Not support type:%s", field.Type().Kind().String()))
 		}
 	} else {
-		return errors2.Errorf("%s:%s", field.Type().Kind().String(), " must Be Assignable, it should be or be in addressable value!")
+		return errors.New(fmt.Sprintf("%s:must Be Assignable, it should be or be in addressable value!", field.Type().Kind().String()))
 	}
 	return nil
 }

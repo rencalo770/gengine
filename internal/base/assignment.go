@@ -1,40 +1,58 @@
 package base
 
 import (
+	"fmt"
 	"gengine/context"
 	"gengine/internal/core/errors"
+	"runtime"
 )
 
 // := or =
 type Assignment struct {
+	SourceCode
 	Variable       string
 	MapVar         *MapVar
 	MathExpression *MathExpression
-	dataCtx *context.DataContext
+	dataCtx        *context.DataContext
 }
 
-func (a *Assignment) Evaluate(Vars map[string]interface{}) (interface{}, error) {
-	v, err := a.MathExpression.Evaluate(Vars)
+func (a *Assignment) Evaluate(Vars map[string]interface{}) (value interface{}, err error) {
+
+	defer func() {
+		if e := recover(); e != nil {
+			size := 1 << 10 * 10
+			buf := make([]byte, size)
+			rs := runtime.Stack(buf, false)
+			if rs > size {
+				rs = size
+			}
+			buf = buf[:rs]
+			err = errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v \n%s", a.LineNum, a.Column, a.Code, e, string(buf)))
+		}
+	}()
+
+	mv, err := a.MathExpression.Evaluate(Vars)
 	if err != nil {
 		return nil, err
 	}
 
 	if len(a.Variable) > 0 {
-		err = a.dataCtx.SetValue(Vars, a.Variable, v)
+		err = a.dataCtx.SetValue(Vars, a.Variable, mv)
 		if err != nil {
-			return nil, err
+			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", a.LineNum, a.Column, a.Code, err))
 		}
-		return nil, nil
+		return
 	}
 
 	if a.MapVar != nil {
-		err := a.dataCtx.SetMapVarValue(Vars, a.MapVar.Name, a.MapVar.Strkey, a.MapVar.Varkey, a.MapVar.Intkey, v)
+		err = a.dataCtx.SetMapVarValue(Vars, a.MapVar.Name, a.MapVar.Strkey, a.MapVar.Varkey, a.MapVar.Intkey, mv)
 		if err != nil {
-			return nil, err
+			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
 		}
+		return
 	}
 
-	return nil, nil
+	return
 }
 
 func (a *Assignment) Initialize(dc *context.DataContext) {

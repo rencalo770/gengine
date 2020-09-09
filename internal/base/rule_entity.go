@@ -1,6 +1,7 @@
 package base
 
 import (
+	"fmt"
 	"gengine/context"
 	"gengine/internal/core/errors"
 )
@@ -10,8 +11,8 @@ type RuleEntity struct {
 	Salience        int64
 	RuleDescription string
 	RuleContent     *RuleContent
-	dataCtx *context.DataContext
-	Vars    map[string]interface{} //belongs to current rule,rule execute finish, it will be clear
+	dataCtx         *context.DataContext
+	Vars            map[string]interface{} //belongs to current rule,rule execute finish, it will be clear
 }
 
 func (r *RuleEntity) AcceptString(s string) error {
@@ -24,7 +25,7 @@ func (r *RuleEntity) AcceptString(s string) error {
 		r.RuleDescription = s
 		return nil
 	}
-	return errors.Errorf("value = %s set twice!", s)
+	return errors.New(fmt.Sprintf("value = %s set twice!", s))
 }
 
 func (r *RuleEntity) AcceptInteger(val int64) error {

@@ -6,7 +6,7 @@ import (
 
 type Constant struct {
 	ConstantValue interface{}
-	dataCtx *context.DataContext
+	dataCtx       *context.DataContext
 }
 
 func (cons *Constant) AcceptString(str string) error {

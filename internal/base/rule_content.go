@@ -7,7 +7,7 @@ import (
 
 type RuleContent struct {
 	Statements *Statements
-	dataCtx *context.DataContext
+	dataCtx    *context.DataContext
 }
 
 func (t *RuleContent) Initialize(dc *context.DataContext) {

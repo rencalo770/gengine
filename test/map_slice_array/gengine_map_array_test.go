@@ -5,7 +5,8 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
-	"github.com/sirupsen/logrus"
+	"github.com/google/martian/log"
+
 	"testing"
 	"time"
 )
@@ -100,10 +101,10 @@ func Test_map_array(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(ma_rule)
 	end1 := time.Now().UnixNano()
 
-	logrus.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
+	log.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
 
 	if err != nil {
-		logrus.Errorf("err:%s ", err)
+		log.Errorf("err:%s ", err)
 	} else {
 		eng := engine.NewGengine()
 		start := time.Now().UnixNano()
@@ -111,9 +112,9 @@ func Test_map_array(t *testing.T) {
 		err := eng.Execute(ruleBuilder, true)
 		end := time.Now().UnixNano()
 		if err != nil {
-			logrus.Errorf("execute rule error: %v", err)
+			log.Errorf("execute rule error: %v", err)
 		}
-		logrus.Infof("execute rule cost %d ns", end-start)
+		log.Infof("execute rule cost %d ns", end-start)
 	}
 
 }

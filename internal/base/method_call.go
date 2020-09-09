@@ -1,14 +1,17 @@
 package base
 
 import (
+	"fmt"
 	"gengine/context"
 	"gengine/internal/core/errors"
+	"runtime"
 )
 
 type MethodCall struct {
+	SourceCode
 	MethodName string
 	MethodArgs *Args
-	dataCtx *context.DataContext
+	dataCtx    *context.DataContext
 }
 
 func (mc *MethodCall) Initialize(dataCtx *context.DataContext) {
@@ -27,7 +30,21 @@ func (mc *MethodCall) AcceptArgs(funcArg *Args) error {
 	return errors.New("methodArgs set twice!")
 }
 
-func (mc *MethodCall) Evaluate(Vars map[string]interface{}) (interface{}, error) {
+func (mc *MethodCall) Evaluate(Vars map[string]interface{}) (mr interface{}, err error) {
+
+	defer func() {
+		if e := recover(); e != nil {
+			size := 1 << 10 * 10
+			buf := make([]byte, size)
+			rs := runtime.Stack(buf, false)
+			if rs > size {
+				rs = size
+			}
+			buf = buf[:rs]
+			err = errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v \n%s", mc.LineNum, mc.Column, mc.Code, e, string(buf)))
+		}
+	}()
+
 	var argumentValues []interface{}
 	if mc.MethodArgs == nil {
 		argumentValues = make([]interface{}, 0)
@@ -39,5 +56,9 @@ func (mc *MethodCall) Evaluate(Vars map[string]interface{}) (interface{}, error)
 		argumentValues = av
 	}
 
-	return mc.dataCtx.ExecMethod(mc.MethodName, argumentValues)
+	mr, err = mc.dataCtx.ExecMethod(mc.MethodName, argumentValues)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", mc.LineNum, mc.Column, mc.Code, err))
+	}
+	return
 }

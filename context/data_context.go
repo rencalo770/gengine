@@ -1,6 +1,7 @@
 package context
 
 import (
+	"fmt"
 	"gengine/internal/core"
 	"gengine/internal/core/errors"
 	"gengine/internal/define"
@@ -10,9 +11,9 @@ import (
 )
 
 type DataContext struct {
-	lock    sync.Mutex
-	lockMap sync.Mutex
-	base    map[string]interface{}
+	lockVars sync.Mutex
+	lockBase sync.Mutex
+	base     map[string]interface{}
 }
 
 func NewDataContext() *DataContext {
@@ -29,19 +30,19 @@ func (dc *DataContext) loadInnerUDF() {
 }
 
 func (dc *DataContext) Add(key string, obj interface{}) {
-	dc.lockMap.Lock()
+	dc.lockBase.Lock()
 	dc.base[key] = obj
-	dc.lockMap.Unlock()
+	dc.lockBase.Unlock()
 }
 
 func (dc *DataContext) Get(key string) (interface{}, error) {
-	dc.lockMap.Lock()
+	dc.lockBase.Lock()
 	v := dc.base[key]
-	dc.lockMap.Unlock()
+	dc.lockBase.Unlock()
 	if v != nil {
 		return v, nil
 	} else {
-		return nil, errors.Errorf("not Found key :%s ", key)
+		return nil, errors.New(fmt.Sprintf("NOT FOUND key :%s ", key))
 	}
 }
 
@@ -50,9 +51,9 @@ execute the injected functions
 function execute supply multi return values, but simplify ,just return one value
 */
 func (dc *DataContext) ExecFunc(funcName string, parameters []interface{}) (interface{}, error) {
-	dc.lockMap.Lock()
+	dc.lockBase.Lock()
 	v := dc.base[funcName]
-	dc.lockMap.Unlock()
+	dc.lockBase.Unlock()
 
 	if v != nil {
 		params := core.ParamsTypeChange(v, parameters)
@@ -68,7 +69,7 @@ func (dc *DataContext) ExecFunc(funcName string, parameters []interface{}) (inte
 		}
 		return raw, nil
 	} else {
-		return nil, errors.Errorf("%s NOT FOUND in DataContext!", funcName)
+		return nil, errors.New(fmt.Sprintf("NOT FOUND function \"%s\"", funcName))
 	}
 }
 
@@ -80,12 +81,12 @@ func (dc *DataContext) ExecMethod(methodName string, args []interface{}) (interf
 	structAndMethod := strings.Split(methodName, ".")
 	//Dimit rule
 	if len(structAndMethod) != 2 {
-		return nil, errors.Errorf("Not supported call, just support struct.method call, now length is %d", len(structAndMethod))
+		return nil, errors.New(fmt.Sprintf("Not supported call, just support struct.method call, now length is %d", len(structAndMethod)))
 	}
 
-	dc.lockMap.Lock()
+	dc.lockBase.Lock()
 	v := dc.base[structAndMethod[0]]
-	dc.lockMap.Unlock()
+	dc.lockBase.Unlock()
 
 	if v != nil {
 		res, err := core.InvokeFunction(v, structAndMethod[1], args)
@@ -94,7 +95,7 @@ func (dc *DataContext) ExecMethod(methodName string, args []interface{}) (interf
 		}
 		return res, nil
 	}
-	return nil, errors.Errorf("Not found method: %s", methodName)
+	return nil, errors.New(fmt.Sprintf("Not found method: %s", methodName))
 }
 
 /**
@@ -106,34 +107,40 @@ func (dc *DataContext) GetValue(Vars map[string]interface{}, variable string) (i
 		structAndField := strings.Split(variable, ".")
 		//Dimit rule
 		if len(structAndField) != 2 {
-			return nil, errors.Errorf("Not supported Field, just support struct.field , now length is %d", len(structAndField))
+			return nil, errors.New(fmt.Sprintf("Not supported Field, just support struct.field, now length is %d", len(structAndField)))
 		}
 
-		dc.lockMap.Lock()
+		dc.lockBase.Lock()
 		v := dc.base[structAndField[0]]
-		dc.lockMap.Unlock()
+		dc.lockBase.Unlock()
 
 		if v != nil {
 			return core.GetStructAttributeValue(v, structAndField[1])
 		}
 
 		//for return struct or struct ptr
-		if obj, ok := Vars[structAndField[0]]; ok {
+		dc.lockVars.Lock()
+		obj, ok := Vars[structAndField[0]]
+		dc.lockVars.Unlock()
+		if ok {
 			return core.GetStructAttributeValue(obj, structAndField[1])
 		}
 	} else {
 		//user set
-		dc.lockMap.Lock()
+		dc.lockBase.Lock()
 		v := dc.base[variable]
-		dc.lockMap.Unlock()
+		dc.lockBase.Unlock()
 
 		if v != nil {
 			return v, nil
 		}
 		//in RuleEntity
-		return Vars[variable], nil
+		dc.lockVars.Lock()
+		res := Vars[variable]
+		dc.lockVars.Unlock()
+		return res, nil
 	}
-	return nil, errors.Errorf("Did not found variable : %s ", variable)
+	return nil, errors.New(fmt.Sprintf("Did not found variable : %s ", variable))
 }
 
 func (dc *DataContext) SetValue(Vars map[string]interface{}, variable string, newValue interface{}) error {
@@ -141,21 +148,21 @@ func (dc *DataContext) SetValue(Vars map[string]interface{}, variable string, ne
 		structAndField := strings.Split(variable, ".")
 		//Dimit rule
 		if len(structAndField) != 2 {
-			return errors.Errorf("Not supported Field, just support struct.field , now length is %d", len(structAndField))
+			return errors.New(fmt.Sprintf("just support struct.field, now length is %d", len(structAndField)))
 		}
 
-		dc.lockMap.Lock()
+		dc.lockBase.Lock()
 		v := dc.base[structAndField[0]]
-		dc.lockMap.Unlock()
+		dc.lockBase.Unlock()
 
 		if v != nil {
 			return core.SetAttributeValue(v, structAndField[1], newValue)
 		}
 	} else {
 		//in RuleEntity
-		dc.lock.Lock()
+		dc.lockVars.Lock()
 		Vars[variable] = newValue
-		dc.lock.Unlock()
+		dc.lockVars.Unlock()
 		return nil
 	}
 	return errors.New("setValue not found error.")
@@ -351,7 +358,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 				splits := strings.Split(mapVarName, ".")
 				stru, err := dc.Get(splits[0])
 				if err != nil {
-					return errors.Errorf("Not Found struct :%s", stru)
+					return errors.New(fmt.Sprintf("Not Found struct :%s", stru))
 				}
 
 				if len(mapVarVarkey) > 0 {

@@ -2,7 +2,7 @@ package base
 
 import (
 	"gengine/context"
-	"github.com/sirupsen/logrus"
+	"github.com/google/martian/log"
 	"sync"
 )
 
@@ -10,7 +10,7 @@ type ConcStatement struct {
 	Assignments   []*Assignment
 	FunctionCalls []*FunctionCall
 	MethodCalls   []*MethodCall
-	dataCtx *context.DataContext
+	dataCtx       *context.DataContext
 }
 
 func (cs *ConcStatement) Initialize(dc *context.DataContext) {
@@ -64,7 +64,7 @@ func (cs *ConcStatement) Evaluate(Vars map[string]interface{}) (interface{}, err
 		if aLen > 0 {
 			_, e := cs.Assignments[0].Evaluate(Vars)
 			if e != nil {
-				logrus.Errorf("conc block sort Assignment evaluate err: %+v ", e)
+				log.Errorf("conc block sort Assignment evaluate err: %+v ", e)
 			}
 			return nil, e
 		}
@@ -72,7 +72,7 @@ func (cs *ConcStatement) Evaluate(Vars map[string]interface{}) (interface{}, err
 		if fLen > 0 {
 			_, e := cs.FunctionCalls[0].Evaluate(Vars)
 			if e != nil {
-				logrus.Errorf("conc block sort FunctionCall evaluate err: %+v ", e)
+				log.Errorf("conc block sort FunctionCall evaluate err: %+v ", e)
 			}
 			return nil, e
 		}
@@ -80,7 +80,7 @@ func (cs *ConcStatement) Evaluate(Vars map[string]interface{}) (interface{}, err
 		if mLen > 0 {
 			_, e := cs.MethodCalls[0].Evaluate(Vars)
 			if e != nil {
-				logrus.Errorf("conc block sort FunctionCall evaluate err: %+v ", e)
+				log.Errorf("conc block sort FunctionCall evaluate err: %+v ", e)
 			}
 			return nil, e
 		}
@@ -93,7 +93,7 @@ func (cs *ConcStatement) Evaluate(Vars map[string]interface{}) (interface{}, err
 			go func() {
 				_, e := assignment.Evaluate(Vars)
 				if e != nil {
-					logrus.Errorf("concStatement Assignment err: %+v ", e)
+					log.Errorf("concStatement Assignment err: %+v ", e)
 				}
 				wg.Done()
 			}()
@@ -103,7 +103,7 @@ func (cs *ConcStatement) Evaluate(Vars map[string]interface{}) (interface{}, err
 			go func() {
 				_, e := fun.Evaluate(Vars)
 				if e != nil {
-					logrus.Errorf("concStatement FunctionCall err: %+v ", e)
+					log.Errorf("concStatement FunctionCall err: %+v ", e)
 				}
 				wg.Done()
 			}()
@@ -114,7 +114,7 @@ func (cs *ConcStatement) Evaluate(Vars map[string]interface{}) (interface{}, err
 			go func() {
 				_, e := meth.Evaluate(Vars)
 				if e != nil {
-					logrus.Errorf("concStatement MethodCall err: %+v ", e)
+					log.Errorf("concStatement MethodCall err: %+v ", e)
 				}
 				wg.Done()
 			}()

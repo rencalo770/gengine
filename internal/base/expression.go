@@ -1,6 +1,7 @@
 package base
 
 import (
+	"fmt"
 	"gengine/context"
 	"gengine/internal/core/errors"
 	"reflect"
@@ -22,6 +23,7 @@ var TypeMap = map[string]string{
 }
 
 type Expression struct {
+	SourceCode
 	ExpressionLeft     *Expression
 	ExpressionRight    *Expression
 	ExpressionAtom     *ExpressionAtom
@@ -29,7 +31,7 @@ type Expression struct {
 	LogicalOperator    string
 	ComparisonOperator string
 	NotOperator        string
-	dataCtx *context.DataContext
+	dataCtx            *context.DataContext
 }
 
 func (e *Expression) Initialize(dc *context.DataContext) {
@@ -137,7 +139,7 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 				b = flv.Bool() || frv.Bool()
 			}
 		} else {
-			return nil, errors.Errorf(" || or && can't be used between %s and %s", flv.Kind().String(), frv.Kind().String())
+			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, || or && can't be used between %s and %s:\n", e.LineNum, e.Column, e.Code, flv.Kind().String(), frv.Kind().String()))
 		}
 	}
 
@@ -182,7 +184,7 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 				b = flv.String() <= frv.String()
 				break
 			default:
-				return nil, errors.Errorf("Can't be recognized ComparisonOperator: %s", e.ComparisonOperator)
+				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, Can't be recognized ComparisonOperator: %s", e.LineNum, e.Column, e.Code, e.ComparisonOperator))
 			}
 			goto LAST
 		}
@@ -236,7 +238,7 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 					b = ll <= rr
 					break
 				default:
-					return nil, errors.Errorf("Can't be recognized ComparisonOperator: %s", e.ComparisonOperator)
+					return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, Can't be recognized ComparisonOperator: %s", e.LineNum, e.Column, e.Code, e.ComparisonOperator))
 				}
 			}
 			goto LAST
@@ -251,7 +253,7 @@ func (e *Expression) Evaluate(Vars map[string]interface{}) (interface{}, error) 
 				b = flv.Bool() != frv.Bool()
 				break
 			default:
-				return nil, errors.Errorf("Can't be recognized ComparisonOperator: %s", e.ComparisonOperator)
+				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, Can't be recognized ComparisonOperator: %s", e.LineNum, e.Column, e.Code, e.ComparisonOperator))
 			}
 			goto LAST
 		}
@@ -284,5 +286,5 @@ LAST:
 			return b, nil
 		}
 	}
-	return nil, errors.New("evaluate Expression err!")
+	return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, evaluate Expression err!", e.LineNum, e.Column, e.Code))
 }

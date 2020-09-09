@@ -1,7 +1,7 @@
 package base
 
 import (
-	"fmt"
+	"errors"
 	"gengine/context"
 )
 
@@ -11,7 +11,7 @@ type Arg struct {
 	FunctionCall *FunctionCall
 	MethodCall   *MethodCall
 	MapVar       *MapVar
-	dataCtx *context.DataContext
+	dataCtx      *context.DataContext
 }
 
 func (a *Arg) Initialize(dc *context.DataContext) {
@@ -54,5 +54,5 @@ func (a *Arg) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		return a.MapVar.Evaluate(Vars)
 	}
 
-	return nil, fmt.Errorf("argHolder holder has more values than want！")
+	return nil, errors.New("argHolder holder has more values than want！")
 }

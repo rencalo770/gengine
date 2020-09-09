@@ -1,6 +1,7 @@
 package iparser
 
 import (
+	"fmt"
 	"gengine/internal/base"
 	"gengine/internal/core/errors"
 	parser "gengine/internal/iantlr/alr"
@@ -35,7 +36,7 @@ func (g *GengineParserListener) AddError(e error) {
 func (g *GengineParserListener) VisitTerminal(node antlr.TerminalNode) {}
 
 func (g *GengineParserListener) VisitErrorNode(node antlr.ErrorNode) {
-	g.AddError(errors.Errorf("cannot recognize '" + node.GetText() + "' "))
+	g.AddError(errors.New(fmt.Sprintf("cannot recognize token : %s", node.GetText())))
 }
 
 func (g *GengineParserListener) EnterEveryRule(ctx antlr.ParserRuleContext) {}
@@ -60,7 +61,7 @@ func (g *GengineParserListener) ExitRuleEntity(ctx *parser.RuleEntityContext) {
 	}
 	entity := g.Stack.Pop().(*base.RuleEntity)
 	if _, ok := g.KnowledgeContext.RuleEntities[entity.RuleName]; ok {
-		g.AddError(errors.Errorf("already existed entity's name \"%s\"", entity.RuleName))
+		g.AddError(errors.New(fmt.Sprintf("already existed entity's name \"%s\"", entity.RuleName)))
 		return
 	}
 	g.KnowledgeContext.RuleEntities[entity.RuleName] = entity
@@ -142,9 +143,15 @@ func (g *GengineParserListener) ExitAssignment(ctx *parser.AssignmentContext) {
 	if len(g.ParseErrors) > 0 {
 		return
 	}
-	assignment := g.Stack.Pop().(*base.Assignment)
+	expr := g.Stack.Pop().(*base.Assignment)
+
+	expr.Code = ctx.GetText()
+	expr.LineNum = ctx.GetStart().GetLine()
+	expr.Column = ctx.GetStart().GetColumn()
+	expr.LineStop = ctx.GetStop().GetColumn()
+
 	holder := g.Stack.Peek().(base.AssignmentHolder)
-	err := holder.AcceptAssignment(assignment)
+	err := holder.AcceptAssignment(expr)
 	if err != nil {
 		g.AddError(err)
 	}
@@ -164,6 +171,12 @@ func (g *GengineParserListener) ExitMathExpression(ctx *parser.MathExpressionCon
 		return
 	}
 	expr := g.Stack.Pop().(*base.MathExpression)
+
+	expr.Code = ctx.GetText()
+	expr.LineNum = ctx.GetStart().GetLine()
+	expr.Column = ctx.GetStart().GetColumn()
+	expr.LineStop = ctx.GetStop().GetColumn()
+
 	holder := g.Stack.Peek().(base.MathExpressionHolder)
 	err := holder.AcceptMathExpression(expr)
 	if err != nil {
@@ -184,6 +197,12 @@ func (g *GengineParserListener) ExitExpression(ctx *parser.ExpressionContext) {
 		return
 	}
 	expr := g.Stack.Pop().(*base.Expression)
+
+	expr.Code = ctx.GetText()
+	expr.LineNum = ctx.GetStart().GetLine()
+	expr.Column = ctx.GetStart().GetColumn()
+	expr.LineStop = ctx.GetStop().GetColumn()
+
 	holder := g.Stack.Peek().(base.ExpressionHolder)
 	err := holder.AcceptExpression(expr)
 	if err != nil {
@@ -203,9 +222,15 @@ func (g *GengineParserListener) ExitExpressionAtom(ctx *parser.ExpressionAtomCon
 	if len(g.ParseErrors) > 0 {
 		return
 	}
-	exprAtom := g.Stack.Pop().(*base.ExpressionAtom)
+	expr := g.Stack.Pop().(*base.ExpressionAtom)
+
+	expr.Code = ctx.GetText()
+	expr.LineNum = ctx.GetStart().GetLine()
+	expr.Column = ctx.GetStart().GetColumn()
+	expr.LineStop = ctx.GetStop().GetColumn()
+
 	holder := g.Stack.Peek().(base.ExpressionAtomHolder)
-	err := holder.AcceptExpressionAtom(exprAtom)
+	err := holder.AcceptExpressionAtom(expr)
 	if err != nil {
 		g.AddError(err)
 	}
@@ -225,9 +250,15 @@ func (g *GengineParserListener) ExitMethodCall(ctx *parser.MethodCallContext) {
 	if len(g.ParseErrors) > 0 {
 		return
 	}
-	methodCall := g.Stack.Pop().(*base.MethodCall)
+	expr := g.Stack.Pop().(*base.MethodCall)
+
+	expr.Code = ctx.GetText()
+	expr.LineNum = ctx.GetStart().GetLine()
+	expr.Column = ctx.GetStart().GetColumn()
+	expr.LineStop = ctx.GetStop().GetColumn()
+
 	holder := g.Stack.Peek().(base.MethodCallHolder)
-	err := holder.AcceptMethodCall(methodCall)
+	err := holder.AcceptMethodCall(expr)
 	if err != nil {
 		g.AddError(err)
 	}
@@ -247,9 +278,14 @@ func (g *GengineParserListener) ExitFunctionCall(ctx *parser.FunctionCallContext
 	if len(g.ParseErrors) > 0 {
 		return
 	}
-	funcCall := g.Stack.Pop().(*base.FunctionCall)
+	expr := g.Stack.Pop().(*base.FunctionCall)
+
+	expr.Code = ctx.GetText()
+	expr.LineNum = ctx.GetStart().GetLine()
+	expr.Column = ctx.GetStart().GetColumn()
+	expr.LineStop = ctx.GetStop().GetColumn()
 	holder := g.Stack.Peek().(base.FunctionCallHolder)
-	err := holder.AcceptFunctionCall(funcCall)
+	err := holder.AcceptFunctionCall(expr)
 	if err != nil {
 		g.AddError(err)
 	}
@@ -269,9 +305,9 @@ func (g *GengineParserListener) ExitFunctionArgs(ctx *parser.FunctionArgsContext
 	if len(g.ParseErrors) > 0 {
 		return
 	}
-	funcArgs := g.Stack.Pop().(*base.Args)
+	expr := g.Stack.Pop().(*base.Args)
 	argHolder := g.Stack.Peek().(base.ArgsHolder)
-	err := argHolder.AcceptArgs(funcArgs)
+	err := argHolder.AcceptArgs(expr)
 	if err != nil {
 		g.AddError(err)
 	}
@@ -410,7 +446,7 @@ func (g *GengineParserListener) ExitRealLiteral(ctx *parser.RealLiteralContext) 
 	cons := g.Stack.Peek().(*base.Constant)
 	flo, err := strconv.ParseFloat(ctx.GetText(), 64)
 	if err != nil {
-		g.AddError(errors.Errorf("string to float conversion error. String is not real type '%s'", ctx.GetText()))
+		g.AddError(errors.New(fmt.Sprintf("string to float conversion error. String is not real type '%s'", ctx.GetText())))
 		return
 	}
 	cons.ConstantValue = flo

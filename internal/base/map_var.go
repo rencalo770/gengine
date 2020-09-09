@@ -1,6 +1,7 @@
 package base
 
 import (
+	"fmt"
 	"gengine/context"
 	"gengine/internal/core"
 	"gengine/internal/core/errors"
@@ -10,10 +11,11 @@ import (
 
 //support map or array
 type MapVar struct {
-	Name   string // map name
-	Intkey int64  // array index
-	Strkey string // map key
-	Varkey string // array index or map key
+	SourceCode
+	Name    string // map name
+	Intkey  int64  // array index
+	Strkey  string // map key
+	Varkey  string // array index or map key
 	dataCtx *context.DataContext
 }
 
@@ -25,7 +27,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 
 	value, e := m.dataCtx.GetValue(Vars, m.Name)
 	if e != nil {
-		return nil, e
+		return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 	}
 	typeName := reflect.TypeOf(value).String()
 
@@ -38,12 +40,12 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		if len(m.Varkey) > 0 {
 			key, e := m.dataCtx.GetValue(Vars, m.Varkey)
 			if e != nil {
-				return nil, e
+				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 			}
 
 			wantedKey, e := core.GetWantedValue(key, keyType)
 			if e != nil {
-				return nil, e
+				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 			}
 			return reflect.ValueOf(value).MapIndex(reflect.ValueOf(wantedKey)).Interface(), nil
 		}
@@ -55,7 +57,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		//intKey
 		wantedKey, e := core.GetWantedValue(m.Intkey, keyType)
 		if e != nil {
-			return nil, e
+			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 		}
 
 		return reflect.ValueOf(value).MapIndex(reflect.ValueOf(wantedKey)).Interface(), nil
@@ -66,7 +68,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		if len(m.Varkey) > 0 {
 			wantedKey, e := m.dataCtx.GetValue(Vars, m.Varkey)
 			if e != nil {
-				return nil, e
+				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 			}
 			return reflect.ValueOf(value).Index(int(reflect.ValueOf(wantedKey).Int())).Interface(), nil
 		}
@@ -74,7 +76,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		if m.Intkey >= 0 {
 			return reflect.ValueOf(value).Index(int(m.Intkey)).Interface(), nil
 		} else {
-			return nil, errors.New("Slice or Array index must be non-negative!")
+			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, Slice or Array index must be non-negative!", m.LineNum, m.Column, m.Code))
 		}
 	}
 
@@ -86,11 +88,11 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		if len(m.Varkey) > 0 {
 			key, e := m.dataCtx.GetValue(Vars, m.Varkey)
 			if e != nil {
-				return nil, e
+				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 			}
 			wantedKey, e := core.GetWantedValue(key, keyType)
 			if e != nil {
-				return nil, e
+				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 			}
 			return reflect.ValueOf(value).Elem().MapIndex(reflect.ValueOf(wantedKey)).Interface(), nil
 		}
@@ -101,7 +103,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 
 		wantedKey, e := core.GetWantedValue(m.Intkey, keyType)
 		if e != nil {
-			return nil, e
+			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 		}
 		return reflect.ValueOf(value).Elem().MapIndex(reflect.ValueOf(wantedKey)).Interface(), nil
 	}
@@ -112,7 +114,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		if len(m.Varkey) > 0 {
 			wantedKey, e := m.dataCtx.GetValue(Vars, m.Varkey)
 			if e != nil {
-				return nil, e
+				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 			}
 			return reflect.ValueOf(value).Elem().Index(int(reflect.ValueOf(wantedKey).Int())).Interface(), nil
 		}
@@ -120,11 +122,11 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		if m.Intkey >= 0 {
 			return reflect.ValueOf(value).Elem().Index(int(m.Intkey)).Interface(), nil
 		} else {
-			return nil, errors.New("Slice or Array index must be non-negative!")
+			return nil, errors.New(fmt.Sprintf("line %d, column %d, code %s, Slice or Array index must be non-negative!", m.LineNum, m.Column, m.Code))
 		}
 	}
 
-	return nil, errors.New("Evaluate MapVarValue Only support directly-Pointer-Map, directly-Pointer-Slice and directly-Pointer-Array  or Map, Slice and Array in Pointer-Struct!")
+	return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, Evaluate MapVarValue Only support directly-Pointer-Map, directly-Pointer-Slice and directly-Pointer-Array  or Map, Slice and Array in Pointer-Struct!", m.LineNum, m.Column, m.Code))
 }
 
 func (m *MapVar) AcceptVariable(name string) error {

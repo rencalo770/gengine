@@ -1,10 +1,11 @@
 package engine
 
 import (
+	"fmt"
 	"gengine/builder"
 	"gengine/internal/base"
 	"gengine/internal/core/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/google/martian/log"
 	"sort"
 	"sync"
 )
@@ -34,9 +35,9 @@ func (g *Gengine) Execute(rb *builder.RuleBuilder, b bool) error {
 		err := r.Execute()
 		if err != nil {
 			if b {
-				logrus.Errorf("rule: %s executed, error: %+v ", r.RuleName, err)
+				log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err)
 			} else {
-				return errors.Errorf("rule: %s executed, error: %+v ", r.RuleName, err)
+				return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err))
 			}
 		}
 	}
@@ -63,9 +64,9 @@ func (g *Gengine) ExecuteWithStopTagDirect(rb *builder.RuleBuilder, b bool, sTag
 		err := r.Execute()
 		if err != nil {
 			if b {
-				logrus.Errorf("rule: %s executed, error: %+v ", r.RuleName, err)
+				log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err)
 			} else {
-				return errors.Errorf("rule: %s executed, error: %+v ", r.RuleName, err)
+				return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err))
 			}
 		}
 
@@ -89,7 +90,7 @@ func (g *Gengine) ExecuteConcurrent(rb *builder.RuleBuilder) {
 			go func() {
 				e := rr.Execute()
 				if e != nil {
-					logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
+					log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e)
 				}
 				wg.Done()
 			}()
@@ -109,7 +110,7 @@ func (g *Gengine) ExecuteMixModel(rb *builder.RuleBuilder) {
 	if len(rules) > 0 {
 		e := rules[0].Execute()
 		if e != nil {
-			logrus.Errorf("the most high priority rule: [%s]  exe err:%+v", rules[0].RuleName, e)
+			log.Errorf("the most high priority rule: \"%s\"  executed, error:\n %+v", rules[0].RuleName, e)
 		}
 	} else {
 		return
@@ -123,7 +124,7 @@ func (g *Gengine) ExecuteMixModel(rb *builder.RuleBuilder) {
 			go func() {
 				e := rr.Execute()
 				if e != nil {
-					logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
+					log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e)
 				}
 				wg.Done()
 			}()
@@ -151,7 +152,7 @@ func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb *builder.RuleBuilder, sTag
 	if len(rules) > 0 {
 		e := rules[0].Execute()
 		if e != nil {
-			logrus.Errorf("the most high priority rule: [%s]  exe err:%+v", rules[0].RuleName, e)
+			log.Errorf("the most high priority rule: \"%s\"  executed, error:\n %+v", rules[0].RuleName, e)
 		}
 	} else {
 		return
@@ -166,7 +167,7 @@ func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb *builder.RuleBuilder, sTag
 				go func() {
 					e := rr.Execute()
 					if e != nil {
-						logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
+						log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e)
 					}
 					wg.Done()
 				}()
@@ -186,7 +187,7 @@ func (g *Gengine) ExecuteSelectedRules(rb *builder.RuleBuilder, names []string) 
 			rr := ruleEntity
 			rules = append(rules, rr)
 		} else {
-			logrus.Infof("no such rule named: %s", name)
+			log.Infof("no such rule named: \"%s\"", name)
 		}
 	}
 
@@ -204,7 +205,7 @@ func (g *Gengine) ExecuteSelectedRules(rb *builder.RuleBuilder, names []string) 
 		rr := rule
 		e := rr.Execute()
 		if e != nil {
-			logrus.Errorf("execute rule :%s, err:%+v", rr.RuleName, e)
+			log.Errorf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e)
 		}
 	}
 }
@@ -220,7 +221,7 @@ func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names 
 			rr := ruleEntity
 			rules = append(rules, rr)
 		} else {
-			logrus.Infof("no such rule named: %s", name)
+			log.Infof("no such rule named: \"%s\"", name)
 		}
 	}
 
@@ -231,7 +232,7 @@ func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names 
 	if len(rules) <= 1 {
 		e := rules[0].Execute()
 		if e != nil {
-			logrus.Errorf("execute rule: %s, err: %+v", rules[0].RuleName, e)
+			log.Errorf("rule: \"%s\" executed, error:\n %+v ", rules[0].RuleName, e)
 		}
 		return
 	}
@@ -243,7 +244,7 @@ func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names 
 		go func() {
 			e := rr.Execute()
 			if e != nil {
-				logrus.Errorf("in rule:%s execute rule err:  %+v", r.RuleName, e)
+				log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e)
 			}
 			wg.Done()
 		}()

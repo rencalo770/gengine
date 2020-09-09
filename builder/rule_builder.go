@@ -1,6 +1,7 @@
 package builder
 
 import (
+	"fmt"
 	"gengine/context"
 	"gengine/internal/base"
 	"gengine/internal/core/errors"
@@ -41,12 +42,12 @@ func (builder *RuleBuilder) BuildRuleFromString(ruleString string) error {
 
 	if len(errListener.GrammarErrors) > 0 {
 		builder.Kc.ClearRules()
-		return errors.Errorf("%+v", errListener.GrammarErrors)
+		return errors.New(fmt.Sprintf("%+v", errListener.GrammarErrors))
 	}
 
 	if len(listener.ParseErrors) > 0 {
 		builder.Kc.ClearRules()
-		return errors.Errorf("%+v", listener.ParseErrors)
+		return errors.New(fmt.Sprintf("%+v", listener.ParseErrors))
 	}
 
 	//initial
