@@ -158,8 +158,7 @@ func (gp *GenginePool) getGengine() (*gengineWrapper, error) {
 		if freeAddition > 0 {
 			gp.additionLock.Lock()
 			gw := gp.additionGengines[0]
-			copy(gp.additionGengines, gp.additionGengines[:1])
-			gp.additionGengines = gp.additionGengines[:freeAddition-1]
+			gp.additionGengines = gp.additionGengines[1:]
 
 			gp.additionLock.Unlock()
 			gp.getEngineLock.Unlock()
