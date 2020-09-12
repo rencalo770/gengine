@@ -71,6 +71,16 @@ func GetRawTypeValue(rs []reflect.Value) (interface{}, error) {
 			return newPtr.Interface(), nil
 		case reflect.Slice, reflect.Map, reflect.Array:
 			return rs[0].Interface(), nil
+		case reflect.Interface:
+			return rs[0].Interface(), nil
+		case reflect.Chan:
+			return rs[0].Interface(), nil
+		case reflect.Complex64:
+			return complex64(rs[0].Complex()),nil
+		case reflect.Complex128:
+			return rs[0].Complex(),nil
+		case reflect.Func:
+			return rs[0].Interface(), nil
 		default:
 			return nil, errors.New(fmt.Sprintf("Can't be handled type: %s", rs[0].Kind().String()))
 		}
@@ -206,6 +216,22 @@ func SetAttributeValue(obj interface{}, fieldName string, value interface{}) err
 		case reflect.Slice:
 			field.Set(reflect.ValueOf(value))
 			break
+		case reflect.Map:
+			field.Set(reflect.ValueOf(value))
+		case reflect.Array:
+			field.Set(reflect.ValueOf(value))
+		case reflect.Struct:
+			field.Set(reflect.ValueOf(value))
+		case reflect.Interface:
+			field.Set(reflect.ValueOf(value))
+		case reflect.Chan:
+			field.Set(reflect.ValueOf(value))
+		case reflect.Complex64:
+			field.SetComplex(reflect.ValueOf(value).Complex())
+		case reflect.Complex128:
+			field.SetComplex(reflect.ValueOf(value).Complex())
+		case reflect.Func:
+			field.Set(reflect.ValueOf(value))
 		default:
 			return errors.New(fmt.Sprintf("Not support type:%s", field.Type().Kind().String()))
 		}

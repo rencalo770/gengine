@@ -3,6 +3,7 @@ package icore
 import (
 	"bytes"
 	"encoding/gob"
+	"fmt"
 	"testing"
 )
 
@@ -43,14 +44,18 @@ func Test_copy(t *testing.T) {
 }
 
 func Test_1_copy(t *testing.T) {
+	//gw := gp.freeGengines[0]
+	//copy(gp.freeGengines, gp.freeGengines[:1])
+	//gp.freeGengines = gp.freeGengines[:numFree-1]
 
-	/*	a1 := []int16{1}
-		copy(a1, a1[1:])
-		a1 = a1[:1-1]
-		println(fmt.Sprintf("%+v", a1))*/
-	var s []int
-	println(len(s))
-	s = append(s, 1)
-	println(len(s))
+	a1 := []int16{1, 2}
+	x := a1[0]
+	//copy(a1, a1[:1])
+	a1 = a1[1:]
+	println(fmt.Sprintf("%d,%+v", x, a1))
+	//var s []int
+	//println(len(s))
+	//s = append(s, 1)
+	//println(len(s))
 
 }
