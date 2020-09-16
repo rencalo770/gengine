@@ -378,6 +378,15 @@ func ParamsTypeChange(f interface{}, params []interface{}) []interface{} {
 				params[i] = reflect.ValueOf(params[i]).Float()
 			}
 			break
+		case reflect.Ptr:
+			if !reflect.ValueOf(params[i]).IsValid(){
+				params[i] = reflect.New(tf.In(i).Elem()).Interface()
+			}
+			break
+		case reflect.Interface:
+			if !reflect.ValueOf(params[i]).IsValid(){
+				params[i] = reflect.New(tf.In(i)).Interface()
+			}
 		default:
 			continue
 		}
