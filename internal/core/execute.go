@@ -9,7 +9,14 @@ import (
 
 func InvokeFunction(obj interface{}, methodName string, parameters []interface{}) (interface{}, error) {
 	objVal := reflect.ValueOf(obj)
-	fun := objVal.MethodByName(methodName).Interface()
+
+	f := objVal.MethodByName(methodName)//.Interface()
+	var fun interface{}
+	if !f.IsValid() {
+		return nil, errors.New(fmt.Sprintf("NOT FOUND Function: %s", methodName))
+	}else {
+		fun = f.Interface()
+	}
 	//change type for base type params
 	params := ParamsTypeChange(fun, parameters)
 	args := make([]reflect.Value, 0)

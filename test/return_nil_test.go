@@ -58,7 +58,7 @@ live.Getfun(ff)
 
 ii = live.GetInterf()
 live.SetInterf(ii)
-
+x()
 end
 `
 
