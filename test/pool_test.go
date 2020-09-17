@@ -236,5 +236,6 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 
 	}()
 
-	time.Sleep(10000 * time.Second)
+	println("test 10 seconds...")
+	time.Sleep(10 * time.Second)
 }

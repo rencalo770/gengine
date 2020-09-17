@@ -71,7 +71,7 @@ func GetRawTypeValue(rs []reflect.Value) (interface{}, error) {
 			return rs[0].Interface(), nil
 		case reflect.Ptr:
 			if rs[0].IsNil() {
-				return nil, nil
+				return rs[0].Interface(), nil
 			}
 			newPtr := reflect.New(rs[0].Elem().Type())
 			newPtr.Elem().Set(rs[0].Elem())
@@ -386,9 +386,6 @@ func ParamsTypeChange(f interface{}, params []interface{}) []interface{} {
 			}
 			break
 		case reflect.Ptr:
-			if !reflect.ValueOf(params[i]).IsValid(){
-				params[i] = reflect.New(tf.In(i).Elem()).Interface()
-			}
 			break
 		case reflect.Interface:
 			if !reflect.ValueOf(params[i]).IsValid(){

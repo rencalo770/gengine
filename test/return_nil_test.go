@@ -58,7 +58,7 @@ live.Getfun(ff)
 
 ii = live.GetInterf()
 live.SetInterf(ii)
-x()
+live.x()
 end
 `
 
@@ -95,6 +95,9 @@ func (l *Live) GetBoolPtr() *bool {
 }
 
 func (l *Live) SetBoolPtr(b *bool){
+	if b == nil {
+		println("----------b is nil-------")
+	}
 	println("SetBoolPtr...")
 }
 
@@ -243,7 +246,9 @@ func (l *Live) GetInterf() interface{}{
 }
 
 func (l *Live) SetInterf(i interface{}){
-
+	if i == nil {
+		println("interface is nil")
+	}
 	println("SetInterf...")
 }
 
