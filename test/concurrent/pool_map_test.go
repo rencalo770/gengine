@@ -178,7 +178,7 @@ func Test_map_bbb(t *testing.T) {
 		//}
 	}()
 
-	time.Sleep(100 * time.Second)
+	time.Sleep(10 * time.Second)
 
 }
 
@@ -271,6 +271,6 @@ func Test_map_conc(t *testing.T) {
 
 	}()
 
-	time.Sleep(10000 * time.Second)
+	time.Sleep(15 * time.Second)
 
 }
