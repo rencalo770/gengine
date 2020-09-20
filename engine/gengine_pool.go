@@ -84,7 +84,7 @@ func NewGenginePool(poolMinLen, poolMaxLen int64, em int, rulesStr string, apiOu
 			rulebuilder: arb,
 			gengine:     NewGengine(),
 			version:     v,
-			addition:    false,
+			addition:    true,
 		}
 	}
 
@@ -107,6 +107,7 @@ func NewGenginePool(poolMinLen, poolMaxLen int64, em int, rulesStr string, apiOu
 	return p, nil
 }
 
+//this could ensure make thread safety!
 func makeRuleBuilder(ruleStr string, apiOuter map[string]interface{}) (*builder.RuleBuilder, error) {
 	dataContext := context.NewDataContext()
 	if apiOuter != nil {
@@ -127,16 +128,6 @@ func makeRuleBuilder(ruleStr string, apiOuter map[string]interface{}) (*builder.
 	return rb, nil
 }
 
-
-func copyRuleBuilder(src *builder.RuleBuilder) (*builder.RuleBuilder, error) {
-	if src == nil {
-		return nil, errors.New("src ruleBuilder is nil!")
-	}
-	r1 := *src
-	rb := &r1
-	return rb, nil
-}
-
 // if there is no enough gengine source, no request will take a lock
 func (gp *GenginePool) getGengine() (*gengineWrapper, error) {
 
@@ -154,12 +145,11 @@ func (gp *GenginePool) getGengine() (*gengineWrapper, error) {
 		}
 
 		//check if there has addition resource
-		freeAddition := len(gp.additionGengines)
-		if freeAddition > 0 {
+		numAddition := len(gp.additionGengines)
+		if numAddition > 0 {
 			gp.additionLock.Lock()
 			gw := gp.additionGengines[0]
 			gp.additionGengines = gp.additionGengines[1:]
-
 			gp.additionLock.Unlock()
 			gp.getEngineLock.Unlock()
 			return gw, nil
@@ -168,7 +158,7 @@ func (gp *GenginePool) getGengine() (*gengineWrapper, error) {
 		//we can create a new gengine
 		/*		if gp.additionCount < gp.additionNum {
 				gp.additionCount++
-				dstRb, e := copyRuleBuilder(gp.ruleBuilder)
+				dstRb, e := makeRuleBuilder(gp.rStr, gp.apis)
 				if e != nil {
 					gp.additionCount--
 					gp.getEngineLock.Unlock()
@@ -192,11 +182,18 @@ func (gp *GenginePool) getGengine() (*gengineWrapper, error) {
 func (gp *GenginePool) putGengineLocked(gw *gengineWrapper) {
 	//addition resource
 	go func() {
+		if gw.version != gp.version {
+			rb, e :=  makeRuleBuilder(gp.rStr, gp.apis)
+			if e != nil {
+				log.Errorf("async update rules err:%+v", e)
+			}else{
+				gw.version = gp.version
+				gw.rulebuilder = rb
+			}
+		}
 		if gw.addition {
 			gp.additionLock.Lock()
-			if len(gp.additionGengines) < int(gp.additionNum) {
-				gp.additionGengines = append(gp.additionGengines, gw)
-			}
+			gp.additionGengines = append(gp.additionGengines, gw)
 			gp.additionLock.Unlock()
 		} else {
 			gp.runningLock.Lock()
@@ -222,6 +219,7 @@ func (gp *GenginePool) UpdatePooledRules(ruleStr string) error {
 	}else {
 		gp.ruleBuilder = rb
 		gp.version ++
+		gp.rStr= ruleStr
 		gp.clear = false
 		gp.updateLock.Unlock()
 		return nil
@@ -232,6 +230,7 @@ func (gp *GenginePool) UpdatePooledRules(ruleStr string) error {
 func (gp *GenginePool) ClearPoolRules() {
 	gp.updateLock.Lock()
 	gp.ruleBuilder = nil
+	gp.rStr = ""
 	gp.clear = true
 	gp.updateLock.Unlock()
 }
@@ -249,7 +248,7 @@ func (gp *GenginePool) SetExecModel(execModel int) error {
 
 //check the rule whether exist
 func (gp *GenginePool) IsExist(ruleName string) bool {
-	if gp.ruleBuilder == nil || gp.clear{
+	if gp.rStr == "" || gp.clear || gp.ruleBuilder == nil{
 		return false
 	}
 	_, ok := gp.ruleBuilder.Kc.RuleEntities[ruleName]
@@ -261,16 +260,6 @@ func (gp *GenginePool) prepare(reqName string, req interface{}, respName string,
 	gw, e := gp.getGengine()
 	if e != nil {
 		return nil, e
-	}
-
-	if gw.version != gp.version {
-		rb, e := copyRuleBuilder(gp.ruleBuilder)
-		if e != nil {
-			log.Errorf("update rules err:%+v", e)
-			return nil,e
-		}
-		gw.version = gp.version
-		gw.rulebuilder = rb
 	}
 
 	if reqName != "" && req != nil {
@@ -288,16 +277,6 @@ func (gp *GenginePool) prepareWithMultiInput(data map[string]interface{}) (*geng
 	gw, e := gp.getGengine()
 	if e != nil {
 		return nil, e
-	}
-
-	if gw.version != gp.version {
-		rb, e := copyRuleBuilder(gp.ruleBuilder)
-		if e != nil {
-			log.Errorf("update rules err:%+v", e)
-			return nil,e
-		}
-		gw.version = gp.version
-		gw.rulebuilder = rb
 	}
 
 	for k, v := range data {

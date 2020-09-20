@@ -32,7 +32,6 @@ end
 `
 
 func Check(b map[string]*Ranking, x int64) {
-	println("check-----")
 	if b == nil {
 		println("b is nil")
 	}
@@ -46,7 +45,6 @@ type Result struct {
 
 func (r *Result) Add(sid string, an *Ranking) {
 	r.Lock()
-	println("sid=", sid)
 	if an == nil {
 		println("an==nil")
 	} else {
@@ -127,9 +125,11 @@ func Test_map_bbb(t *testing.T) {
 		}
 		var cache []int64
 
-		for k, v := range result.SidResult {
+		var x1 []*Ranking
+		for _, v := range result.SidResult {
 			//time.Sleep(100*time.Nanosecond)
-			println("1k=", k, fmt.Sprintf("v=%+v", v))
+			//println("1k=", k, fmt.Sprintf("v=%+v", v))
+			x1 = append(x1, v)
 		}
 
 		if result.SidResult == nil {
@@ -158,10 +158,11 @@ func Test_map_bbb(t *testing.T) {
 			println("result is nil")
 		}
 		var cache []int64
-
-		for k, v := range result.SidResult {
+		var x1 []*Ranking
+		for _, v := range result.SidResult {
 			//time.Sleep(100*time.Nanosecond)
-			println("1k=", k, fmt.Sprintf("v=%+v", v))
+			x1 = append(x1, v)
+			//println("1k=", k, fmt.Sprintf("v=%+v", v))
 		}
 
 		if result.SidResult == nil {
@@ -177,7 +178,10 @@ func Test_map_bbb(t *testing.T) {
 		}
 		//}
 	}()
-
+	go func() {
+		time.Sleep(1 *time.Second)
+		println("测试运行中...")
+	}()
 	time.Sleep(10 * time.Second)
 
 }
@@ -211,10 +215,11 @@ func Test_map_conc(t *testing.T) {
 				println("result is nil")
 			}
 			var cache []int64
-
-			for k, v := range result.SidResult {
+			var x1 []*Ranking
+			for _, v := range result.SidResult {
 				//time.Sleep(100*time.Nanosecond)
-				println("1k=", k, fmt.Sprintf("v=%+v", v))
+				x1 = append(x1, v)
+				//println("1k=", k, fmt.Sprintf("v=%+v", v))
 			}
 
 			if result.SidResult == nil {
@@ -250,10 +255,11 @@ func Test_map_conc(t *testing.T) {
 				println("result is nil")
 			}
 
-			var cache []int64
-			for k, v := range result.SidResult {
+			var x1 []*Ranking
+			for _, v := range result.SidResult {
 				//time.Sleep(200*time.Nanosecond)
-				println("1k=", k, fmt.Sprintf("v=%+v", v))
+				x1 = append(x1, v)
+				//println("1k=", k, fmt.Sprintf("v=%+v", v))
 			}
 
 			if result.SidResult == nil {
@@ -264,10 +270,17 @@ func Test_map_conc(t *testing.T) {
 				println("yes2_2")
 			}
 
+			var cache []int64
 			for i := 0; i < len(result.SidResult["3"].Sl); i++ {
 				cache = append(cache, result.SidResult["3"].Sl[i])
 			}
 		}
+
+	}()
+
+	go func() {
+		time.Sleep(1 *time.Second)
+		println("测试运行中...")
 
 	}()
 

@@ -105,7 +105,7 @@ func Test_rp1(t *testing.T){
 	}()
 
 
-	time.Sleep(30 *time.Second)
+	time.Sleep(20 *time.Second)
 
 
 
