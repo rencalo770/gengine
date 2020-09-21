@@ -29,6 +29,10 @@ type GenginePool struct {
 	version    int
 	clear      bool //whether rules has been cleared ，if true it means there is no rules in gengine
 
+	rbChan chan *builder.RuleBuilder
+	//total gengine instance number
+	max int64
+
 	getEngineLock sync.RWMutex //just one can get this lock
 }
 
@@ -57,7 +61,6 @@ func NewGenginePool(poolMinLen, poolMaxLen int64, em int, rulesStr string, apiOu
 	if em != 1 && em != 2 && em != 3 {
 		return nil, errors.New(fmt.Sprintf("exec model must be 1 or 2 or 3), now it is %d", em))
 	}
-
 
 	v := 0
 	fg := make([]*gengineWrapper, poolMinLen)
@@ -103,6 +106,7 @@ func NewGenginePool(poolMinLen, poolMaxLen int64, em int, rulesStr string, apiOu
 		additionNum:      poolMaxLen - poolMinLen,
 		additionGengines: ag,
 		clear:            false,
+		max:              poolMaxLen,
 	}
 	return p, nil
 }
@@ -182,15 +186,6 @@ func (gp *GenginePool) getGengine() (*gengineWrapper, error) {
 func (gp *GenginePool) putGengineLocked(gw *gengineWrapper) {
 	//addition resource
 	go func() {
-		if gw.version != gp.version {
-			rb, e :=  makeRuleBuilder(gp.rStr, gp.apis)
-			if e != nil {
-				log.Errorf("async update rules err:%+v", e)
-			}else{
-				gw.version = gp.version
-				gw.rulebuilder = rb
-			}
-		}
 		if gw.addition {
 			gp.additionLock.Lock()
 			gp.additionGengines = append(gp.additionGengines, gw)
@@ -212,16 +207,25 @@ func (gp *GenginePool) putGengineLocked(gw *gengineWrapper) {
 func (gp *GenginePool) UpdatePooledRules(ruleStr string) error {
 	//check the rules
 	gp.updateLock.Lock()
+	defer gp.updateLock.Unlock()
 	rb, e := makeRuleBuilder(ruleStr, gp.apis)
 	if e != nil {
-		gp.updateLock.Unlock()
 		return e
-	}else {
+	} else {
+		newrbChan := make(chan *builder.RuleBuilder, gp.max)
+		for i := 0; i < int(gp.max); i++ {
+			rb, e := makeRuleBuilder(ruleStr, gp.apis)
+			if e != nil {
+				return e
+			} else {
+				newrbChan <- rb
+			}
+		}
+		gp.rbChan = newrbChan
 		gp.ruleBuilder = rb
-		gp.version ++
-		gp.rStr= ruleStr
+		gp.version++
+		gp.rStr = ruleStr
 		gp.clear = false
-		gp.updateLock.Unlock()
 		return nil
 	}
 }
@@ -246,13 +250,24 @@ func (gp *GenginePool) SetExecModel(execModel int) error {
 	return nil
 }
 
+func (gp *GenginePool) GetExecModel() int {
+	return gp.execModel
+}
+
 //check the rule whether exist
 func (gp *GenginePool) IsExist(ruleName string) bool {
-	if gp.rStr == "" || gp.clear || gp.ruleBuilder == nil{
+	if gp.rStr == "" || gp.clear || gp.ruleBuilder == nil {
 		return false
 	}
 	_, ok := gp.ruleBuilder.Kc.RuleEntities[ruleName]
 	return ok
+}
+
+func (gp *GenginePool) GetRulesNumber() int {
+	if gp.rStr == "" || gp.clear || gp.ruleBuilder == nil {
+		return 0
+	}
+	return len(gp.ruleBuilder.Kc.RuleEntities)
 }
 
 func (gp *GenginePool) prepare(reqName string, req interface{}, respName string, resp interface{}) (*gengineWrapper, error) {
@@ -260,6 +275,12 @@ func (gp *GenginePool) prepare(reqName string, req interface{}, respName string,
 	gw, e := gp.getGengine()
 	if e != nil {
 		return nil, e
+	}
+
+	if gw.version != gp.version {
+		rb := <-gp.rbChan
+		gw.version = gp.version
+		gw.rulebuilder = rb
 	}
 
 	if reqName != "" && req != nil {
@@ -277,6 +298,12 @@ func (gp *GenginePool) prepareWithMultiInput(data map[string]interface{}) (*geng
 	gw, e := gp.getGengine()
 	if e != nil {
 		return nil, e
+	}
+
+	if gw.version != gp.version {
+		rb := <-gp.rbChan
+		gw.version = gp.version
+		gw.rulebuilder = rb
 	}
 
 	for k, v := range data {
@@ -485,5 +512,61 @@ func (gp *GenginePool) ExecuteSelectedRulesConcurrentWithMultiInput(data map[str
 	defer gp.putGengineLocked(gw)
 
 	gw.gengine.ExecuteSelectedRulesConcurrent(gw.rulebuilder, names)
+	return nil
+}
+
+/**
+see ExecuteSelectedRulesMixModel in gengine.go
+*/
+func (gp *GenginePool) ExecuteSelectedRulesMixModelWithMultiInput(data map[string]interface{}, names []string) error {
+
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil
+	}
+
+	gw, e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e
+	}
+	//release resource
+	defer gp.putGengineLocked(gw)
+
+	gw.gengine.ExecuteSelectedRulesMixModel(gw.rulebuilder, names)
+	return nil
+}
+
+/***
+this make user could use exemodel to control the select-exemodel
+*/
+func (gp *GenginePool) ExecuteSelected(data map[string]interface{}, names []string) error {
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil
+	}
+
+	gw, e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e
+	}
+	//release resource
+	defer gp.putGengineLocked(gw)
+
+	if gp.execModel == 1 {
+		gw.gengine.ExecuteSelectedRules(gw.rulebuilder, names)
+		return nil
+	}
+
+	if gp.execModel == 2 {
+		gw.gengine.ExecuteSelectedRulesConcurrent(gw.rulebuilder, names)
+		return nil
+	}
+
+	if gp.execModel == 3 {
+		gw.gengine.ExecuteSelectedRulesMixModel(gw.rulebuilder, names)
+		return nil
+	}
 	return nil
 }

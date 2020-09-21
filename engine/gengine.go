@@ -237,9 +237,73 @@ func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names 
 		return
 	}
 
+	// len(rule) >= 2
 	var wg sync.WaitGroup
 	wg.Add(len(rules))
 	for _, r := range rules {
+		rr := r
+		go func() {
+			e := rr.Execute()
+			if e != nil {
+				log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e)
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+}
+
+/**
+user can choose specified name rules to run with mix model
+*/
+func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []string) {
+
+	rules := []*base.RuleEntity{}
+	for _, name := range names {
+		if ruleEntity, ok := rb.Kc.RuleEntities[name]; ok {
+			rr := ruleEntity
+			rules = append(rules, rr)
+		} else {
+			log.Infof("no such rule named: \"%s\"", name)
+		}
+	}
+
+	rLen := len(rules)
+	if rLen < 1 {
+		return
+	}
+
+	if rLen == 1 {
+		e := rules[0].Execute()
+		if e != nil {
+			log.Errorf("rule: \"%s\" executed, error:\n %+v ", rules[0].RuleName, e)
+		}
+		return
+	}
+
+	sort.SliceStable(rules, func(i, j int) bool {
+		return rules[i].Salience > rules[j].Salience
+	})
+
+	if rLen == 2 {
+		for _, r := range rules {
+			err := r.Execute()
+			if err != nil {
+				log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err)
+			}
+		}
+		return
+	}
+
+	// rLen >= 3
+	e := rules[0].Execute()
+	if e != nil {
+		log.Errorf("the most high priority rule: \"%s\"  executed, error:\n %+v", rules[0].RuleName, e)
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(rLen - 1)
+	for _, r := range rules[1:] {
 		rr := r
 		go func() {
 			e := rr.Execute()
