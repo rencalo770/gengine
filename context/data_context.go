@@ -159,14 +159,89 @@ func (dc *DataContext) SetValue(Vars map[string]interface{}, variable string, ne
 			return core.SetAttributeValue(v, structAndField[1], newValue)
 		}
 	} else {
-		//in RuleEntity
-		dc.lockVars.Lock()
-		Vars[variable] = newValue
-		dc.lockVars.Unlock()
-		return nil
+		dc.lockBase.Lock()
+		v, ok := dc.base[variable]
+		dc.lockBase.Unlock()
+		if ok {
+			return dc.setSingleValue(v, variable, newValue)
+		} else {
+			//in RuleEntity
+			dc.lockVars.Lock()
+			Vars[variable] = newValue
+			dc.lockVars.Unlock()
+			return nil
+		}
 	}
-	return errors.New("setValue not found error.")
+	return errors.New(fmt.Sprintf("setValue not found \"%s\" error.", variable))
 }
+
+//set single value
+func (dc *DataContext) setSingleValue(obj interface{}, fieldName string, value interface{}) error {
+
+	if reflect.ValueOf(obj).Kind() == reflect.Ptr {
+		if reflect.ValueOf(value).Kind() == reflect.Ptr {
+			//both ptr
+			value = reflect.ValueOf(value).Elem().Interface()
+		}
+
+		objKind := reflect.ValueOf(obj).Elem().Kind()
+		valueKind := reflect.ValueOf(value).Kind()
+		if objKind == valueKind {
+			reflect.ValueOf(obj).Elem().Set(reflect.ValueOf(value))
+			return nil
+		} else {
+			valueKindStr := valueKind.String()
+			switch objKind {
+			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+				if strings.HasPrefix(valueKindStr, "int") {
+					reflect.ValueOf(obj).Elem().SetInt(reflect.ValueOf(value).Int())
+					return nil
+				}
+				if strings.HasPrefix(valueKindStr, "float") {
+					reflect.ValueOf(obj).Elem().SetInt(int64(reflect.ValueOf(value).Float()))
+					return nil
+				}
+				if strings.HasPrefix(valueKindStr, "uint") {
+					reflect.ValueOf(obj).Elem().SetInt(int64(reflect.ValueOf(value).Uint()))
+					return nil
+				}
+				break
+			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+				if strings.HasPrefix(valueKindStr, "int") && reflect.ValueOf(value).Int() >= 0 {
+					reflect.ValueOf(obj).Elem().SetUint(uint64(reflect.ValueOf(value).Int()))
+					return nil
+				}
+				if strings.HasPrefix(valueKindStr, "float") && reflect.ValueOf(value).Float() >= 0 {
+					reflect.ValueOf(obj).Elem().SetUint(uint64(reflect.ValueOf(value).Float()))
+					return nil
+				}
+				if strings.HasPrefix(valueKindStr, "uint") {
+					reflect.ValueOf(obj).Elem().SetUint(reflect.ValueOf(value).Uint())
+					return nil
+				}
+				break
+			case reflect.Float32, reflect.Float64:
+				if strings.HasPrefix(valueKindStr, "int") {
+					reflect.ValueOf(obj).Elem().SetFloat(float64(reflect.ValueOf(value).Int()))
+					return nil
+				}
+				if strings.HasPrefix(valueKindStr, "float") {
+					reflect.ValueOf(obj).Elem().SetFloat(reflect.ValueOf(value).Float())
+					return nil
+				}
+				if strings.HasPrefix(valueKindStr, "uint") {
+					reflect.ValueOf(obj).Elem().SetFloat(float64(reflect.ValueOf(value).Uint()))
+					return nil
+				}
+				break
+			}
+			return errors.New(fmt.Sprintf("\"%s\" value type \"%s\" is different from \"%s\" ", fieldName, reflect.ValueOf(obj).Elem().Kind().String(), reflect.ValueOf(value).Kind()))
+		}
+	} else {
+		return errors.New(fmt.Sprintf("\"%s\" value is unassignable!", fieldName))
+	}
+}
+
 
 func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, mapVarStrkey, mapVarVarkey string, mapVarIntkey int64, newValue interface{}) error {
 
