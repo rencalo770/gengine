@@ -34,7 +34,7 @@ expressionAtom
     | variable
     ;
 
-assignment : (mapVar | variable) (assignOperator | setOperator)  mathExpression;
+assignment : (mapVar | variable) (assignOperator | setOperator)  (mathExpression| expression);
 
 ifStmt : 'if' expression '{' statements? '}' elseIfStmt*  elseStmt? ;
 
@@ -51,7 +51,7 @@ constant
     ;
 
 functionArgs
-    : (constant | variable  | functionCall | methodCall | mapVar)  (','(constant | variable | functionCall | methodCall | mapVar))*
+    : (constant | variable  | functionCall | methodCall | mapVar | expression)  (','(constant | variable | functionCall | methodCall | mapVar | expression))*
     ;
 
 integer : '-'? INT;

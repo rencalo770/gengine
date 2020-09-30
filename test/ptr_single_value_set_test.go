@@ -12,7 +12,7 @@ const set_single_value_rule = `
 rule "single_value_test"
 begin
 
-px =111
+//px =111
 
 pi = 100
 pi = piv
@@ -46,8 +46,8 @@ func Test_single_value_set(t *testing.T) {
 	dataContext.Add("println", fmt.Println)
 
 	//反例，不可设置
-	var px int
-	dataContext.Add("px", px)
+	//var px int
+	//dataContext.Add("px", px)
 
 	//正例，都可设置
 	var pi int
@@ -96,7 +96,7 @@ func Test_single_value_set(t *testing.T) {
 		println("err-------")
 	}
 
-	println("outer--->", px)
+	//println("outer--->", px)
 
 	println("outer--->", pi)
 	println("outer--->", pf)

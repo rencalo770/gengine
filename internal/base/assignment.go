@@ -13,6 +13,7 @@ type Assignment struct {
 	Variable       string
 	MapVar         *MapVar
 	MathExpression *MathExpression
+	Expression     *Expression
 	dataCtx        *context.DataContext
 }
 
@@ -31,9 +32,20 @@ func (a *Assignment) Evaluate(Vars map[string]interface{}) (value interface{}, e
 		}
 	}()
 
-	mv, err := a.MathExpression.Evaluate(Vars)
-	if err != nil {
-		return nil, err
+	var mv interface{}
+
+	if a.MathExpression != nil {
+		mv, err = a.MathExpression.Evaluate(Vars)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if a.Expression != nil {
+		mv, err = a.Expression.Evaluate(Vars)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if len(a.Variable) > 0 {
@@ -65,6 +77,11 @@ func (a *Assignment) Initialize(dc *context.DataContext) {
 	if a.MapVar != nil {
 		a.MapVar.Initialize(dc)
 	}
+
+	if a.Expression != nil {
+		a.Expression.Initialize(dc)
+	}
+
 }
 
 func (a *Assignment) AcceptMathExpression(me *MathExpression) error {
@@ -89,4 +106,12 @@ func (a *Assignment) AcceptMapVar(mapVar *MapVar) error {
 		return nil
 	}
 	return errors.New("MapVar already set twice!")
+}
+
+func (a *Assignment) AcceptExpression(exp *Expression) error {
+	if a.Expression == nil {
+		a.Expression = exp
+		return nil
+	}
+	return errors.New("Expression already set twice!")
 }

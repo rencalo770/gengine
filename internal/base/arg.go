@@ -11,6 +11,7 @@ type Arg struct {
 	FunctionCall *FunctionCall
 	MethodCall   *MethodCall
 	MapVar       *MapVar
+	Expression   *Expression
 	dataCtx      *context.DataContext
 }
 
@@ -29,6 +30,10 @@ func (a *Arg) Initialize(dc *context.DataContext) {
 	}
 	if a.MapVar != nil {
 		a.MapVar.Initialize(dc)
+	}
+
+	if a.Expression != nil {
+		a.Expression.Initialize(dc)
 	}
 
 }
@@ -52,6 +57,10 @@ func (a *Arg) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 
 	if a.MapVar != nil {
 		return a.MapVar.Evaluate(Vars)
+	}
+
+	if a.Expression != nil {
+		return a.Expression.Evaluate(Vars)
 	}
 
 	return nil, errors.New("argHolder holder has more values than want！")
