@@ -510,11 +510,14 @@ func (g *GengineParserListener) ExitStatements(ctx *parser.StatementsContext) {
 
 func (g *GengineParserListener) EnterAssignOperator(ctx *parser.AssignOperatorContext) {}
 
-func (g *GengineParserListener) ExitAssignOperator(ctx *parser.AssignOperatorContext) {}
+func (g *GengineParserListener) ExitAssignOperator(ctx *parser.AssignOperatorContext) {
 
-func (g *GengineParserListener) EnterSetOperator(ctx *parser.SetOperatorContext) {}
-
-func (g *GengineParserListener) ExitSetOperator(ctx *parser.SetOperatorContext) {}
+	if len(g.ParseErrors) > 0 {
+		return
+	}
+	expr := g.Stack.Peek().(*base.Assignment)
+	expr.AssignOperator = ctx.GetText()
+}
 
 func (g *GengineParserListener) EnterElseIfStmt(ctx *parser.ElseIfStmtContext) {
 	if len(g.ParseErrors) > 0 {

@@ -1,4 +1,4 @@
-// Code generated from /Users/renyunyi/go/src/gengine/internal/iantlr/gengine.g4 by ANTLR 4.7.2. DO NOT EDIT.
+// Code generated from /Users/renyunyi/go/src/gengine/internal/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package parser // gengine
 
@@ -98,9 +98,6 @@ type gengineListener interface {
 	// EnterAssignOperator is called when entering the assignOperator production.
 	EnterAssignOperator(c *AssignOperatorContext)
 
-	// EnterSetOperator is called when entering the setOperator production.
-	EnterSetOperator(c *SetOperatorContext)
-
 	// EnterNotOperator is called when entering the notOperator production.
 	EnterNotOperator(c *NotOperatorContext)
 
@@ -199,9 +196,6 @@ type gengineListener interface {
 
 	// ExitAssignOperator is called when exiting the assignOperator production.
 	ExitAssignOperator(c *AssignOperatorContext)
-
-	// ExitSetOperator is called when exiting the setOperator production.
-	ExitSetOperator(c *SetOperatorContext)
 
 	// ExitNotOperator is called when exiting the notOperator production.
 	ExitNotOperator(c *NotOperatorContext)

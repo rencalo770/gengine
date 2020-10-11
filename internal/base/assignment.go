@@ -3,6 +3,7 @@ package base
 import (
 	"fmt"
 	"gengine/context"
+	"gengine/internal/core"
 	"gengine/internal/core/errors"
 	"runtime"
 )
@@ -12,6 +13,7 @@ type Assignment struct {
 	SourceCode
 	Variable       string
 	MapVar         *MapVar
+	AssignOperator string
 	MathExpression *MathExpression
 	Expression     *Expression
 	dataCtx        *context.DataContext
@@ -48,6 +50,60 @@ func (a *Assignment) Evaluate(Vars map[string]interface{}) (value interface{}, e
 		}
 	}
 
+	var sv interface{}
+
+	if a.AssignOperator == "=" || a.AssignOperator == ":=" {
+		goto END
+	}
+
+	if len(a.Variable) > 0 {
+		sv, err = a.dataCtx.GetValue(Vars, a.Variable)
+		if err != nil {
+			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
+		}
+	}
+
+	if a.MapVar != nil {
+		sv, err = a.MapVar.Evaluate(Vars)
+		if err != nil {
+			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
+		}
+	}
+
+	//var pv interface{}
+	if a.AssignOperator == "+=" {
+		mv, err = core.Add(sv, mv)
+		if err != nil {
+			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
+		}
+		goto END
+	}
+
+	if a.AssignOperator == "-=" {
+		mv, err = core.Sub(sv, mv)
+		if err != nil {
+			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
+		}
+		goto END
+	}
+
+	if a.AssignOperator == "*=" {
+		mv, err = core.Mul(sv, mv)
+		if err != nil {
+			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
+		}
+		goto END
+	}
+
+	if a.AssignOperator == "/=" {
+		mv, err = core.Div(sv, mv)
+		if err != nil {
+			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
+		}
+		goto END
+	}
+
+	END:
 	if len(a.Variable) > 0 {
 		err = a.dataCtx.SetValue(Vars, a.Variable, mv)
 		if err != nil {

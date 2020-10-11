@@ -1,4 +1,4 @@
-// Code generated from /Users/renyunyi/go/src/gengine/internal/iantlr/gengine.g4 by ANTLR 4.7.2. DO NOT EDIT.
+// Code generated from /Users/renyunyi/go/src/gengine/internal/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package parser // gengine
 
@@ -200,12 +200,6 @@ func (s *BasegengineListener) EnterAssignOperator(ctx *AssignOperatorContext) {}
 
 // ExitAssignOperator is called when production assignOperator is exited.
 func (s *BasegengineListener) ExitAssignOperator(ctx *AssignOperatorContext) {}
-
-// EnterSetOperator is called when production setOperator is entered.
-func (s *BasegengineListener) EnterSetOperator(ctx *SetOperatorContext) {}
-
-// ExitSetOperator is called when production setOperator is exited.
-func (s *BasegengineListener) ExitSetOperator(ctx *SetOperatorContext) {}
 
 // EnterNotOperator is called when production notOperator is entered.
 func (s *BasegengineListener) EnterNotOperator(ctx *NotOperatorContext) {}

@@ -34,7 +34,7 @@ expressionAtom
     | variable
     ;
 
-assignment : (mapVar | variable) (assignOperator | setOperator)  (mathExpression| expression);
+assignment : (mapVar | variable) assignOperator (mathExpression| expression);
 
 ifStmt : 'if' expression '{' statements? '}' elseIfStmt*  elseStmt? ;
 
@@ -76,9 +76,7 @@ comparisonOperator : GT | LT | GTE | LTE | EQUALS | NOTEQUALS ;
 
 logicalOperator : AND | OR ;
 
-assignOperator: ASSIGN ;
-
-setOperator: SET;
+assignOperator: ASSIGN | SET | PLUSEQUAL | MINUSEQUAL | MULTIEQUAL | DIVEQUAL ;
 
 notOperator: NOT;
 
@@ -145,6 +143,10 @@ NOT                         : '!' ;
 
 ASSIGN                      : ':=' ;
 SET                         : '=';
+PLUSEQUAL                   : '+=';
+MINUSEQUAL                  : '-=';
+MULTIEQUAL                  : '*=';
+DIVEQUAL                    : '/=';
 
 LSQARE    : '[' ;
 RSQARE    : ']' ;

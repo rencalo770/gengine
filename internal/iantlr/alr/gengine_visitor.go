@@ -1,4 +1,4 @@
-// Code generated from /Users/renyunyi/go/src/gengine/internal/iantlr/gengine.g4 by ANTLR 4.7.2. DO NOT EDIT.
+// Code generated from /Users/renyunyi/go/src/gengine/internal/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package parser // gengine
 
@@ -96,9 +96,6 @@ type gengineVisitor interface {
 
 	// Visit a parse tree produced by gengineParser#assignOperator.
 	VisitAssignOperator(ctx *AssignOperatorContext) interface{}
-
-	// Visit a parse tree produced by gengineParser#setOperator.
-	VisitSetOperator(ctx *SetOperatorContext) interface{}
 
 	// Visit a parse tree produced by gengineParser#notOperator.
 	VisitNotOperator(ctx *NotOperatorContext) interface{}

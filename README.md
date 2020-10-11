@@ -1,6 +1,6 @@
 # Gengine
 - [简体中文](README_zh.md)
-- 使用交流QQ群号:1132683357
+- 使用交流QQ群号:1132683357 (为你解答所有有关的gengine问题)
 
 ## English Doc
 - https://rencalo770.github.io/gengine_en
@@ -9,8 +9,8 @@
 - https://rencalo770.github.io/gengine_doc
 
 ## the rule engine based on golang 
-- this is a rule engine named **Gengine** based on golang and AST, it can help you to load your code(rules) to run while you did not need to restart your application.  
-- Gengine's code structure is Modular design, logic is easy to understand, and it passed the necessary testing！
+- this is a rule engine(or code dynamic load framework) named **Gengine** based on golang and AST, it can help you to load your code(rules) to run while you did not need to restart your application.  
+- Gengine's code structure is Modular design, logic is easy to understand, and necessary testing！
 - it is also a high performance engine    
 
 ## Thinking in Design of gengine
