@@ -100,7 +100,6 @@ func Test_operator(t *testing.T) {
 
 }
 
-
 func Test_golang_base(t *testing.T) {
 
 	a := "hello"
@@ -137,7 +136,6 @@ func Test_golang_base(t *testing.T) {
 	b -= b // b = b - b
 	println("b6--->", b)
 
-
 	b = 10
 	b *= b // b = b * b
 	println("b7--->", b)
@@ -163,8 +161,7 @@ func Test_golang_base(t *testing.T) {
 	println("b12--->", b)
 
 	b = 10
-	b /=b+ 1+ 20  // b = b / (1 + 20)
+	b /= b + 1 + 20 // b = b / (1 + 20)
 	println("b13--->", b)
 
 }
-

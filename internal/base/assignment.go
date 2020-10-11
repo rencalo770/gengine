@@ -103,7 +103,7 @@ func (a *Assignment) Evaluate(Vars map[string]interface{}) (value interface{}, e
 		goto END
 	}
 
-	END:
+END:
 	if len(a.Variable) > 0 {
 		err = a.dataCtx.SetValue(Vars, a.Variable, mv)
 		if err != nil {
