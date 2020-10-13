@@ -13,6 +13,7 @@ const line_number_rule = `
 rule "aaa" "test line number support when execute error" 
 begin
 //SetNumber(101)
+AAA.SetNumber(s)
 a = AAA.SetNumber(SetNumber(101), 888)
 //println(a)
 end

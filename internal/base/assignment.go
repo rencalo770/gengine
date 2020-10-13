@@ -6,6 +6,7 @@ import (
 	"gengine/internal/core"
 	"gengine/internal/core/errors"
 	"runtime"
+	"strings"
 )
 
 // := or =
@@ -30,7 +31,9 @@ func (a *Assignment) Evaluate(Vars map[string]interface{}) (value interface{}, e
 				rs = size
 			}
 			buf = buf[:rs]
-			err = errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v \n%s", a.LineNum, a.Column, a.Code, e, string(buf)))
+			eMsg := fmt.Sprintf("line %d, column %d, code: %s, %+v \n%s", a.LineNum, a.Column, a.Code, e, string(buf))
+			eMsg = strings.Replace(eMsg,"panic","error", 10)
+			err = errors.New(eMsg)
 		}
 	}()
 

@@ -5,6 +5,7 @@ import (
 	"gengine/context"
 	"gengine/internal/core/errors"
 	"runtime"
+	"strings"
 )
 
 type MethodCall struct {
@@ -41,7 +42,9 @@ func (mc *MethodCall) Evaluate(Vars map[string]interface{}) (mr interface{}, err
 				rs = size
 			}
 			buf = buf[:rs]
-			err = errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v \n%s", mc.LineNum, mc.Column, mc.Code, e, string(buf)))
+			eMsg := fmt.Sprintf("line %d, column %d, code: %s, %+v \n%s", mc.LineNum, mc.Column, mc.Code, e, string(buf))
+			eMsg = strings.Replace(eMsg,"panic", "error",10)
+			err = errors.New(eMsg)
 		}
 	}()
 
