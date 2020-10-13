@@ -43,7 +43,7 @@ func (mc *MethodCall) Evaluate(Vars map[string]interface{}) (mr interface{}, err
 			}
 			buf = buf[:rs]
 			eMsg := fmt.Sprintf("line %d, column %d, code: %s, %+v \n%s", mc.LineNum, mc.Column, mc.Code, e, string(buf))
-			eMsg = strings.Replace(eMsg,"panic", "error",10)
+			eMsg = strings.ReplaceAll(eMsg,"panic", "error")
 			err = errors.New(eMsg)
 		}
 	}()
