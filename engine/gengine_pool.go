@@ -5,8 +5,9 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/internal/core/errors"
-	"github.com/google/martian/log"
 	"sync"
+
+	"github.com/google/martian/log"
 )
 
 // when you use NewGenginePool, you just think of it as the connection pool of mysql, the higher QPS you want to support, the more resource you need to give
@@ -334,7 +335,10 @@ func (gp *GenginePool) ExecuteRules(reqName string, req interface{}, respName st
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gp.cleanGwData(gw, []string{reqName, respName})
+		gp.putGengineLocked(gw)
+	}()
 
 	if gp.execModel == 1 { //sort
 		// when some rule execute error ,it will continue to execute last
@@ -373,7 +377,10 @@ func (gp *GenginePool) ExecuteRulesWithMultiInput(data map[string]interface{}) e
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gp.cleanGwData(gw, gp.dataKeys(data))
+		gp.putGengineLocked(gw)
+	}()
 
 	if gp.execModel == 1 { //sort
 		// when some rule execute error ,it will continue to execute last
@@ -416,7 +423,10 @@ func (gp *GenginePool) ExecuteRulesWithStopTag(reqName string, req interface{}, 
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gp.cleanGwData(gw, []string{reqName, respName})
+		gp.putGengineLocked(gw)
+	}()
 
 	if gp.execModel == 1 { //sort
 		// when some rule execute error ,it will continue to execute last
@@ -450,7 +460,10 @@ func (gp *GenginePool) ExecuteRulesWithMultiInputAndStopTag(data map[string]inte
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gp.cleanGwData(gw, gp.dataKeys(data))
+		gp.putGengineLocked(gw)
+	}()
 
 	if gp.execModel == 1 { //sort
 		// when some rule execute error ,it will continue to execute last
@@ -487,7 +500,10 @@ func (gp *GenginePool) ExecuteSelectedRulesWithMultiInput(data map[string]interf
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gp.cleanGwData(gw, gp.dataKeys(data))
+		gp.putGengineLocked(gw)
+	}()
 
 	gw.gengine.ExecuteSelectedRules(gw.rulebuilder, names)
 	return nil
@@ -509,7 +525,10 @@ func (gp *GenginePool) ExecuteSelectedRulesConcurrentWithMultiInput(data map[str
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gp.cleanGwData(gw, gp.dataKeys(data))
+		gp.putGengineLocked(gw)
+	}()
 
 	gw.gengine.ExecuteSelectedRulesConcurrent(gw.rulebuilder, names)
 	return nil
@@ -531,7 +550,10 @@ func (gp *GenginePool) ExecuteSelectedRulesMixModelWithMultiInput(data map[strin
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gp.cleanGwData(gw, gp.dataKeys(data))
+		gp.putGengineLocked(gw)
+	}()
 
 	gw.gengine.ExecuteSelectedRulesMixModel(gw.rulebuilder, names)
 	return nil
@@ -552,7 +574,10 @@ func (gp *GenginePool) ExecuteSelected(data map[string]interface{}, names []stri
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gp.cleanGwData(gw, gp.dataKeys(data))
+		gp.putGengineLocked(gw)
+	}()
 
 	if gp.execModel == 1 {
 		gw.gengine.ExecuteSelectedRules(gw.rulebuilder, names)
@@ -569,4 +594,20 @@ func (gp *GenginePool) ExecuteSelected(data map[string]interface{}, names []stri
 		return nil
 	}
 	return nil
+}
+
+// clean the data
+func (gp *GenginePool) cleanGwData(gw *gengineWrapper, keys []string) {
+	if gw == nil || gw.rulebuilder == nil || gw.rulebuilder.Dc == nil {
+		return
+	}
+	gw.rulebuilder.Dc.Del(keys...)
+}
+
+func (gp *GenginePool) dataKeys(data map[string]interface{}) []string {
+	keys := make([]string, 0, len(data))
+	for k := range data {
+		keys = append(keys, k)
+	}
+	return keys
 }

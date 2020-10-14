@@ -46,6 +46,18 @@ func (dc *DataContext) Get(key string) (interface{}, error) {
 	}
 }
 
+// Del delete the keyes
+func (dc *DataContext) Del(keys ...string) {
+	if len(keys) == 0 {
+		return
+	}
+	dc.lockBase.Lock()
+	for _, k := range keys {
+		delete(dc.base, k)
+	}
+	dc.lockBase.Unlock()
+}
+
 /**
 execute the injected functions
 function execute supply multi return values, but simplify ,just return one value
@@ -241,7 +253,6 @@ func (dc *DataContext) setSingleValue(obj interface{}, fieldName string, value i
 		return errors.New(fmt.Sprintf("\"%s\" value is unassignable!", fieldName))
 	}
 }
-
 
 func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, mapVarStrkey, mapVarVarkey string, mapVarIntkey int64, newValue interface{}) error {
 
