@@ -14,7 +14,7 @@ import (
 )
 
 func readAll() string {
-	f, err := os.Open("/Users/renyunyi/go/src/gengine/test/rule.gengine")
+	f, err := os.Open("../rule.gengine")
 	if err != nil {
 		log.Errorf("read file err: %+v", err)
 	}

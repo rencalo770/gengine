@@ -9,6 +9,7 @@ type KnowledgeContext struct {
 func NewKnowledgeContext() *KnowledgeContext {
 	return &KnowledgeContext{
 		RuleEntities: make(map[string]*RuleEntity),
+		SortRules:    make([]*RuleEntity, 0),
 	}
 }
 

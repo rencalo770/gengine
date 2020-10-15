@@ -119,9 +119,9 @@ func Test_map_bbb(t *testing.T) {
 		result := &Result{SidResult: make(map[string]*Ranking)}
 		ruleBuilder1.Dc.Add("result", result)
 		ruleBuilder1.Dc.Add("request", request)
-		en1.ExecuteSelectedRulesConcurrent(ruleBuilder1, []string{"1"})
-		if result == nil {
-			println("result is nil")
+		e := en1.ExecuteSelectedRulesConcurrent(ruleBuilder1, []string{"1"})
+		if e != nil {
+			panic(e)
 		}
 		var cache []int64
 
@@ -133,17 +133,17 @@ func Test_map_bbb(t *testing.T) {
 		}
 
 		if result.SidResult == nil {
-			println("yes1_1")
+			println("gengine error")
 		}
 
 		if result.SidResult["3"] == nil {
-			println("yes1_2")
+			println("gengine error")
 		}
 
 		for i := 0; i < len(result.SidResult["3"].Sl); i++ {
 			cache = append(cache, result.SidResult["3"].Sl[i])
 		}
-
+		println("test finish...")
 		//	}
 	}()
 
@@ -153,10 +153,11 @@ func Test_map_bbb(t *testing.T) {
 		result := &Result{SidResult: make(map[string]*Ranking)}
 		ruleBuilder2.Dc.Add("result", result)
 		ruleBuilder2.Dc.Add("request", request)
-		en2.ExecuteSelectedRulesConcurrent(ruleBuilder2, []string{"1"})
-		if result == nil {
-			println("result is nil")
+		e := en2.ExecuteSelectedRulesConcurrent(ruleBuilder2, []string{"1"})
+		if e != nil {
+			panic("gengine error")
 		}
+
 		var cache []int64
 		var x1 []*Ranking
 		for _, v := range result.SidResult {
@@ -166,21 +167,18 @@ func Test_map_bbb(t *testing.T) {
 		}
 
 		if result.SidResult == nil {
-			println("yes1_1")
+			println("gengine error")
 		}
 
 		if result.SidResult["3"] == nil {
-			println("yes1_2")
+			println("gengine error")
 		}
 
 		for i := 0; i < len(result.SidResult["3"].Sl); i++ {
 			cache = append(cache, result.SidResult["3"].Sl[i])
 		}
 		//}
-	}()
-	go func() {
-		time.Sleep(1 *time.Second)
-		println("测试运行中...")
+		println("test finish...")
 	}()
 	time.Sleep(10 * time.Second)
 
@@ -199,7 +197,7 @@ func Test_map_conc(t *testing.T) {
 	}
 
 	go func() {
-		for {
+		//for {
 			request := &Request{Uid: 1}
 			data := make(map[string]interface{})
 			data["request"] = request
@@ -223,21 +221,22 @@ func Test_map_conc(t *testing.T) {
 			}
 
 			if result.SidResult == nil {
-				println("yes1_1")
+				println("gengine error")
 			}
 
 			if result.SidResult["3"] == nil {
-				println("yes1_2")
+				println("gengine error")
 			}
 
 			for i := 0; i < len(result.SidResult["3"].Sl); i++ {
 				cache = append(cache, result.SidResult["3"].Sl[i])
 			}
-		}
+			println("test finish...")
+		//}
 	}()
 
 	go func() {
-		for {
+		//for {
 			request := &Request{Uid: 2}
 			data := make(map[string]interface{})
 			data["request"] = request
@@ -263,27 +262,21 @@ func Test_map_conc(t *testing.T) {
 			}
 
 			if result.SidResult == nil {
-				println("yes2_1")
+				println("gengine error")
 			}
 
 			if result.SidResult["3"] == nil {
-				println("yes2_2")
+				println("gengine error")
 			}
 
 			var cache []int64
 			for i := 0; i < len(result.SidResult["3"].Sl); i++ {
 				cache = append(cache, result.SidResult["3"].Sl[i])
 			}
-		}
+			println("test finish...")
+		//}
 
 	}()
-
-	go func() {
-		time.Sleep(1 *time.Second)
-		println("测试运行中...")
-
-	}()
-
-	time.Sleep(15 * time.Second)
+	time.Sleep(3 * time.Second)
 
 }

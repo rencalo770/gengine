@@ -343,13 +343,11 @@ func (gp *GenginePool) ExecuteRules(reqName string, req interface{}, respName st
 	}
 
 	if gp.execModel == 2 { //concurrent
-		gw.gengine.ExecuteConcurrent(gw.rulebuilder)
-		return nil
+		return gw.gengine.ExecuteConcurrent(gw.rulebuilder)
 	}
 
 	if gp.execModel == 3 { //mix
-		gw.gengine.ExecuteMixModel(gw.rulebuilder)
-		return nil
+		return gw.gengine.ExecuteMixModel(gw.rulebuilder)
 	}
 
 	return nil
@@ -382,13 +380,11 @@ func (gp *GenginePool) ExecuteRulesWithMultiInput(data map[string]interface{}) e
 	}
 
 	if gp.execModel == 2 { //concurrent
-		gw.gengine.ExecuteConcurrent(gw.rulebuilder)
-		return nil
+		return gw.gengine.ExecuteConcurrent(gw.rulebuilder)
 	}
 
 	if gp.execModel == 3 { //mix
-		gw.gengine.ExecuteMixModel(gw.rulebuilder)
-		return nil
+		return gw.gengine.ExecuteMixModel(gw.rulebuilder)
 	}
 
 	return nil
@@ -425,13 +421,11 @@ func (gp *GenginePool) ExecuteRulesWithStopTag(reqName string, req interface{}, 
 	}
 
 	if gp.execModel == 2 { //concurrent
-		gw.gengine.ExecuteConcurrent(gw.rulebuilder)
-		return nil
+		return gw.gengine.ExecuteConcurrent(gw.rulebuilder)
 	}
 
 	if gp.execModel == 3 { //mix
-		gw.gengine.ExecuteMixModelWithStopTagDirect(gw.rulebuilder, stag)
-		return nil
+		return gw.gengine.ExecuteMixModelWithStopTagDirect(gw.rulebuilder, stag)
 	}
 
 	return nil
@@ -454,18 +448,15 @@ func (gp *GenginePool) ExecuteRulesWithMultiInputAndStopTag(data map[string]inte
 
 	if gp.execModel == 1 { //sort
 		// when some rule execute error ,it will continue to execute last
-		e := gw.gengine.ExecuteWithStopTagDirect(gw.rulebuilder, true, stag)
-		return e
+		return gw.gengine.ExecuteWithStopTagDirect(gw.rulebuilder, true, stag)
 	}
 
 	if gp.execModel == 2 { //concurrent
-		gw.gengine.ExecuteConcurrent(gw.rulebuilder)
-		return nil
+		return gw.gengine.ExecuteConcurrent(gw.rulebuilder)
 	}
 
 	if gp.execModel == 3 { //mix
-		gw.gengine.ExecuteMixModelWithStopTagDirect(gw.rulebuilder, stag)
-		return nil
+		return gw.gengine.ExecuteMixModelWithStopTagDirect(gw.rulebuilder, stag)
 	}
 
 	return nil
@@ -489,8 +480,49 @@ func (gp *GenginePool) ExecuteSelectedRulesWithMultiInput(data map[string]interf
 	//release resource
 	defer gp.putGengineLocked(gw)
 
-	gw.gengine.ExecuteSelectedRules(gw.rulebuilder, names)
-	return nil
+	return gw.gengine.ExecuteSelectedRules(gw.rulebuilder, names)
+}
+
+/**
+see ExecuteSelectedRulesWithControl in gengine.go
+*/
+func (gp *GenginePool) ExecuteSelectedRulesWithControlWithMultiInput(data map[string]interface{}, b bool, names []string) error {
+
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil
+	}
+
+	gw, e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e
+	}
+	//release resource
+	defer gp.putGengineLocked(gw)
+
+	return gw.gengine.ExecuteSelectedRulesWithControl(gw.rulebuilder, b, names)
+}
+
+/**
+see ExecuteSelectedRulesWithControlAndStopTag in gengine.go
+*/
+func (gp *GenginePool) ExecuteSelectedRulesWithControlAndStopTagWithMultiInput(data map[string]interface{}, b bool,stag *Stag, names []string) error {
+
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil
+	}
+
+	gw, e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e
+	}
+	//release resource
+	defer gp.putGengineLocked(gw)
+
+	return gw.gengine.ExecuteSelectedRulesWithControlAndStopTag(gw.rulebuilder, b, stag, names)
 }
 
 /**
@@ -511,8 +543,7 @@ func (gp *GenginePool) ExecuteSelectedRulesConcurrentWithMultiInput(data map[str
 	//release resource
 	defer gp.putGengineLocked(gw)
 
-	gw.gengine.ExecuteSelectedRulesConcurrent(gw.rulebuilder, names)
-	return nil
+	return gw.gengine.ExecuteSelectedRulesConcurrent(gw.rulebuilder, names)
 }
 
 /**
@@ -533,8 +564,7 @@ func (gp *GenginePool) ExecuteSelectedRulesMixModelWithMultiInput(data map[strin
 	//release resource
 	defer gp.putGengineLocked(gw)
 
-	gw.gengine.ExecuteSelectedRulesMixModel(gw.rulebuilder, names)
-	return nil
+	return gw.gengine.ExecuteSelectedRulesMixModel(gw.rulebuilder, names)
 }
 
 /***
@@ -555,18 +585,15 @@ func (gp *GenginePool) ExecuteSelected(data map[string]interface{}, names []stri
 	defer gp.putGengineLocked(gw)
 
 	if gp.execModel == 1 {
-		gw.gengine.ExecuteSelectedRules(gw.rulebuilder, names)
-		return nil
+		return gw.gengine.ExecuteSelectedRules(gw.rulebuilder, names)
 	}
 
 	if gp.execModel == 2 {
-		gw.gengine.ExecuteSelectedRulesConcurrent(gw.rulebuilder, names)
-		return nil
+		return gw.gengine.ExecuteSelectedRulesConcurrent(gw.rulebuilder, names)
 	}
 
 	if gp.execModel == 3 {
-		gw.gengine.ExecuteSelectedRulesMixModel(gw.rulebuilder, names)
-		return nil
+		return gw.gengine.ExecuteSelectedRulesMixModel(gw.rulebuilder, names)
 	}
 	return nil
 }

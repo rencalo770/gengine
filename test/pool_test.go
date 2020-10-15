@@ -69,7 +69,7 @@ func Test_pool_no_rules(t *testing.T) {
 	}
 	e2 := pool.ExecuteRules("", nil, "", nil)
 	if e2 != nil {
-		println(fmt.Sprintf("e1: %+v", e1))
+		println(fmt.Sprintf("Test_pool_no_rules, e2: %+v", e2))
 	}
 
 	println("cost time:", time.Since(t1), "ns")
@@ -127,7 +127,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 			reqest := &Reqest{Data: 1}
 			e2 := pool.ExecuteRules("Req", reqest, "", nil)
 			if e2 != nil {
-				println(fmt.Sprintf("e1: %+v", e1))
+				println(fmt.Sprintf("e2: %+v", e2))
 			}
 			duration := time.Since(t2)
 			if int64(duration) > max {
@@ -148,7 +148,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 			reqest := &Reqest{Data: 1}
 			e2 := pool.ExecuteRules("Req", reqest, "", nil)
 			if e2 != nil {
-				println(fmt.Sprintf("e1: %+v", e1))
+				println(fmt.Sprintf("e2: %+v", e2))
 			}
 			duration := time.Since(t2)
 			if int64(duration) > max {
@@ -169,7 +169,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 			reqest := &Reqest{Data: 1}
 			e2 := pool.ExecuteRules("Req", reqest, "", nil)
 			if e2 != nil {
-				println(fmt.Sprintf("e1: %+v", e1))
+				println(fmt.Sprintf("e2: %+v", e2))
 			}
 			duration := time.Since(t2)
 			if int64(duration) > max {
@@ -190,7 +190,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 			reqest := &Reqest{Data: 1}
 			e2 := pool.ExecuteRules("Req", reqest, "", nil)
 			if e2 != nil {
-				println(fmt.Sprintf("e1: %+v", e1))
+				println(fmt.Sprintf("e2: %+v", e2))
 			}
 			duration := time.Since(t2)
 			if int64(duration) > max {
@@ -211,7 +211,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 			reqest := &Reqest{Data: 1}
 			e2 := pool.ExecuteRules("Req", reqest, "", nil)
 			if e2 != nil {
-				println(fmt.Sprintf("e1: %+v", e1))
+				println(fmt.Sprintf("e2: %+v", e2))
 			}
 			duration := time.Since(t2)
 			if int64(duration) > max {

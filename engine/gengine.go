@@ -24,22 +24,27 @@ type Stag struct {
 /**
 sort execute model
 
-	when b is true it means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
+when b is true it means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 */
 func (g *Gengine) Execute(rb *builder.RuleBuilder, b bool) error {
-	if len(rb.Kc.RuleEntities) == 0 {
-		return nil
+	if len(rb.Kc.SortRules) == 0 {
+		return errors.New("no rule has been injected into engine.")
 	}
 
+	var eMsg []string
 	for _, r := range rb.Kc.SortRules {
 		err := r.Execute()
 		if err != nil {
 			if b {
-				log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err)
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err))
 			} else {
 				return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err))
 			}
 		}
+	}
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
 	}
 	return nil
 }
@@ -56,15 +61,16 @@ it used in this scene:
 where some high priority rules execute finished, you don't want to execute to the last rules, you can use sTag to control it out of gengine
 */
 func (g *Gengine) ExecuteWithStopTagDirect(rb *builder.RuleBuilder, b bool, sTag *Stag) error {
-	if len(rb.Kc.RuleEntities) == 0 {
-		return nil
+	if len(rb.Kc.SortRules) == 0 {
+		return errors.New("no rule has been injected into engine.")
 	}
 
+	var eMsg []string
 	for _, r := range rb.Kc.SortRules {
 		err := r.Execute()
 		if err != nil {
 			if b {
-				log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err)
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err))
 			} else {
 				return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err))
 			}
@@ -74,6 +80,11 @@ func (g *Gengine) ExecuteWithStopTagDirect(rb *builder.RuleBuilder, b bool, sTag
 			break
 		}
 	}
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+
 	return nil
 }
 
@@ -81,22 +92,34 @@ func (g *Gengine) ExecuteWithStopTagDirect(rb *builder.RuleBuilder, b bool, sTag
  concurrent execute model
  in this mode, it will not consider the priority  and not consider err control
 */
-func (g *Gengine) ExecuteConcurrent(rb *builder.RuleBuilder) {
-	if len(rb.Kc.RuleEntities) >= 1 {
-		var wg sync.WaitGroup
-		wg.Add(len(rb.Kc.RuleEntities))
-		for _, r := range rb.Kc.RuleEntities {
-			rr := r
-			go func() {
-				e := rr.Execute()
-				if e != nil {
-					log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e)
-				}
-				wg.Done()
-			}()
-		}
-		wg.Wait()
+func (g *Gengine) ExecuteConcurrent(rb *builder.RuleBuilder) error {
+	if len(rb.Kc.RuleEntities) == 0 {
+		return errors.New("no rule has been injected into engine.")
 	}
+
+	var errLock sync.Mutex
+	var eMsg []string
+
+	var wg sync.WaitGroup
+	wg.Add(len(rb.Kc.RuleEntities))
+	for _, r := range rb.Kc.RuleEntities {
+		rr := r
+		go func() {
+			e := rr.Execute()
+			if e != nil {
+				errLock.Lock()
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
+				errLock.Unlock()
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+	return nil
 }
 
 /*
@@ -105,16 +128,19 @@ func (g *Gengine) ExecuteConcurrent(rb *builder.RuleBuilder) {
  in this mode, it will not consider the priority，and it also concurrently to execute rules
  first to execute the most high priority rule，then concurrently to execute last rules without consider the priority
 */
-func (g *Gengine) ExecuteMixModel(rb *builder.RuleBuilder) {
-	rules := rb.Kc.SortRules
-	if len(rules) > 0 {
-		e := rules[0].Execute()
-		if e != nil {
-			log.Errorf("the most high priority rule: \"%s\"  executed, error:\n %+v", rules[0].RuleName, e)
-		}
-	} else {
-		return
+func (g *Gengine) ExecuteMixModel(rb *builder.RuleBuilder) error {
+	if len(rb.Kc.SortRules) == 0 {
+		return errors.New("no rule has been injected into engine.")
 	}
+
+	rules := rb.Kc.SortRules
+	e := rules[0].Execute()
+	if e != nil {
+		return errors.New(fmt.Sprintf("the most high priority rule: \"%s\"  executed, error:\n %+v", rules[0].RuleName, e))
+	}
+
+	var errLock sync.Mutex
+	var eMsg []string
 
 	if (len(rules) - 1) >= 1 {
 		var wg sync.WaitGroup
@@ -124,13 +150,20 @@ func (g *Gengine) ExecuteMixModel(rb *builder.RuleBuilder) {
 			go func() {
 				e := rr.Execute()
 				if e != nil {
-					log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e)
+					errLock.Lock()
+					eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
+					errLock.Unlock()
 				}
 				wg.Done()
 			}()
 		}
 		wg.Wait()
 	}
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+	return nil
 }
 
 /**
@@ -146,17 +179,19 @@ it used in this scene:
 where the first rule execute finished, you don't want to execute to the last rules, you can use sTag to control it out of gengine
 
 */
-func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb *builder.RuleBuilder, sTag *Stag) {
+func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb *builder.RuleBuilder, sTag *Stag) error {
+	if len(rb.Kc.SortRules) == 0 {
+		return errors.New("no rule has been injected into engine.")
+	}
 
 	rules := rb.Kc.SortRules
-	if len(rules) > 0 {
-		e := rules[0].Execute()
-		if e != nil {
-			log.Errorf("the most high priority rule: \"%s\"  executed, error:\n %+v", rules[0].RuleName, e)
-		}
-	} else {
-		return
+	e := rules[0].Execute()
+	if e != nil {
+		return errors.New(fmt.Sprintf("the most high priority rule: \"%s\"  executed, error:\n %+v", rules[0].RuleName, e))
 	}
+
+	var errLock sync.Mutex
+	var eMsg []string
 
 	if !sTag.StopTag {
 		if (len(rules) - 1) >= 1 {
@@ -167,7 +202,9 @@ func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb *builder.RuleBuilder, sTag
 				go func() {
 					e := rr.Execute()
 					if e != nil {
-						log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e)
+						errLock.Lock()
+						eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
+						errLock.Unlock()
 					}
 					wg.Done()
 				}()
@@ -175,24 +212,33 @@ func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb *builder.RuleBuilder, sTag
 			wg.Wait()
 		}
 	}
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+	return nil
 }
 
 /**
-user can choose specified name rules to run with sort
+user can choose specified name rules to run with sort, and it will continue to execute the last rules,even if there rule execute error
 */
-func (g *Gengine) ExecuteSelectedRules(rb *builder.RuleBuilder, names []string) {
+func (g *Gengine) ExecuteSelectedRules(rb *builder.RuleBuilder, names []string) error {
+	if len(rb.Kc.RuleEntities) == 0 {
+		return errors.New("no rule has been injected into engine.")
+	}
+
 	rules := []*base.RuleEntity{}
 	for _, name := range names {
 		if ruleEntity, ok := rb.Kc.RuleEntities[name]; ok {
 			rr := ruleEntity
 			rules = append(rules, rr)
 		} else {
-			log.Infof("no such rule named: \"%s\"", name)
+			log.Errorf("no such rule named: \"%s\"", name)
 		}
 	}
 
 	if len(rules) < 1 {
-		return
+		return errors.New(fmt.Sprintf("no rules have been selected, names=%+v", names))
 	}
 
 	if len(rules) >= 2 {
@@ -201,19 +247,29 @@ func (g *Gengine) ExecuteSelectedRules(rb *builder.RuleBuilder, names []string) 
 		})
 	}
 
+	var eMsg []string
 	for _, rule := range rules {
 		rr := rule
 		e := rr.Execute()
 		if e != nil {
-			log.Errorf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e)
+			eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
 		}
 	}
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+	return nil
 }
 
 /**
-user can choose specified name rules to concurrent run
+user can choose specified name rules to run with sort
+b bool:control whether continue to execute last rules ,when a rule execute error; if b == true ,the func is same to ExecuteSelectedRules
 */
-func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names []string) {
+func (g *Gengine) ExecuteSelectedRulesWithControl(rb *builder.RuleBuilder, b bool, names []string) error {
+	if len(rb.Kc.SortRules) == 0 {
+		return errors.New("no rule has been injected into engine.")
+	}
 
 	rules := []*base.RuleEntity{}
 	for _, name := range names {
@@ -221,21 +277,123 @@ func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names 
 			rr := ruleEntity
 			rules = append(rules, rr)
 		} else {
-			log.Infof("no such rule named: \"%s\"", name)
+			log.Errorf("no such rule named: \"%s\"", name)
 		}
 	}
 
 	if len(rules) < 1 {
-		return
+		return errors.New(fmt.Sprintf("no rule has been selected, names=%+v", names))
+	}
+
+	if len(rules) >= 2 {
+		sort.SliceStable(rules, func(i, j int) bool {
+			return rules[i].Salience > rules[j].Salience
+		})
+	}
+
+	var eMsg []string
+	for _, rule := range rules {
+		rr := rule
+		e := rr.Execute()
+		if e != nil {
+			if b {
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+			} else {
+				return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+			}
+		}
+	}
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+	return nil
+}
+
+/**
+user can choose specified name rules to run with sort
+b bool:control whether continue to execute last rules ,when a rule execute error; if b == true ,the func is same to ExecuteSelectedRules
+*/
+func (g *Gengine) ExecuteSelectedRulesWithControlAndStopTag(rb *builder.RuleBuilder, b bool, sTag *Stag, names []string) error {
+	if len(rb.Kc.SortRules) == 0 {
+		return errors.New("no rule has been injected into engine.")
+	}
+
+	rules := []*base.RuleEntity{}
+	for _, name := range names {
+		if ruleEntity, ok := rb.Kc.RuleEntities[name]; ok {
+			rr := ruleEntity
+			rules = append(rules, rr)
+		} else {
+			log.Errorf("no such rule named: \"%s\"", name)
+		}
+	}
+
+	if len(rules) < 1 {
+		return errors.New(fmt.Sprintf("no rule has been selected, names=%+v", names))
+	}
+
+	if len(rules) >= 2 {
+		sort.SliceStable(rules, func(i, j int) bool {
+			return rules[i].Salience > rules[j].Salience
+		})
+	}
+
+	var eMsg []string
+	for _, rule := range rules {
+		rr := rule
+		e := rr.Execute()
+		if e != nil {
+			if b {
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+			} else {
+				return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+			}
+		}
+
+		if sTag.StopTag {
+			break
+		}
+	}
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+	return nil
+}
+
+/**
+user can choose specified name rules to concurrent run
+*/
+func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names []string) error {
+	if len(rb.Kc.RuleEntities) == 0 {
+		return errors.New("no rule has been injected into engine.")
+	}
+
+	rules := []*base.RuleEntity{}
+	for _, name := range names {
+		if ruleEntity, ok := rb.Kc.RuleEntities[name]; ok {
+			rr := ruleEntity
+			rules = append(rules, rr)
+		} else {
+			log.Errorf("no such rule named: \"%s\"", name)
+		}
+	}
+
+	if len(rules) < 1 {
+		return errors.New(fmt.Sprintf("no rule has been selected, names=%+v", names))
 	}
 
 	if len(rules) <= 1 {
 		e := rules[0].Execute()
 		if e != nil {
-			log.Errorf("rule: \"%s\" executed, error:\n %+v ", rules[0].RuleName, e)
+			return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rules[0].RuleName, e))
 		}
-		return
+		return nil
 	}
+
+	var errLock sync.Mutex
+	var eMsg []string
 
 	// len(rule) >= 2
 	var wg sync.WaitGroup
@@ -245,18 +403,28 @@ func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names 
 		go func() {
 			e := rr.Execute()
 			if e != nil {
-				log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e)
+				errLock.Lock()
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
+				errLock.Unlock()
 			}
 			wg.Done()
 		}()
 	}
 	wg.Wait()
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+	return nil
 }
 
 /**
 user can choose specified name rules to run with mix model
 */
-func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []string) {
+func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []string) error {
+	if len(rb.Kc.RuleEntities) == 0 {
+		return errors.New("no rule has been injected into engine.")
+	}
 
 	rules := []*base.RuleEntity{}
 	for _, name := range names {
@@ -264,21 +432,21 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 			rr := ruleEntity
 			rules = append(rules, rr)
 		} else {
-			log.Infof("no such rule named: \"%s\"", name)
+			log.Errorf("no such rule named: \"%s\"", name)
 		}
 	}
 
 	rLen := len(rules)
 	if rLen < 1 {
-		return
+		return errors.New(fmt.Sprintf("no rule has been selected, names=%+v", names))
 	}
 
 	if rLen == 1 {
 		e := rules[0].Execute()
 		if e != nil {
-			log.Errorf("rule: \"%s\" executed, error:\n %+v ", rules[0].RuleName, e)
+			return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rules[0].RuleName, e))
 		}
-		return
+		return nil
 	}
 
 	sort.SliceStable(rules, func(i, j int) bool {
@@ -289,17 +457,20 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 		for _, r := range rules {
 			err := r.Execute()
 			if err != nil {
-				log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err)
+				return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err))
 			}
 		}
-		return
+		return nil
 	}
 
 	// rLen >= 3
 	e := rules[0].Execute()
 	if e != nil {
-		log.Errorf("the most high priority rule: \"%s\"  executed, error:\n %+v", rules[0].RuleName, e)
+		return errors.New(fmt.Sprintf("the most high priority rule: \"%s\"  executed, error:\n %+v", rules[0].RuleName, e))
 	}
+
+	var errLock sync.Mutex
+	var eMsg []string
 
 	var wg sync.WaitGroup
 	wg.Add(rLen - 1)
@@ -308,10 +479,17 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 		go func() {
 			e := rr.Execute()
 			if e != nil {
-				log.Errorf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e)
+				errLock.Lock()
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
+				errLock.Unlock()
 			}
 			wg.Done()
 		}()
 	}
 	wg.Wait()
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+	return nil
 }

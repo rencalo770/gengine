@@ -75,6 +75,10 @@ func (g *GengineParserListener) ExitRuleName(ctx *parser.RuleNameContext) {
 	}
 	text := ctx.GetText()
 	ruleName := strings.Trim(text, "\"")
+	if len(ruleName) == 0 {
+		g.AddError(errors.New("rule name is \"\""))
+		return
+	}
 	entity := g.Stack.Peek().(*base.RuleEntity)
 	g.ruleName = ruleName
 	entity.RuleName = ruleName
