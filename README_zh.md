@@ -14,6 +14,7 @@
 
 ## tag版本v1.2.0
 - 从v1.2.0开始，你需要做一点小小的改动，才能让新版本兼容老的版本，具体实例请看这里：https://rencalo770.github.io/gengine_doc/#/framework
+- 建议使用最新版本
 
 ## 规则执行模式
  ![avatar](exe_model.jpg)

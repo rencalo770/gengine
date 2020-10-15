@@ -1,6 +1,6 @@
 # Gengine
 - [简体中文](README_zh.md)
-- 使用交流QQ群号:1132683357 (解答所有有关的gengine问题)
+- 使用交流QQ群号:1132683357 (解答所有的gengine问题,以及B站golang各段位工程师内推)
 
 ## English Doc
 - https://rencalo770.github.io/gengine_en
@@ -18,8 +18,8 @@
  https://xie.infoq.cn/article/40bfff1fbca1867991a1453ac
 
 ## tag v1.2.0
--from version v1.2.0 , it needs you to make a little change to fit old version, in detail, see:https://rencalo770.github.io/gengine_en/#/framework
-
+-from version v1.2.0, it needs you to make a little change to fit old version, in detail, see:https://rencalo770.github.io/gengine_en/#/framework
+-please use the newest version! 
 
 ## the execute model of rules
  ![avatar](exe_model.jpg)
