@@ -1,6 +1,6 @@
 # Gengine
 - [简体中文](README_zh.md)
-- 使用交流QQ群号:1132683357 (解答所有的gengine问题,以及B站golang各段位工程师内推)
+- 使用交流QQ群号:1132683357 (解答所有的gengine问题)
 
 ## English Doc
 - https://rencalo770.github.io/gengine_en
