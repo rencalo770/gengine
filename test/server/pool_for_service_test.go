@@ -68,6 +68,13 @@ func NewMyService(poolMinLen, poolMaxLen int64, em int, rulesStr string, apiOute
 	return myService
 }
 
+//和规则控制相关的API，直接包装pool API即可，如规则更新:
+func (ms *MyService) UpdateRules(ruleString string) error {
+	return ms.Pool.UpdatePooledRules(ruleString)
+}
+
+//....
+
 //service
 func (ms *MyService) Service(req *Request) (*Response, error) {
 
@@ -100,7 +107,6 @@ func Test_run(t *testing.T) {
 	apis["println"] = fmt.Println
 	msr := NewMyService(10, 20, 1, service_rules, apis)
 
-
 	//调用
 	req := &Request{
 		Rid:       123,
@@ -114,4 +120,3 @@ func Test_run(t *testing.T) {
 
 	println("resp result = ", response.At, response.Num)
 }
-
