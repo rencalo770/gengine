@@ -5,11 +5,12 @@ import (
 	"gengine/internal/base"
 	"gengine/internal/core/errors"
 	parser "gengine/internal/iantlr/alr"
-	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"github.com/golang-collections/collections/stack"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/golang-collections/collections/stack"
 )
 
 func NewGengineParserListener(ctx *base.KnowledgeContext) *GengineParserListener {
@@ -582,6 +583,28 @@ func (g *GengineParserListener) ExitAtName(ctx *parser.AtNameContext) {
 	}
 	holder := g.Stack.Peek().(base.AtNameHolder)
 	err := holder.AcceptName(strings.ReplaceAll(g.ruleName, "\"", ""))
+	if err != nil {
+		g.AddError(err)
+	}
+}
+
+func (g *GengineParserListener) EnterAtId(ctx *parser.AtIdContext) {}
+
+func (g *GengineParserListener) ExitAtId(ctx *parser.AtIdContext) {
+	if len(g.ParseErrors) > 0 {
+		return
+	}
+	holder := g.Stack.Peek().(base.AtIdHolder)
+	i, e := strconv.ParseInt(strings.Trim(g.ruleName, " "), 10, 64)
+	if e != nil {
+		err := holder.AcceptId(0)
+		if err != nil {
+			g.AddError(err)
+		}
+		return
+	}
+
+	err := holder.AcceptId(i)
 	if err != nil {
 		g.AddError(err)
 	}

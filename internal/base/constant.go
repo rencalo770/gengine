@@ -32,3 +32,8 @@ func (cons *Constant) AcceptName(name string) error {
 	cons.ConstantValue = name
 	return nil
 }
+
+func (cons *Constant)AcceptId(id int64) error {
+	cons.ConstantValue = id
+	return nil
+}

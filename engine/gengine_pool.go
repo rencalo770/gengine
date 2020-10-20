@@ -5,8 +5,9 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/internal/core/errors"
-	"github.com/google/martian/log"
 	"sync"
+
+	"github.com/google/martian/log"
 )
 
 // when you use NewGenginePool, you just think of it as the connection pool of mysql, the higher QPS you want to support, the more resource you need to give
@@ -41,6 +42,13 @@ type gengineWrapper struct {
 	gengine     *Gengine
 	version     int
 	addition    bool // when gengine resource is not enough and poollength >  minPool  and  poollength < maxPool, new gengine will be create, and it will be tagged addition=true; when poollength <  minPool it will be tagged addition=false
+}
+
+func (gw *gengineWrapper) clearInjected(keys ...string) {
+	if gw == nil || gw.rulebuilder == nil || gw.rulebuilder.Dc == nil {
+		return
+	}
+	gw.rulebuilder.Dc.Del(keys...)
 }
 
 //poolLen  -> gengine pool length to init
@@ -334,7 +342,10 @@ func (gp *GenginePool) ExecuteRules(reqName string, req interface{}, respName st
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gw.rulebuilder.Dc.Del(reqName, respName)
+		gp.putGengineLocked(gw)
+	}()
 
 	if gp.execModel == 1 { //sort
 		// when some rule execute error ,it will continue to execute last
@@ -371,7 +382,10 @@ func (gp *GenginePool) ExecuteRulesWithMultiInput(data map[string]interface{}) e
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
 
 	if gp.execModel == 1 { //sort
 		// when some rule execute error ,it will continue to execute last
@@ -412,7 +426,10 @@ func (gp *GenginePool) ExecuteRulesWithStopTag(reqName string, req interface{}, 
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gw.clearInjected(reqName, reqName)
+		gp.putGengineLocked(gw)
+	}()
 
 	if gp.execModel == 1 { //sort
 		// when some rule execute error ,it will continue to execute last
@@ -444,7 +461,10 @@ func (gp *GenginePool) ExecuteRulesWithMultiInputAndStopTag(data map[string]inte
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
 
 	if gp.execModel == 1 { //sort
 		// when some rule execute error ,it will continue to execute last
@@ -478,7 +498,10 @@ func (gp *GenginePool) ExecuteSelectedRulesWithMultiInput(data map[string]interf
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
 
 	return gw.gengine.ExecuteSelectedRules(gw.rulebuilder, names)
 }
@@ -499,7 +522,10 @@ func (gp *GenginePool) ExecuteSelectedRulesWithControlWithMultiInput(data map[st
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
 
 	return gw.gengine.ExecuteSelectedRulesWithControl(gw.rulebuilder, b, names)
 }
@@ -507,7 +533,7 @@ func (gp *GenginePool) ExecuteSelectedRulesWithControlWithMultiInput(data map[st
 /**
 see ExecuteSelectedRulesWithControlAndStopTag in gengine.go
 */
-func (gp *GenginePool) ExecuteSelectedRulesWithControlAndStopTagWithMultiInput(data map[string]interface{}, b bool,stag *Stag, names []string) error {
+func (gp *GenginePool) ExecuteSelectedRulesWithControlAndStopTagWithMultiInput(data map[string]interface{}, b bool, stag *Stag, names []string) error {
 
 	//rules has bean cleared
 	if gp.clear {
@@ -520,7 +546,10 @@ func (gp *GenginePool) ExecuteSelectedRulesWithControlAndStopTagWithMultiInput(d
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
 
 	return gw.gengine.ExecuteSelectedRulesWithControlAndStopTag(gw.rulebuilder, b, stag, names)
 }
@@ -541,7 +570,10 @@ func (gp *GenginePool) ExecuteSelectedRulesConcurrentWithMultiInput(data map[str
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
 
 	return gw.gengine.ExecuteSelectedRulesConcurrent(gw.rulebuilder, names)
 }
@@ -562,7 +594,10 @@ func (gp *GenginePool) ExecuteSelectedRulesMixModelWithMultiInput(data map[strin
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
 
 	return gw.gengine.ExecuteSelectedRulesMixModel(gw.rulebuilder, names)
 }
@@ -582,7 +617,10 @@ func (gp *GenginePool) ExecuteSelected(data map[string]interface{}, names []stri
 		return e
 	}
 	//release resource
-	defer gp.putGengineLocked(gw)
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
 
 	if gp.execModel == 1 {
 		return gw.gengine.ExecuteSelectedRules(gw.rulebuilder, names)
@@ -596,4 +634,12 @@ func (gp *GenginePool) ExecuteSelected(data map[string]interface{}, names []stri
 		return gw.gengine.ExecuteSelectedRulesMixModel(gw.rulebuilder, names)
 	}
 	return nil
+}
+
+func getKeys(data map[string]interface{}) []string {
+	var keys []string
+	for k := range data {
+		keys = append(keys, k)
+	}
+	return keys
 }

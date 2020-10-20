@@ -35,6 +35,17 @@ func (dc *DataContext) Add(key string, obj interface{}) {
 	dc.lockBase.Unlock()
 }
 
+func (dc *DataContext) Del(keys ...string) {
+	if len(keys) == 0 {
+		return
+	}
+	dc.lockBase.Lock()
+	for _, key := range keys {
+		delete(dc.base, key)
+	}
+	dc.lockBase.Unlock()
+}
+
 func (dc *DataContext) Get(key string) (interface{}, error) {
 	dc.lockBase.Lock()
 	v := dc.base[key]
@@ -241,7 +252,6 @@ func (dc *DataContext) setSingleValue(obj interface{}, fieldName string, value i
 		return errors.New(fmt.Sprintf("\"%s\" value is unassignable!", fieldName))
 	}
 }
-
 
 func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, mapVarStrkey, mapVarVarkey string, mapVarIntkey int64, newValue interface{}) error {
 
