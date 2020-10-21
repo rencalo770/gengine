@@ -5,9 +5,10 @@ import (
 	"gengine/builder"
 	"gengine/internal/base"
 	"gengine/internal/core/errors"
-	"github.com/google/martian/log"
 	"sort"
 	"sync"
+
+	"github.com/google/martian/log"
 )
 
 type Gengine struct {
@@ -108,7 +109,7 @@ func (g *Gengine) ExecuteConcurrent(rb *builder.RuleBuilder) error {
 			e := rr.Execute()
 			if e != nil {
 				errLock.Lock()
-				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
 				errLock.Unlock()
 			}
 			wg.Done()
@@ -151,7 +152,7 @@ func (g *Gengine) ExecuteMixModel(rb *builder.RuleBuilder) error {
 				e := rr.Execute()
 				if e != nil {
 					errLock.Lock()
-					eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
+					eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
 					errLock.Unlock()
 				}
 				wg.Done()
@@ -203,7 +204,7 @@ func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb *builder.RuleBuilder, sTag
 					e := rr.Execute()
 					if e != nil {
 						errLock.Lock()
-						eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
+						eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
 						errLock.Unlock()
 					}
 					wg.Done()
@@ -404,7 +405,7 @@ func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names 
 			e := rr.Execute()
 			if e != nil {
 				errLock.Lock()
-				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
 				errLock.Unlock()
 			}
 			wg.Done()
@@ -480,7 +481,7 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 			e := rr.Execute()
 			if e != nil {
 				errLock.Lock()
-				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
 				errLock.Unlock()
 			}
 			wg.Done()
