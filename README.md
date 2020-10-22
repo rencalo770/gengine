@@ -16,9 +16,8 @@
 ## English Doc
 - https://rencalo770.github.io/gengine_en
 
-## tag v1.2.0
-- from version v1.2.0, it needs you to make a little change to fit old version, in detail, see:https://rencalo770.github.io/gengine_en/#/framework
-- please use the newest version! 
+## recommend
+- use the newest version! 
 
 ## supported the execute model of rules
  ![avatar](exe_model.jpg)
