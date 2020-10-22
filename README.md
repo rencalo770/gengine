@@ -6,7 +6,7 @@
 [![Documentation](https://img.shields.io/badge/api-reference-blue.svg)](https://rencalo770.github.io/gengine_en) 
 
 # Gengine
-- [简体中文](README_zh.md)
+- [简体中文](README_zh.md) 使用交流Q群1132683357
 
 ## the rule engine based on golang 
 - this is a rule engine(or code dynamic load framework) named **Gengine** based on golang and AST, it can help you to load your code(rules) to run while you did not need to restart your application.  
