@@ -21,15 +21,12 @@
 ## 官方文档
 - https://rencalo770.github.io/gengine_doc
 
-
-## 推荐
-- 建议使用最新版本
-
 ## 支持的执行模式
  ![avatar](exe_model.jpg)
 
 ## 使用
 - go mod 或者 go vendor
+- 建议使用最新版本
 
 ## 问题联系
 - 提issue，或者联系

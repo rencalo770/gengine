@@ -16,14 +16,12 @@
 ## English Doc
 - https://rencalo770.github.io/gengine_en
 
-## recommend
-- use the newest version! 
-
 ## supported the execute model of rules
  ![avatar](exe_model.jpg)
 
 ## use 
 - go mod or go vendor 
+- use the newest version! 
 
 ## Question Connection
 - write issue or connect
