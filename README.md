@@ -14,7 +14,7 @@
 - it is also a high performance engine, support many execute-model and rules pool for business, it is easy to use in distribute system. 
 
 ## English Doc
-- because gengine is designed to be extremely easy to use(only 4 APIs), so there are a lot programmer to use gengine without reading document!
+- because gengine is designed to be extremely easy to use(only 4 APIs), so there are a lot programmers to use gengine without reading document!
 - I sincerely hope you can read the document before you use gengine! The doc can greatly help you to use it well
 - https://rencalo770.github.io/gengine_en
 
