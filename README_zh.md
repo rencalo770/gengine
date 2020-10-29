@@ -19,6 +19,8 @@
 - 可以看这篇文章: https://xie.infoq.cn/article/40bfff1fbca1867991a1453ac
 
 ## 官方文档
+- 因为gengine被设计成为极易使用的框架(仅有4个关键的API)，所以很多人在使用之前根本不看文档
+- 我衷心的希望您在使用gengine之前,可以认真的看看文档.文档不仅能帮助你更好的使用gengine,还能帮助你拓宽你在业务上思路
 - https://rencalo770.github.io/gengine_doc
 
 ## 支持的执行模式
