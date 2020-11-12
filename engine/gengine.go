@@ -228,7 +228,7 @@ func (g *Gengine) ExecuteSelectedRules(rb *builder.RuleBuilder, names []string) 
 		return errors.New("no rule has been injected into engine.")
 	}
 
-	rules := []*base.RuleEntity{}
+	var rules []*base.RuleEntity
 	for _, name := range names {
 		if ruleEntity, ok := rb.Kc.RuleEntities[name]; ok {
 			rr := ruleEntity
@@ -272,7 +272,7 @@ func (g *Gengine) ExecuteSelectedRulesWithControl(rb *builder.RuleBuilder, b boo
 		return errors.New("no rule has been injected into engine.")
 	}
 
-	rules := []*base.RuleEntity{}
+	var rules []*base.RuleEntity
 	for _, name := range names {
 		if ruleEntity, ok := rb.Kc.RuleEntities[name]; ok {
 			rr := ruleEntity
@@ -320,7 +320,7 @@ func (g *Gengine) ExecuteSelectedRulesWithControlAndStopTag(rb *builder.RuleBuil
 		return errors.New("no rule has been injected into engine.")
 	}
 
-	rules := []*base.RuleEntity{}
+	var rules []*base.RuleEntity
 	for _, name := range names {
 		if ruleEntity, ok := rb.Kc.RuleEntities[name]; ok {
 			rr := ruleEntity
@@ -371,7 +371,7 @@ func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names 
 		return errors.New("no rule has been injected into engine.")
 	}
 
-	rules := []*base.RuleEntity{}
+	var rules []*base.RuleEntity
 	for _, name := range names {
 		if ruleEntity, ok := rb.Kc.RuleEntities[name]; ok {
 			rr := ruleEntity
@@ -427,7 +427,7 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 		return errors.New("no rule has been injected into engine.")
 	}
 
-	rules := []*base.RuleEntity{}
+	var rules []*base.RuleEntity
 	for _, name := range names {
 		if ruleEntity, ok := rb.Kc.RuleEntities[name]; ok {
 			rr := ruleEntity
@@ -493,4 +493,106 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 		return errors.New(fmt.Sprintf("%+v", eMsg))
 	}
 	return nil
+}
+
+//inverse mix model
+func (g *Gengine) ExecuteInverseMixModel(rb *builder.RuleBuilder) error {
+	rules := rb.Kc.SortRules
+	length := len(rules)
+	if length == 0 {
+		return errors.New("no rule has been injected into engine.")
+	}
+
+	if length <= 2 {
+		for _, r := range rules {
+			e := r.Execute()
+			if e != nil {
+				return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
+			}
+		}
+		return nil
+	}
+
+	var errLock sync.Mutex
+	var eMsg []string
+
+	var wg sync.WaitGroup
+	wg.Add(length - 1)
+	for _, r := range rules[:length-1] {
+		rr := r
+		go func() {
+			e := rr.Execute()
+			if e != nil {
+				errLock.Lock()
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+				errLock.Unlock()
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+
+	return rules[length-1].Execute()
+}
+
+//inverse mix model with user selected
+func (g *Gengine) ExecuteSelectedRulesInverseMixModel(rb *builder.RuleBuilder, names []string) error {
+	var rules []*base.RuleEntity
+	//choose user need!
+	for _, name := range names {
+		if re, ok := rb.Kc.RuleEntities[name]; ok {
+			rules = append(rules, re)
+		} else {
+			log.Errorf("no such rule named: \"%s\"", name)
+		}
+	}
+
+	length := len(rules)
+	if length == 0 {
+		return errors.New("no rule has been selected to execute.")
+	}
+
+	//resort
+	sort.SliceStable(rules, func(i, j int) bool {
+		return rules[i].Salience > rules[j].Salience
+	})
+
+	if length <= 2 {
+		for _, r := range rules {
+			e := r.Execute()
+			if e != nil {
+				return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
+			}
+		}
+		return nil
+	}
+
+	var errLock sync.Mutex
+	var eMsg []string
+
+	var wg sync.WaitGroup
+	wg.Add(length - 1)
+	for _, r := range rules[:length-1] {
+		rr := r
+		go func() {
+			e := rr.Execute()
+			if e != nil {
+				errLock.Lock()
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+				errLock.Unlock()
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+
+	return rules[length-1].Execute()
 }

@@ -10,6 +10,13 @@ import (
 	"github.com/google/martian/log"
 )
 
+const (
+	SORT_MODEL        = 1
+	CONCOURRENT_MODEL = 2
+	MIX_MODEL         = 3
+	INVERSE_MIX_MODEL = 4
+)
+
 // when you use NewGenginePool, you just think of it as the connection pool of mysql, the higher QPS you want to support, the more resource you need to give
 type GenginePool struct {
 	runningLock  sync.Mutex
@@ -58,7 +65,7 @@ func (gw *gengineWrapper) clearInjected(keys ...string) {
 // just init once!!!
 
 // best practise：
-// when the has cost-time operate in your rule or you want to support high concurrency(> 200000QPS) , please set poolMinLen bigger Appropriately
+// when there has cost-time operate in your rule or you want to support high concurrency(> 200000QPS) , please set poolMinLen bigger Appropriately
 // when you use NewGenginePool,you just think of it as the connection pool of mysql, the higher QPS you want to support, the more resource you need to give
 func NewGenginePool(poolMinLen, poolMaxLen int64, em int, rulesStr string, apiOuter map[string]interface{}) (*GenginePool, error) {
 
@@ -66,8 +73,8 @@ func NewGenginePool(poolMinLen, poolMaxLen int64, em int, rulesStr string, apiOu
 		return nil, errors.New("pool length must be bigger than 0, and poolMaxLen must bigger than poolMinLen")
 	}
 
-	if em != 1 && em != 2 && em != 3 {
-		return nil, errors.New(fmt.Sprintf("exec model must be 1 or 2 or 3), now it is %d", em))
+	if em != SORT_MODEL && em != CONCOURRENT_MODEL && em != MIX_MODEL && em != INVERSE_MIX_MODEL {
+		return nil, errors.New(fmt.Sprintf("exec model must be SORT_MODEL(1) or CONCOURRENT_MODEL(2) or MIX_MODEL(3) or INVERSE_MIX_MODEL(4), now it is %d", em))
 	}
 
 	v := 0
@@ -247,11 +254,17 @@ func (gp *GenginePool) ClearPoolRules() {
 	gp.updateLock.Unlock()
 }
 
+/*
+1 sort model
+2 concurrent model
+3 mix model
+4 inverse mix model
+*/
 func (gp *GenginePool) SetExecModel(execModel int) error {
 	gp.updateLock.Lock()
 	defer gp.updateLock.Unlock()
-	if execModel != 1 && execModel != 2 && execModel != 3 {
-		return errors.New(fmt.Sprintf("exec model must be 1 or 2 or 3), now it is %d", execModel))
+	if execModel != SORT_MODEL && execModel != CONCOURRENT_MODEL && execModel != MIX_MODEL && execModel != INVERSE_MIX_MODEL {
+		return errors.New(fmt.Sprintf("exec model must be SORT_MODEL(1) or CONCOURRENT_MODEL(2) or MIX_MODEL(3) or INVERSE_MIX_MODEL(4), now it is %d", execModel))
 	} else {
 		gp.execModel = execModel
 	}
@@ -347,18 +360,21 @@ func (gp *GenginePool) ExecuteRules(reqName string, req interface{}, respName st
 		gp.putGengineLocked(gw)
 	}()
 
-	if gp.execModel == 1 { //sort
+	if gp.execModel == SORT_MODEL { //sort
 		// when some rule execute error ,it will continue to execute last
-		e := gw.gengine.Execute(gw.rulebuilder, true)
-		return e
+		return gw.gengine.Execute(gw.rulebuilder, true)
 	}
 
-	if gp.execModel == 2 { //concurrent
+	if gp.execModel == CONCOURRENT_MODEL { //concurrent
 		return gw.gengine.ExecuteConcurrent(gw.rulebuilder)
 	}
 
-	if gp.execModel == 3 { //mix
+	if gp.execModel == MIX_MODEL { //mix
 		return gw.gengine.ExecuteMixModel(gw.rulebuilder)
+	}
+
+	if gp.execModel == INVERSE_MIX_MODEL { // inverse mix model
+		return gw.gengine.ExecuteInverseMixModel(gw.rulebuilder)
 	}
 
 	return nil
@@ -387,18 +403,21 @@ func (gp *GenginePool) ExecuteRulesWithMultiInput(data map[string]interface{}) e
 		gp.putGengineLocked(gw)
 	}()
 
-	if gp.execModel == 1 { //sort
+	if gp.execModel == SORT_MODEL { //sort
 		// when some rule execute error ,it will continue to execute last
-		e := gw.gengine.Execute(gw.rulebuilder, true)
-		return e
+		return gw.gengine.Execute(gw.rulebuilder, true)
 	}
 
-	if gp.execModel == 2 { //concurrent
+	if gp.execModel == CONCOURRENT_MODEL { //concurrent
 		return gw.gengine.ExecuteConcurrent(gw.rulebuilder)
 	}
 
-	if gp.execModel == 3 { //mix
+	if gp.execModel == MIX_MODEL { //mix
 		return gw.gengine.ExecuteMixModel(gw.rulebuilder)
+	}
+
+	if gp.execModel == INVERSE_MIX_MODEL { // inverse mix model
+		return gw.gengine.ExecuteInverseMixModel(gw.rulebuilder)
 	}
 
 	return nil
@@ -431,18 +450,21 @@ func (gp *GenginePool) ExecuteRulesWithStopTag(reqName string, req interface{}, 
 		gp.putGengineLocked(gw)
 	}()
 
-	if gp.execModel == 1 { //sort
+	if gp.execModel == SORT_MODEL { //sort
 		// when some rule execute error ,it will continue to execute last
-		e := gw.gengine.ExecuteWithStopTagDirect(gw.rulebuilder, true, stag)
-		return e
+		return gw.gengine.ExecuteWithStopTagDirect(gw.rulebuilder, true, stag)
 	}
 
-	if gp.execModel == 2 { //concurrent
+	if gp.execModel == CONCOURRENT_MODEL { //concurrent
 		return gw.gengine.ExecuteConcurrent(gw.rulebuilder)
 	}
 
-	if gp.execModel == 3 { //mix
+	if gp.execModel == MIX_MODEL { //mix
 		return gw.gengine.ExecuteMixModelWithStopTagDirect(gw.rulebuilder, stag)
+	}
+
+	if gp.execModel == INVERSE_MIX_MODEL { // inverse mix model
+		return gw.gengine.ExecuteInverseMixModel(gw.rulebuilder)
 	}
 
 	return nil
@@ -466,17 +488,21 @@ func (gp *GenginePool) ExecuteRulesWithMultiInputAndStopTag(data map[string]inte
 		gp.putGengineLocked(gw)
 	}()
 
-	if gp.execModel == 1 { //sort
+	if gp.execModel == SORT_MODEL { //sort
 		// when some rule execute error ,it will continue to execute last
 		return gw.gengine.ExecuteWithStopTagDirect(gw.rulebuilder, true, stag)
 	}
 
-	if gp.execModel == 2 { //concurrent
+	if gp.execModel == CONCOURRENT_MODEL { //concurrent
 		return gw.gengine.ExecuteConcurrent(gw.rulebuilder)
 	}
 
-	if gp.execModel == 3 { //mix
+	if gp.execModel == MIX_MODEL { //mix
 		return gw.gengine.ExecuteMixModelWithStopTagDirect(gw.rulebuilder, stag)
+	}
+
+	if gp.execModel == INVERSE_MIX_MODEL { // inverse mix model
+		return gw.gengine.ExecuteInverseMixModel(gw.rulebuilder)
 	}
 
 	return nil
@@ -602,6 +628,50 @@ func (gp *GenginePool) ExecuteSelectedRulesMixModelWithMultiInput(data map[strin
 	return gw.gengine.ExecuteSelectedRulesMixModel(gw.rulebuilder, names)
 }
 
+// see ExecuteInverseMixModel in gengine.go
+func (gp *GenginePool) ExecuteInverseMixModelWithMultiInput(data map[string]interface{}) error {
+
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil
+	}
+
+	gw, e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e
+	}
+	//release resource
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
+
+	return gw.gengine.ExecuteInverseMixModel(gw.rulebuilder)
+}
+
+//see ExecuteInverseMixModelWithSelected in gengine.go
+func (gp *GenginePool) ExecuteSelectedRulesInverseMixModelWithMultiInput(data map[string]interface{}, names []string) error {
+
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil
+	}
+
+	gw, e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e
+	}
+	//release resource
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
+
+	return gw.gengine.ExecuteSelectedRulesInverseMixModel(gw.rulebuilder, names)
+}
+
 /***
 this make user could use exemodel to control the select-exemodel
 */
@@ -622,17 +692,22 @@ func (gp *GenginePool) ExecuteSelected(data map[string]interface{}, names []stri
 		gp.putGengineLocked(gw)
 	}()
 
-	if gp.execModel == 1 {
+	if gp.execModel == SORT_MODEL {
 		return gw.gengine.ExecuteSelectedRules(gw.rulebuilder, names)
 	}
 
-	if gp.execModel == 2 {
+	if gp.execModel == CONCOURRENT_MODEL {
 		return gw.gengine.ExecuteSelectedRulesConcurrent(gw.rulebuilder, names)
 	}
 
-	if gp.execModel == 3 {
+	if gp.execModel == MIX_MODEL {
 		return gw.gengine.ExecuteSelectedRulesMixModel(gw.rulebuilder, names)
 	}
+
+	if gp.execModel == INVERSE_MIX_MODEL {
+		return gw.gengine.ExecuteSelectedRulesInverseMixModel(gw.rulebuilder, names)
+	}
+
 	return nil
 }
 

@@ -5,6 +5,7 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
+	"reflect"
 	"testing"
 )
 
@@ -57,7 +58,7 @@ ff = live.Setfun()
 live.Getfun(ff)
 
 ii = live.GetInterf()
-live.SetInterf(ii)
+live.SetInterf(8888)
 live.x()
 end
 `
@@ -249,7 +250,7 @@ func (l *Live) SetInterf(i interface{}){
 	if i == nil {
 		println("interface is nil")
 	}
-	println("SetInterf...")
+	println("SetInterf...",reflect.ValueOf(i).String())
 }
 
 
