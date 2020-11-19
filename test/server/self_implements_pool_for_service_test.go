@@ -78,7 +78,6 @@ func makeRuleBuilder(ruleStr string, apiOuter map[string]interface{}) (*builder.
 	rb := builder.NewRuleBuilder(dataContext)
 	if ruleStr != "" {
 		if e := rb.BuildRuleFromString(ruleStr); e != nil {
-			rb.Kc.ClearRules()
 			return nil, errors.New(fmt.Sprintf("build rule from string err: %+v", e))
 		}
 	} else {

@@ -4,7 +4,12 @@ import (
 	"fmt"
 	"gengine/builder"
 	"gengine/context"
+	"gengine/internal/base"
 	"gengine/internal/core/errors"
+	parser "gengine/internal/iantlr/alr"
+	"gengine/internal/iparser"
+	"gengine/internal/tool"
+	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"sync"
 
 	"github.com/google/martian/log"
@@ -25,7 +30,6 @@ type GenginePool struct {
 	//just for check whether a rule exist
 	ruleBuilder *builder.RuleBuilder
 
-	rStr      string
 	execModel int
 	apis      map[string]interface{}
 
@@ -34,10 +38,9 @@ type GenginePool struct {
 	additionNum      int64
 
 	updateLock sync.Mutex
-	version    int
 	clear      bool //whether rules has been cleared ，if true it means there is no rules in gengine
 
-	rbChan chan *builder.RuleBuilder
+	rbSlice []*builder.RuleBuilder
 	//total gengine instance number
 	max int64
 
@@ -45,10 +48,11 @@ type GenginePool struct {
 }
 
 type gengineWrapper struct {
+	tag         int64 // one to one between the ruleBuilder slice
 	rulebuilder *builder.RuleBuilder
 	gengine     *Gengine
-	version     int
-	addition    bool // when gengine resource is not enough and poollength >  minPool  and  poollength < maxPool, new gengine will be create, and it will be tagged addition=true; when poollength <  minPool it will be tagged addition=false
+
+	addition bool // when gengine resource is not enough and poollength >  minPool  and  poollength < maxPool, new gengine will be create, and it will be tagged addition=true; when poollength <  minPool it will be tagged addition=false
 }
 
 func (gw *gengineWrapper) clearInjected(keys ...string) {
@@ -77,32 +81,21 @@ func NewGenginePool(poolMinLen, poolMaxLen int64, em int, rulesStr string, apiOu
 		return nil, errors.New(fmt.Sprintf("exec model must be SORT_MODEL(1) or CONCOURRENT_MODEL(2) or MIX_MODEL(3) or INVERSE_MIX_MODEL(4), now it is %d", em))
 	}
 
-	v := 0
 	fg := make([]*gengineWrapper, poolMinLen)
 	for i := int64(0); i < poolMinLen; i++ {
-		frb, e := makeRuleBuilder(rulesStr, apiOuter)
-		if e != nil {
-			return nil, e
-		}
 		fg[i] = &gengineWrapper{
-			rulebuilder: frb,
-			gengine:     NewGengine(),
-			version:     v,
-			addition:    false,
+			tag:      i,
+			gengine:  NewGengine(),
+			addition: false,
 		}
 	}
 
 	ag := make([]*gengineWrapper, poolMaxLen-poolMinLen)
 	for j := int64(0); j < poolMaxLen-poolMinLen; j++ {
-		arb, e := makeRuleBuilder(rulesStr, apiOuter)
-		if e != nil {
-			return nil, e
-		}
 		ag[j] = &gengineWrapper{
-			rulebuilder: arb,
-			gengine:     NewGengine(),
-			version:     v,
-			addition:    true,
+			tag:      j + poolMinLen,
+			gengine:  NewGengine(),
+			addition: true,
 		}
 	}
 
@@ -111,16 +104,24 @@ func NewGenginePool(poolMinLen, poolMaxLen int64, em int, rulesStr string, apiOu
 		return nil, e
 	}
 
+	rbs := make([]*builder.RuleBuilder, poolMaxLen)
+	for i := 0; i < int(poolMaxLen); i++ {
+		rb, e := makeRuleBuilder(rulesStr, apiOuter)
+		if e != nil {
+			return nil, e
+		}
+		rbs[i] = rb
+	}
+
 	p := &GenginePool{
 		ruleBuilder:      srcRb,
-		rStr:             rulesStr,
 		freeGengines:     fg,
 		apis:             apiOuter,
 		execModel:        em,
-		version:          v,
 		additionNum:      poolMaxLen - poolMinLen,
 		additionGengines: ag,
 		clear:            false,
+		rbSlice:          rbs,
 		max:              poolMaxLen,
 	}
 	return p, nil
@@ -138,7 +139,6 @@ func makeRuleBuilder(ruleStr string, apiOuter map[string]interface{}) (*builder.
 	rb := builder.NewRuleBuilder(dataContext)
 	if ruleStr != "" {
 		if e := rb.BuildRuleFromString(ruleStr); e != nil {
-			rb.Kc.ClearRules()
 			return nil, errors.New(fmt.Sprintf("build rule from string err: %+v", e))
 		}
 	} else {
@@ -174,25 +174,6 @@ func (gp *GenginePool) getGengine() (*gengineWrapper, error) {
 			return gw, nil
 		}
 
-		//we can create a new gengine
-		/*		if gp.additionCount < gp.additionNum {
-				gp.additionCount++
-				dstRb, e := makeRuleBuilder(gp.rStr, gp.apis)
-				if e != nil {
-					gp.additionCount--
-					gp.getEngineLock.Unlock()
-					return nil, e
-				} else {
-					gw := &gengineWrapper{
-						rulebuilder: dstRb,
-						gengine:     NewGengine(),
-						version:     gp.version,
-						addition:    true,
-					}
-					gp.getEngineLock.Unlock()
-					return gw, nil
-				}
-			}*/
 		gp.getEngineLock.Unlock()
 	}
 }
@@ -213,7 +194,8 @@ func (gp *GenginePool) putGengineLocked(gw *gengineWrapper) {
 	}()
 }
 
-//update the rules in all engine in the pool
+//sync method
+//update the all rules in all engine in the pool
 //update success: return nil
 //update failed: return error
 // this is very different from connection pool,
@@ -223,33 +205,183 @@ func (gp *GenginePool) UpdatePooledRules(ruleStr string) error {
 	//check the rules
 	gp.updateLock.Lock()
 	defer gp.updateLock.Unlock()
-	rb, e := makeRuleBuilder(ruleStr, gp.apis)
+
+	rbi, e := makeRuleBuilder(ruleStr, gp.apis)
 	if e != nil {
 		return e
 	} else {
-		newrbChan := make(chan *builder.RuleBuilder, gp.max)
+		if len(rbi.Kc.RuleEntities) == 0 {
+			return errors.New(fmt.Sprintf("if you want to clear all rules, use method \"pool.ClearPoolRules()\""))
+		}
+
+		//new instance array
+		rbs := make([]*builder.RuleBuilder, gp.max)
 		for i := 0; i < int(gp.max); i++ {
 			rb, e := makeRuleBuilder(ruleStr, gp.apis)
 			if e != nil {
 				return e
-			} else {
-				newrbChan <- rb
 			}
+			rbs[i] = rb
 		}
-		gp.rbChan = newrbChan
-		gp.ruleBuilder = rb
-		gp.version++
-		gp.rStr = ruleStr
+
+		//update instance
+		gp.rbSlice = rbs
+		//update core
+		gp.ruleBuilder = rbi
 		gp.clear = false
 		return nil
 	}
+}
+
+func getKc(ruleString string) (*base.KnowledgeContext, error) {
+
+	in := antlr.NewInputStream(ruleString)
+	lexer := parser.NewgengineLexer(in)
+	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
+
+	kc := base.NewKnowledgeContext()
+
+	listener := iparser.NewGengineParserListener(kc)
+	psr := parser.NewgengineParser(stream)
+	psr.BuildParseTrees = true
+
+	errListener := iparser.NewGengineErrorListener()
+	psr.AddErrorListener(errListener)
+	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Primary())
+
+	if len(errListener.GrammarErrors) > 0 {
+		return nil, errors.New(fmt.Sprintf("%+v", errListener.GrammarErrors))
+	}
+
+	if len(listener.ParseErrors) > 0 {
+		return nil, errors.New(fmt.Sprintf("%+v", listener.ParseErrors))
+	}
+
+	if len(kc.RuleEntities) == 0 {
+		return nil, errors.New(fmt.Sprintf("no rules to update or add."))
+	}
+
+	return kc, nil
+}
+
+func updateIncremental(kc *base.KnowledgeContext, rb *builder.RuleBuilder) {
+	//copy
+	newRuleEntities := make(map[string]*base.RuleEntity, len(rb.Kc.RuleEntities))
+	for mk, mv := range rb.Kc.RuleEntities {
+		newRuleEntities[mk] = mv
+	}
+
+	//copy
+	newSortRules := make([]*base.RuleEntity, len(rb.Kc.SortRules))
+	for sk, sv := range rb.Kc.SortRules {
+		newSortRules[sk] = sv
+	}
+
+	//kc store the new rules
+	for k, v := range kc.RuleEntities {
+		//init
+		v.Initialize(rb.Dc)
+
+		if vm, ok := newRuleEntities[k]; ok {
+			//repalce update
+			//search
+			index := rb.Kc.SortRulesIndexMap[v.RuleName]
+			if v.Salience == vm.Salience {
+				//replace
+				newSortRules[index] = v
+			} else {
+				newSortRules := append(newSortRules[:index], newSortRules[index+1:]...)
+				low, mid := tool.BinarySearch(newSortRules, v.Salience)
+
+				ire := []*base.RuleEntity{v}
+				if mid == 0 {
+					newRe := append(ire, newSortRules[low:]...)
+					newSortRules = append(newSortRules[:low], newRe...)
+				} else {
+					newRe := append(ire, newSortRules[mid:]...)
+					newSortRules = append(newSortRules[:mid], newRe...)
+				}
+
+				//update the sort index
+				indexMap := make(map[string]int)
+				for k, v := range newSortRules {
+					indexMap[v.RuleName] = k
+				}
+				rb.Kc.SortRulesIndexMap = indexMap
+			}
+
+			newRuleEntities[k] = v
+		} else {
+			//add update
+			low, mid := tool.BinarySearch(newSortRules, v.Salience)
+
+			ire := []*base.RuleEntity{v}
+			if mid == 0 {
+				newRe := append(ire, newSortRules[low:]...)
+				newSortRules = append(newSortRules[:low], newRe...)
+			} else {
+				newRe := append(ire, newSortRules[mid:]...)
+				newSortRules = append(newSortRules[:mid], newRe...)
+			}
+
+			//update the sort index
+			indexMap := make(map[string]int)
+			for k, v := range newSortRules {
+				indexMap[v.RuleName] = k
+			}
+			rb.Kc.SortRulesIndexMap = indexMap
+
+			newRuleEntities[k] = v
+		}
+	}
+
+	rb.Kc.RuleEntities = newRuleEntities
+	rb.Kc.SortRules = newSortRules
+}
+
+//sync method
+//incremental update the rules in all engine in the pool
+//incremental update success: return nil
+//incremental update failed: return error
+// if a rule already exists, this method will use the new rule to replace the old one
+// if a rule doesn't exist, this method will add the new rule to the existed rules list
+//see: func (builder *RuleBuilder)BuildRuleWithIncremental(ruleString string) in rule_builder.go
+func (gp *GenginePool) UpdatePooledRulesIncremental(ruleStr string) error {
+	gp.updateLock.Lock()
+	defer gp.updateLock.Unlock()
+
+	//new main
+	kci, e := getKc(ruleStr)
+	if e != nil {
+		return e
+	}
+
+	//new instance
+	kcs := make([]*base.KnowledgeContext, gp.max)
+	for i := 0; i < int(gp.max); i++ {
+		kc, e := getKc(ruleStr)
+		if e != nil {
+			return e
+		}
+		kcs[i] = kc
+	}
+
+	//update main
+	updateIncremental(kci, gp.ruleBuilder)
+
+	//update instance
+	for i := 0; i < int(gp.max); i++ {
+		updateIncremental(kcs[i], gp.rbSlice[i])
+	}
+
+	gp.clear = false
+	return nil
 }
 
 //clear all rules in engine in pool
 func (gp *GenginePool) ClearPoolRules() {
 	gp.updateLock.Lock()
 	gp.ruleBuilder = nil
-	gp.rStr = ""
 	gp.clear = true
 	gp.updateLock.Unlock()
 }
@@ -277,7 +409,10 @@ func (gp *GenginePool) GetExecModel() int {
 
 //check the rule whether exist
 func (gp *GenginePool) IsExist(ruleName string) bool {
-	if gp.rStr == "" || gp.clear || gp.ruleBuilder == nil {
+	gp.updateLock.Lock()
+	defer gp.updateLock.Unlock()
+
+	if gp.clear || gp.ruleBuilder == nil {
 		return false
 	}
 	_, ok := gp.ruleBuilder.Kc.RuleEntities[ruleName]
@@ -285,7 +420,10 @@ func (gp *GenginePool) IsExist(ruleName string) bool {
 }
 
 func (gp *GenginePool) GetRulesNumber() int {
-	if gp.rStr == "" || gp.clear || gp.ruleBuilder == nil {
+	gp.updateLock.Lock()
+	defer gp.updateLock.Unlock()
+
+	if gp.clear || gp.ruleBuilder == nil {
 		return 0
 	}
 	return len(gp.ruleBuilder.Kc.RuleEntities)
@@ -298,11 +436,7 @@ func (gp *GenginePool) prepare(reqName string, req interface{}, respName string,
 		return nil, e
 	}
 
-	if gw.version != gp.version {
-		rb := <-gp.rbChan
-		gw.version = gp.version
-		gw.rulebuilder = rb
-	}
+	gw.rulebuilder = gp.rbSlice[gw.tag]
 
 	if reqName != "" && req != nil {
 		gw.rulebuilder.Dc.Add(reqName, req)
@@ -321,11 +455,7 @@ func (gp *GenginePool) prepareWithMultiInput(data map[string]interface{}) (*geng
 		return nil, e
 	}
 
-	if gw.version != gp.version {
-		rb := <-gp.rbChan
-		gw.version = gp.version
-		gw.rulebuilder = rb
-	}
+	gw.rulebuilder = gp.rbSlice[gw.tag]
 
 	for k, v := range data {
 		//user should not inject "" string or nil value
