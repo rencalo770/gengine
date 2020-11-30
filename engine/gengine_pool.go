@@ -381,9 +381,12 @@ func (gp *GenginePool) UpdatePooledRulesIncremental(ruleStr string) error {
 //clear all rules in engine in pool
 func (gp *GenginePool) ClearPoolRules() {
 	gp.updateLock.Lock()
+	defer gp.updateLock.Unlock()
 	gp.ruleBuilder = nil
 	gp.clear = true
-	gp.updateLock.Unlock()
+	for i := 0; i < int(gp.max) ; i++ {
+		gp.rbSlice[i].Kc.ClearRules()
+	}
 }
 
 /*
