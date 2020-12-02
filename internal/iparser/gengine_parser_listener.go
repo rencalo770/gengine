@@ -28,6 +28,7 @@ type GengineParserListener struct {
 	KnowledgeContext *base.KnowledgeContext
 	Stack            *stack.Stack
 	ruleName         string
+	ruleDescription  string
 }
 
 func (g *GengineParserListener) AddError(e error) {
@@ -100,6 +101,7 @@ func (g *GengineParserListener) ExitRuleDescription(ctx *parser.RuleDescriptionC
 	ruleDescription := strings.Trim(text, "\"")
 	entity := g.Stack.Peek().(*base.RuleEntity)
 	entity.RuleDescription = ruleDescription
+	g.ruleDescription = ruleDescription
 }
 
 func (g *GengineParserListener) EnterRuleContent(ctx *parser.RuleContentContext) {
@@ -583,6 +585,18 @@ func (g *GengineParserListener) ExitAtName(ctx *parser.AtNameContext) {
 	}
 	holder := g.Stack.Peek().(base.AtNameHolder)
 	err := holder.AcceptName(strings.ReplaceAll(g.ruleName, "\"", ""))
+	if err != nil {
+		g.AddError(err)
+	}
+}
+func (g *GengineParserListener) EnterAtDesc(ctx *parser.AtDescContext) {}
+
+func (g *GengineParserListener) ExitAtDesc(ctx *parser.AtDescContext) {
+	if len(g.ParseErrors) > 0 {
+		return
+	}
+	holder := g.Stack.Peek().(base.AtDescHolder)
+	err := holder.AcceptDesc(strings.ReplaceAll(g.ruleDescription, "\"", ""))
 	if err != nil {
 		g.AddError(err)
 	}

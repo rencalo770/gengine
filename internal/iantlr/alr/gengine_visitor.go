@@ -1,4 +1,4 @@
-// Code generated from /Users/renyunyi/go/src/gengine/internal/iantlr/gengine.g4 by ANTLR 4.7.2. DO NOT EDIT.
+// Code generated from gengine.g4 by ANTLR 4.9. DO NOT EDIT.
 
 package parser // gengine
 
@@ -106,6 +106,9 @@ type gengineVisitor interface {
 
 	// Visit a parse tree produced by gengineParser#atName.
 	VisitAtName(ctx *AtNameContext) interface{}
+
+	// Visit a parse tree produced by gengineParser#atDesc.
+	VisitAtDesc(ctx *AtDescContext) interface{}
 
 	// Visit a parse tree produced by gengineParser#atId.
 	VisitAtId(ctx *AtIdContext) interface{}

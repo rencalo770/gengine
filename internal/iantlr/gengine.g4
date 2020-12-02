@@ -48,6 +48,7 @@ constant
     | realLiteral
     | stringLiteral
     | atName
+    | atDesc
     | atId
     ;
 
@@ -84,6 +85,7 @@ notOperator: NOT;
 mapVar: variable LSQARE (integer |stringLiteral | variable ) RSQARE;
 
 atName : '@name';
+atDesc : '@desc';
 atId : '@id';
 
 fragment DEC_DIGIT          : [0-9];

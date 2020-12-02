@@ -33,7 +33,13 @@ func (cons *Constant) AcceptName(name string) error {
 	return nil
 }
 
-func (cons *Constant)AcceptId(id int64) error {
+func (cons *Constant) AcceptId(id int64) error {
 	cons.ConstantValue = id
+	return nil
+}
+
+//receive rule's description
+func (cons *Constant) AcceptDesc(desc string) error {
+	cons.ConstantValue = desc
 	return nil
 }
