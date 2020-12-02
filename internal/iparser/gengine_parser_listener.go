@@ -596,7 +596,7 @@ func (g *GengineParserListener) ExitAtDesc(ctx *parser.AtDescContext) {
 		return
 	}
 	holder := g.Stack.Peek().(base.AtDescHolder)
-	err := holder.AcceptName(strings.ReplaceAll(g.ruleDescription, "\"", ""))
+	err := holder.AcceptDesc(strings.ReplaceAll(g.ruleDescription, "\"", ""))
 	if err != nil {
 		g.AddError(err)
 	}
