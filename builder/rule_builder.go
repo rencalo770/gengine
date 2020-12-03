@@ -10,6 +10,7 @@ import (
 	"gengine/internal/tool"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"sort"
+	"strings"
 	"sync"
 )
 
@@ -28,9 +29,16 @@ func NewRuleBuilder(dc *context.DataContext) *RuleBuilder {
 	}
 }
 
+//chinese comment :全量更新
+// if update success, all old rules will be delete and you inject new rules will be in the gengine
 func (builder *RuleBuilder) BuildRuleFromString(ruleString string) error {
 	builder.buildLock.Lock()
 	defer builder.buildLock.Unlock()
+
+	if strings.TrimSpace(ruleString) == "" {
+		//nil ruleString check
+		return errors.New(fmt.Sprintf("inject ruleString is %s", ruleString))
+	}
 
 	kc := base.NewKnowledgeContext()
 
@@ -86,6 +94,11 @@ func (builder *RuleBuilder) BuildRuleWithIncremental(ruleString string) error {
 	builder.buildLock.Lock()
 	defer builder.buildLock.Unlock()
 
+	if strings.TrimSpace(ruleString) == "" {
+		//nil ruleString check
+		return errors.New(fmt.Sprintf("incremental inject ruleString is %s", ruleString))
+	}
+
 	in := antlr.NewInputStream(ruleString)
 	lexer := parser.NewgengineLexer(in)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
@@ -108,22 +121,21 @@ func (builder *RuleBuilder) BuildRuleWithIncremental(ruleString string) error {
 		return errors.New(fmt.Sprintf("%+v", listener.ParseErrors))
 	}
 
-	if len(kc.RuleEntities)==0 {
+	if len(kc.RuleEntities) == 0 {
 		return errors.New(fmt.Sprintf("no rules need to update or add."))
 	}
 
 	//copy
 	newRuleEntities := make(map[string]*base.RuleEntity, len(builder.Kc.RuleEntities))
-	for mk, mv :=range builder.Kc.RuleEntities{
+	for mk, mv := range builder.Kc.RuleEntities {
 		newRuleEntities[mk] = mv
 	}
 
 	//copy
 	newSortRules := make([]*base.RuleEntity, len(builder.Kc.SortRules))
-	for sk,sv:=range builder.Kc.SortRules  {
+	for sk, sv := range builder.Kc.SortRules {
 		newSortRules[sk] = sv
 	}
-
 
 	//kc store the new rules
 	for k, v := range kc.RuleEntities {
@@ -137,7 +149,7 @@ func (builder *RuleBuilder) BuildRuleWithIncremental(ruleString string) error {
 			if v.Salience == vm.Salience {
 				//replace
 				newSortRules[index] = v
-			}else {
+			} else {
 				newSortRules := append(newSortRules[:index], newSortRules[index+1:]...)
 				//search location to insert
 				low, mid := tool.BinarySearch(newSortRules, v.Salience)
@@ -159,8 +171,8 @@ func (builder *RuleBuilder) BuildRuleWithIncremental(ruleString string) error {
 				builder.Kc.SortRulesIndexMap = indexMap
 			}
 
-			newRuleEntities[k]= v
-		}else {
+			newRuleEntities[k] = v
+		} else {
 			//add update
 			low, mid := tool.BinarySearch(newSortRules, v.Salience)
 
