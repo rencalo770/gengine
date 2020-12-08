@@ -8,7 +8,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/google/martian/log"
+	"github.com/google/martian/v3/log"
 )
 
 type Gengine struct {

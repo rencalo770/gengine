@@ -8,7 +8,7 @@ import (
 	parser "gengine/internal/iantlr/alr"
 	"gengine/internal/iparser"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"github.com/google/martian/log"
+	"github.com/google/martian/v3/log"
 
 	"testing"
 )

@@ -12,7 +12,7 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"sync"
 
-	"github.com/google/martian/log"
+	"github.com/google/martian/v3/log"
 )
 
 const (
@@ -384,7 +384,7 @@ func (gp *GenginePool) ClearPoolRules() {
 	defer gp.updateLock.Unlock()
 	gp.ruleBuilder = nil
 	gp.clear = true
-	for i := 0; i < int(gp.max) ; i++ {
+	for i := 0; i < int(gp.max); i++ {
 		gp.rbSlice[i].Kc.ClearRules()
 	}
 }

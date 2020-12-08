@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/martian/log"
+	"github.com/google/martian/v3/log"
 )
 
 /**

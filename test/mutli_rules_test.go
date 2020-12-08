@@ -6,7 +6,7 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
-	"github.com/google/martian/log"
+	"github.com/google/martian/v3/log"
 
 	"io/ioutil"
 	"strconv"
