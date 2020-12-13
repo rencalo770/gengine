@@ -8,8 +8,6 @@ import (
 	parser "gengine/internal/iantlr/alr"
 	"gengine/internal/iparser"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"github.com/google/martian/log"
-
 	"testing"
 )
 
@@ -51,7 +49,7 @@ func Test_base_msg(t *testing.T) {
 	//读取规则
 	err := ruleBuilder.BuildRuleFromString(rule3)
 	if err != nil {
-		log.Errorf("______%v", err)
+		panic(err)
 	}
 
 	rule := ruleBuilder.Kc.RuleEntities

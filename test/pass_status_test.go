@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-const pass_status_rule  = `
+const pass_status_rule = `
 rule "1" "1"
 begin
 rs.V = rs.V +1
@@ -44,7 +44,7 @@ type Result struct {
 func Test_pass_status(t *testing.T) {
 	dataContext := context.NewDataContext()
 	//inject struct
-	rs := &Result{V:0}
+	rs := &Result{V: 0}
 	dataContext.Add("rs", rs)
 
 	//init rule engine
@@ -59,7 +59,7 @@ func Test_pass_status(t *testing.T) {
 	eng := engine.NewGengine()
 	e2 := eng.Execute(ruleBuilder, true)
 	if e2 != nil {
-		println("err-------")
+		panic(e2)
 	}
 
 	println("rs.V-->", rs.V)

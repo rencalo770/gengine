@@ -1,9 +1,8 @@
-// Code generated from gengine.g4 by ANTLR 4.9. DO NOT EDIT.
+// Code generated from /Users/renyunyi/gengine/internal/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package parser // gengine
 
 import "github.com/antlr/antlr4/runtime/Go/antlr"
-
 // A complete Visitor for a parse tree produced by gengineParser.
 type gengineVisitor interface {
 	antlr.ParseTreeVisitor
@@ -46,6 +45,9 @@ type gengineVisitor interface {
 
 	// Visit a parse tree produced by gengineParser#assignment.
 	VisitAssignment(ctx *AssignmentContext) interface{}
+
+	// Visit a parse tree produced by gengineParser#returnStmt.
+	VisitReturnStmt(ctx *ReturnStmtContext) interface{}
 
 	// Visit a parse tree produced by gengineParser#ifStmt.
 	VisitIfStmt(ctx *IfStmtContext) interface{}
@@ -107,9 +109,10 @@ type gengineVisitor interface {
 	// Visit a parse tree produced by gengineParser#atName.
 	VisitAtName(ctx *AtNameContext) interface{}
 
+	// Visit a parse tree produced by gengineParser#atId.
+	VisitAtId(ctx *AtIdContext) interface{}
+
 	// Visit a parse tree produced by gengineParser#atDesc.
 	VisitAtDesc(ctx *AtDescContext) interface{}
 
-	// Visit a parse tree produced by gengineParser#atId.
-	VisitAtId(ctx *AtIdContext) interface{}
 }

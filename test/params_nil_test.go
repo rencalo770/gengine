@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-const params_nil_rule  = `
+const params_nil_rule = `
 rule "1" "2"
 begin
 
@@ -20,24 +20,23 @@ end
 
 type SS struct {
 	Str string
-	Sl []int64
-	Ab AB
+	Sl  []int64
+	Ab  AB
 }
 
 type AB struct {
 	Sx string
 }
 
-
 func SetSt() *SS {
 	return nil
 }
 
-func GetSt(s *SS) *SS{
+func GetSt(s *SS) *SS {
 	if s == nil {
 		println("xxxxxx")
-	}else {
-		println("yyyyyy", len(s.Sl), fmt.Sprintf("%+v", s.Ab), s.Sl == nil, s.Ab.Sx == "" )
+	} else {
+		println("yyyyyy", len(s.Sl), fmt.Sprintf("%+v", s.Ab), s.Sl == nil, s.Ab.Sx == "")
 	}
 
 	return s
@@ -50,10 +49,7 @@ func Test_p_b(t *testing.T) {
 
 }
 
-
-
 func Test_params_nil(t *testing.T) {
-
 
 	dataContext := context.NewDataContext()
 	//inject struct
@@ -75,8 +71,7 @@ func Test_params_nil(t *testing.T) {
 	// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 	e2 := eng.Execute(ruleBuilder, true)
 	if e2 != nil {
-		println("err-------")
+		panic(e2)
 	}
 
 }
-

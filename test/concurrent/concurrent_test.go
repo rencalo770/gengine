@@ -5,7 +5,6 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
-	"github.com/google/martian/log"
 
 	"io/ioutil"
 	"os"
@@ -16,12 +15,12 @@ import (
 func readAll() string {
 	f, err := os.Open("../rule.gengine")
 	if err != nil {
-		log.Errorf("read file err: %+v", err)
+		println(fmt.Sprintf("read file err: %+v", err))
 	}
 
 	b, e := ioutil.ReadAll(f)
 	if e != nil {
-		log.Errorf("read file err: %+v", e)
+		println(fmt.Sprintf("read file err: %+v", e))
 	}
 	return string(b)
 
@@ -83,25 +82,24 @@ func exe_concurrent(user *User, s string) {
 	err := ruleBuilder.BuildRuleFromString(s)
 	end1 := time.Now().UnixNano()
 
-	log.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
+	println(fmt.Sprintf("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1))
 
 	if err != nil {
-		log.Errorf("err:%s ", err)
-	} else {
-		eng := engine.NewGengine()
-
-		for i := 0; i < 10; i++ {
-			start := time.Now().UnixNano()
-			// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
-			eng.ExecuteConcurrent(ruleBuilder)
-			end := time.Now().UnixNano()
-			log.Infof("execute rule cost %d ns", end-start)
-		}
-
-		if err != nil {
-			log.Errorf("execute rule error: %v", err)
-		}
-
-		log.Infof("user.Age=%d,Name=%s,Male=%t", user.Age, user.Name, user.Male)
+		panic(err)
 	}
+	eng := engine.NewGengine()
+
+	for i := 0; i < 10; i++ {
+		start := time.Now().UnixNano()
+		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
+		err := eng.ExecuteConcurrent(ruleBuilder)
+		if err != nil {
+			panic(err)
+		}
+		end := time.Now().UnixNano()
+		println(fmt.Sprintf("execute rule cost %d ns", end-start))
+	}
+
+	println(fmt.Sprintf("user.Age=%d,Name=%s,Male=%t", user.Age, user.Name, user.Male))
+
 }

@@ -75,5 +75,8 @@ func Test_stop_tag_in_mix_model(t *testing.T) {
 	dataContext.Add("User", user)
 
 	eng := engine.NewGengine()
-	eng.ExecuteMixModelWithStopTagDirect(ruleBuilder, stag)
+	e1 = eng.ExecuteMixModelWithStopTagDirect(ruleBuilder, stag)
+	if e1 != nil {
+		panic(e1)
+	}
 }

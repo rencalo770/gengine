@@ -14,29 +14,33 @@ type Statement struct {
 	dataCtx       *context.DataContext
 }
 
-func (s *Statement) Evaluate(Vars map[string]interface{}) (interface{}, error) {
+func (s *Statement) Evaluate(Vars map[string]interface{}) (interface{}, error, bool) {
 
 	if s.IfStmt != nil {
 		return s.IfStmt.Evaluate(Vars)
 	}
 
 	if s.MethodCall != nil {
-		return s.MethodCall.Evaluate(Vars)
+		v, e := s.MethodCall.Evaluate(Vars)
+		return v, e, false
 	}
 
 	if s.FunctionCall != nil {
-		return s.FunctionCall.Evaluate(Vars)
+		v, e := s.FunctionCall.Evaluate(Vars)
+		return v, e, false
 	}
 
 	if s.Assignment != nil {
-		return s.Assignment.Evaluate(Vars)
+		v, e := s.Assignment.Evaluate(Vars)
+		return v, e, false
 	}
 
 	if s.ConcStatement != nil {
-		return s.ConcStatement.Evaluate(Vars)
+		v, e := s.ConcStatement.Evaluate(Vars)
+		return v, e, false
 	}
 
-	return nil, errors.New("Statement evaluate error!")
+	return nil, errors.New("Statement evaluate error!"), false
 }
 
 func (s *Statement) Initialize(dc *context.DataContext) {

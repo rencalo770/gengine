@@ -7,23 +7,23 @@ ruleName : stringLiteral;
 ruleDescription : stringLiteral;
 salience : SALIENCE integer;
 ruleContent : statements;
-statements: statement+;
+statements: statement* returnStmt? ;
 
 statement : ifStmt | methodCall  | functionCall | assignment | concStatement ;
 
-concStatement : 'conc' '{' ( methodCall | functionCall | assignment )* '}';
+concStatement : CONC LR_BRACE ( methodCall | functionCall | assignment )* RR_BRACE;
 
 expression : mathExpression
             | expression comparisonOperator expression
             | expression logicalOperator expression
             | notOperator ? expressionAtom
-            | notOperator ? '(' expression  ')'
+            | notOperator ? LR_BRACKET expression  RR_BRACKET
             ;
 
 mathExpression : mathExpression  mathMdOperator mathExpression
                | mathExpression  mathPmOperator mathExpression
                | expressionAtom
-               | '(' mathExpression ')'
+               | LR_BRACKET mathExpression RR_BRACKET
                ;
 
 expressionAtom
@@ -36,11 +36,13 @@ expressionAtom
 
 assignment : (mapVar | variable) assignOperator (mathExpression| expression);
 
-ifStmt : 'if' expression '{' statements? '}' elseIfStmt*  elseStmt? ;
+returnStmt : RETURN expression?;
 
-elseIfStmt : 'else' 'if' expression '{' statements? '}';
+ifStmt : IF expression LR_BRACE statements RR_BRACE elseIfStmt*  elseStmt? ;
 
-elseStmt : 'else' '{' statements? '}';
+elseIfStmt : ELSE IF expression LR_BRACE statements RR_BRACE;
+
+elseStmt : ELSE LR_BRACE statements RR_BRACE;
 
 constant
     : booleanLiteral
@@ -56,7 +58,7 @@ functionArgs
     : (constant | variable  | functionCall | methodCall | mapVar | expression)  (','(constant | variable | functionCall | methodCall | mapVar | expression))*
     ;
 
-integer : '-'? INT;
+integer : MINUS? INT;
 
 realLiteral : MINUS? REAL_LITERAL;
 
@@ -64,9 +66,9 @@ stringLiteral: DQUOTA_STRING ;
 
 booleanLiteral : TRUE | FALSE;
 
-functionCall : SIMPLENAME '(' functionArgs? ')';
+functionCall : SIMPLENAME LR_BRACKET functionArgs? RR_BRACKET;
 
-methodCall : DOTTEDNAME '(' functionArgs? ')';
+methodCall : DOTTEDNAME LR_BRACKET functionArgs? RR_BRACKET;
 
 variable :  SIMPLENAME | DOTTEDNAME ;
 
@@ -85,8 +87,9 @@ notOperator: NOT;
 mapVar: variable LSQARE (integer |stringLiteral | variable ) RSQARE;
 
 atName : '@name';
-atDesc : '@desc';
 atId : '@id';
+atDesc : '@desc';
+
 
 fragment DEC_DIGIT          : [0-9];
 fragment A                  : [aA] ;
@@ -121,6 +124,11 @@ NIL                         : N I L;
 RULE                        : R U L E  ;
 AND                         : '&&' ;
 OR                          : '||' ;
+
+CONC                        : C O N C;
+IF                          : I F;
+ELSE                        : E L S E;
+RETURN                      : R E T U R N;
 
 TRUE                        : T R U E ;
 FALSE                       : F A L S E ;
@@ -170,5 +178,4 @@ REAL_LITERAL                : (DEC_DIGIT+)? '.' DEC_DIGIT+
                             ;
 
 SL_COMMENT: '//' .*? '\n' -> skip ;
-
 WS  :   [ \t\n\r]+ -> skip ;

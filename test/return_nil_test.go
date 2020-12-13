@@ -74,7 +74,7 @@ func (l *Live) GetStringPtr() *string {
 	return nil
 }
 
-func (l *Live) SetStringPtr(s *string)  {
+func (l *Live) SetStringPtr(s *string) {
 	println("SetStringPtr... ")
 }
 
@@ -95,7 +95,7 @@ func (l *Live) GetBoolPtr() *bool {
 	return nil
 }
 
-func (l *Live) SetBoolPtr(b *bool){
+func (l *Live) SetBoolPtr(b *bool) {
 	if b == nil {
 		println("----------b is nil-------")
 	}
@@ -127,7 +127,7 @@ func (l *Live) GetUintPtr() *uint {
 	return nil
 }
 
-func (l *Live) SetUintPtr(u *uint){
+func (l *Live) SetUintPtr(u *uint) {
 	println("SetUintPtr...")
 }
 
@@ -155,7 +155,7 @@ func (l *Live) GetEverPtr() *Ever {
 	return nil
 }
 
-func (l *Live) SetEverPtr(e *Ever)    {
+func (l *Live) SetEverPtr(e *Ever) {
 	println("SetEverPtr...")
 }
 
@@ -169,7 +169,7 @@ func (l *Live) GetArrayPtr() *[4]int64 {
 	return nil
 }
 
-func (l *Live) SetArrayPtr(x *[4]int64)  {
+func (l *Live) SetArrayPtr(x *[4]int64) {
 	println("SetArrayPtr....")
 }
 
@@ -184,13 +184,12 @@ func (l *Live) GetArray() [4]int64 {
 	return x
 }
 
-
 func (l *Live) GetSlicePtr() *[]int64 {
 	println("GetSlicePtr")
 	return nil
 }
 
-func (l *Live) SetSlicePtr(s *[]int64 ){
+func (l *Live) SetSlicePtr(s *[]int64) {
 	println("SetSlicePtr....")
 }
 
@@ -199,10 +198,9 @@ func (l *Live) GetSlice() []int64 {
 	return nil
 }
 
-func (l *Live) SetSlice(s []int64){
+func (l *Live) SetSlice(s []int64) {
 	println("SetSlice....")
 }
-
 
 func (l *Live) GetMapPtr() *map[int64]string {
 	println("GetMapPtr")
@@ -218,11 +216,11 @@ func (l *Live) GetMap() map[int64]string {
 	return nil
 }
 
-func (l *Live) SetMap(m map[int64]string ){
+func (l *Live) SetMap(m map[int64]string) {
 	println("SetMap....")
 }
 
-func (l *Live) GetChan() chan string{
+func (l *Live) GetChan() chan string {
 	println("GetChan")
 	return nil
 }
@@ -231,7 +229,7 @@ func (l *Live) SetChan(c chan string) {
 	println("SetChan....")
 }
 
-func (l *Live) Setfun() func(){
+func (l *Live) Setfun() func() {
 	println("Setfun")
 	return nil
 }
@@ -241,18 +239,17 @@ func (l *Live) Getfun(f func()) {
 	println("Getfun...")
 }
 
-func (l *Live) GetInterf() interface{}{
+func (l *Live) GetInterf() interface{} {
 	println("GetInterf...")
 	return nil
 }
 
-func (l *Live) SetInterf(i interface{}){
+func (l *Live) SetInterf(i interface{}) {
 	if i == nil {
 		println("interface is nil")
 	}
-	println("SetInterf...",reflect.ValueOf(i).String())
+	println("SetInterf...", reflect.ValueOf(i).String())
 }
-
 
 func Test_return_nil(t *testing.T) {
 
@@ -276,7 +273,7 @@ func Test_return_nil(t *testing.T) {
 	// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 	e2 := eng.Execute(ruleBuilder, true)
 	if e2 != nil {
-		println("err-------")
+		panic(e2)
 	}
 
 }

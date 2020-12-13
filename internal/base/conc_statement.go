@@ -1,8 +1,9 @@
 package base
 
 import (
+	"fmt"
 	"gengine/context"
-	"github.com/google/martian/log"
+	"gengine/internal/core/errors"
 	"sync"
 )
 
@@ -62,30 +63,22 @@ func (cs *ConcStatement) Evaluate(Vars map[string]interface{}) (interface{}, err
 
 	} else if l == 1 {
 		if aLen > 0 {
-			_, e := cs.Assignments[0].Evaluate(Vars)
-			if e != nil {
-				log.Errorf("conc block sort Assignment evaluate err: %+v ", e)
-			}
-			return nil, e
+			return cs.Assignments[0].Evaluate(Vars)
 		}
 
 		if fLen > 0 {
-			_, e := cs.FunctionCalls[0].Evaluate(Vars)
-			if e != nil {
-				log.Errorf("conc block sort FunctionCall evaluate err: %+v ", e)
-			}
-			return nil, e
+			return cs.FunctionCalls[0].Evaluate(Vars)
 		}
 
 		if mLen > 0 {
-			_, e := cs.MethodCalls[0].Evaluate(Vars)
-			if e != nil {
-				log.Errorf("conc block sort FunctionCall evaluate err: %+v ", e)
-			}
-			return nil, e
+			return cs.MethodCalls[0].Evaluate(Vars)
 		}
 
 	} else {
+
+		var errLock sync.Mutex
+		var eMsg []string
+
 		var wg sync.WaitGroup
 		wg.Add(l)
 		for _, assign := range cs.Assignments {
@@ -93,7 +86,9 @@ func (cs *ConcStatement) Evaluate(Vars map[string]interface{}) (interface{}, err
 			go func() {
 				_, e := assignment.Evaluate(Vars)
 				if e != nil {
-					log.Errorf("concStatement Assignment err: %+v ", e)
+					errLock.Lock()
+					eMsg = append(eMsg, fmt.Sprintf("%+v", e))
+					errLock.Unlock()
 				}
 				wg.Done()
 			}()
@@ -103,7 +98,9 @@ func (cs *ConcStatement) Evaluate(Vars map[string]interface{}) (interface{}, err
 			go func() {
 				_, e := fun.Evaluate(Vars)
 				if e != nil {
-					log.Errorf("concStatement FunctionCall err: %+v ", e)
+					errLock.Lock()
+					eMsg = append(eMsg, fmt.Sprintf("%+v", e))
+					errLock.Unlock()
 				}
 				wg.Done()
 			}()
@@ -114,12 +111,18 @@ func (cs *ConcStatement) Evaluate(Vars map[string]interface{}) (interface{}, err
 			go func() {
 				_, e := meth.Evaluate(Vars)
 				if e != nil {
-					log.Errorf("concStatement MethodCall err: %+v ", e)
+					errLock.Lock()
+					eMsg = append(eMsg, fmt.Sprintf("%+v", e))
+					errLock.Unlock()
 				}
 				wg.Done()
 			}()
 		}
 		wg.Wait()
+
+		if len(eMsg) > 0 {
+			return nil, errors.New(fmt.Sprintf("%+v", eMsg))
+		}
 	}
 	return nil, nil
 }

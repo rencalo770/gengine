@@ -5,8 +5,6 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
-	"github.com/google/martian/log"
-
 	"testing"
 	"time"
 )
@@ -18,7 +16,7 @@ begin
 a = 8
 if a < 1 {
 	println("a < 1")
-} else          if a >= 1 && a <6 {
+} else if a >= 1 && a <6 {
 	println("a >= 1 && a <6")
 } else if a >= 6 && a < 7 {
 	println("a >= 6 && a < 7")
@@ -44,20 +42,20 @@ func Test_elseif(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(rule_else_if_test)
 	end1 := time.Now().UnixNano()
 
-	log.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
+	println(fmt.Sprintf("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1))
 
 	if err != nil {
-		log.Errorf("err:%s ", err)
-	} else {
-		eng := engine.NewGengine()
-
-		start := time.Now().UnixNano()
-		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
-		err := eng.Execute(ruleBuilder, true)
-		end := time.Now().UnixNano()
-		if err != nil {
-			log.Errorf("execute rule error: %v", err)
-		}
-		log.Infof("execute rule cost %d ns", end-start)
+		panic(err)
 	}
+	eng := engine.NewGengine()
+
+	start := time.Now().UnixNano()
+	// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
+	err = eng.Execute(ruleBuilder, true)
+	end := time.Now().UnixNano()
+	if err != nil {
+		panic(err)
+	}
+	println(fmt.Sprintf("execute rule cost %d ns", end-start))
+
 }

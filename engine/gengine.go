@@ -12,14 +12,28 @@ import (
 )
 
 type Gengine struct {
+	lock         sync.Mutex
+	returnResult map[string]interface{}
 }
 
 func NewGengine() *Gengine {
-	return &Gengine{}
+	return &Gengine{
+		returnResult: make(map[string]interface{}),
+	}
 }
 
 type Stag struct {
 	StopTag bool
+}
+
+func (g *Gengine) addResult(name string, returnResult interface{}) {
+	g.lock.Lock()
+	defer g.lock.Unlock()
+	g.returnResult[name] = returnResult
+}
+
+func (g *Gengine) GetRulesResultMap() (map[string]interface{}, error) {
+	return g.returnResult, nil
 }
 
 /**
@@ -34,7 +48,11 @@ func (g *Gengine) Execute(rb *builder.RuleBuilder, b bool) error {
 
 	var eMsg []string
 	for _, r := range rb.Kc.SortRules {
-		err := r.Execute()
+		v, err, bx := r.Execute()
+		if bx {
+			g.addResult(r.RuleName, v)
+		}
+
 		if err != nil {
 			if b {
 				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err))
@@ -68,7 +86,10 @@ func (g *Gengine) ExecuteWithStopTagDirect(rb *builder.RuleBuilder, b bool, sTag
 
 	var eMsg []string
 	for _, r := range rb.Kc.SortRules {
-		err := r.Execute()
+		v, err, bx := r.Execute()
+		if bx {
+			g.addResult(r.RuleName, v)
+		}
 		if err != nil {
 			if b {
 				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err))
@@ -106,7 +127,10 @@ func (g *Gengine) ExecuteConcurrent(rb *builder.RuleBuilder) error {
 	for _, r := range rb.Kc.RuleEntities {
 		rr := r
 		go func() {
-			e := rr.Execute()
+			v, e, bx := rr.Execute()
+			if bx {
+				g.addResult(rr.RuleName, v)
+			}
 			if e != nil {
 				errLock.Lock()
 				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
@@ -135,7 +159,11 @@ func (g *Gengine) ExecuteMixModel(rb *builder.RuleBuilder) error {
 	}
 
 	rules := rb.Kc.SortRules
-	e := rules[0].Execute()
+	v, e, bx := rules[0].Execute()
+	if bx {
+		g.addResult(rules[0].RuleName, v)
+	}
+
 	if e != nil {
 		return errors.New(fmt.Sprintf("the most high priority rule: \"%s\"  executed, error:\n %+v", rules[0].RuleName, e))
 	}
@@ -149,7 +177,10 @@ func (g *Gengine) ExecuteMixModel(rb *builder.RuleBuilder) error {
 		for _, r := range rules[1:] {
 			rr := r
 			go func() {
-				e := rr.Execute()
+				v, e, bx := rr.Execute()
+				if bx {
+					g.addResult(rr.RuleName, v)
+				}
 				if e != nil {
 					errLock.Lock()
 					eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
@@ -186,7 +217,10 @@ func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb *builder.RuleBuilder, sTag
 	}
 
 	rules := rb.Kc.SortRules
-	e := rules[0].Execute()
+	v, e, bx := rules[0].Execute()
+	if bx {
+		g.addResult(rules[0].RuleName, v)
+	}
 	if e != nil {
 		return errors.New(fmt.Sprintf("the most high priority rule: \"%s\"  executed, error:\n %+v", rules[0].RuleName, e))
 	}
@@ -201,7 +235,10 @@ func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb *builder.RuleBuilder, sTag
 			for _, r := range rules[1:] {
 				rr := r
 				go func() {
-					e := rr.Execute()
+					v, e, bx := rr.Execute()
+					if bx {
+						g.addResult(rr.RuleName, v)
+					}
 					if e != nil {
 						errLock.Lock()
 						eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
@@ -251,7 +288,10 @@ func (g *Gengine) ExecuteSelectedRules(rb *builder.RuleBuilder, names []string) 
 	var eMsg []string
 	for _, rule := range rules {
 		rr := rule
-		e := rr.Execute()
+		v, e, bx := rr.Execute()
+		if bx {
+			g.addResult(rr.RuleName, v)
+		}
 		if e != nil {
 			eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
 		}
@@ -295,7 +335,10 @@ func (g *Gengine) ExecuteSelectedRulesWithControl(rb *builder.RuleBuilder, b boo
 	var eMsg []string
 	for _, rule := range rules {
 		rr := rule
-		e := rr.Execute()
+		v, e, bx := rr.Execute()
+		if bx {
+			g.addResult(rr.RuleName, v)
+		}
 		if e != nil {
 			if b {
 				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
@@ -343,7 +386,10 @@ func (g *Gengine) ExecuteSelectedRulesWithControlAndStopTag(rb *builder.RuleBuil
 	var eMsg []string
 	for _, rule := range rules {
 		rr := rule
-		e := rr.Execute()
+		v, e, bx := rr.Execute()
+		if bx {
+			g.addResult(rr.RuleName, v)
+		}
 		if e != nil {
 			if b {
 				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
@@ -381,12 +427,15 @@ func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names 
 		}
 	}
 
-	if len(rules) < 1 {
+	if len(rules) == 0 {
 		return errors.New(fmt.Sprintf("no rule has been selected, names=%+v", names))
 	}
 
-	if len(rules) <= 1 {
-		e := rules[0].Execute()
+	if len(rules) == 1 {
+		v, e, bx := rules[0].Execute()
+		if bx {
+			g.addResult(rules[0].RuleName, v)
+		}
 		if e != nil {
 			return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rules[0].RuleName, e))
 		}
@@ -402,7 +451,10 @@ func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names 
 	for _, r := range rules {
 		rr := r
 		go func() {
-			e := rr.Execute()
+			v, e, bx := rr.Execute()
+			if bx {
+				g.addResult(rr.RuleName, v)
+			}
 			if e != nil {
 				errLock.Lock()
 				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
@@ -437,13 +489,15 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 		}
 	}
 
-	rLen := len(rules)
-	if rLen < 1 {
+	if len(rules) == 0 {
 		return errors.New(fmt.Sprintf("no rule has been selected, names=%+v", names))
 	}
 
-	if rLen == 1 {
-		e := rules[0].Execute()
+	if len(rules) == 1 {
+		v, e, bx := rules[0].Execute()
+		if bx {
+			g.addResult(rules[0].RuleName, v)
+		}
 		if e != nil {
 			return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rules[0].RuleName, e))
 		}
@@ -454,9 +508,12 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 		return rules[i].Salience > rules[j].Salience
 	})
 
-	if rLen == 2 {
+	if len(rules) == 2 {
 		for _, r := range rules {
-			err := r.Execute()
+			v, err, bx := r.Execute()
+			if bx {
+				g.addResult(r.RuleName, v)
+			}
 			if err != nil {
 				return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, err))
 			}
@@ -465,7 +522,10 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 	}
 
 	// rLen >= 3
-	e := rules[0].Execute()
+	v, e, bx := rules[0].Execute()
+	if bx {
+		g.addResult(rules[0].RuleName, v)
+	}
 	if e != nil {
 		return errors.New(fmt.Sprintf("the most high priority rule: \"%s\"  executed, error:\n %+v", rules[0].RuleName, e))
 	}
@@ -474,11 +534,14 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 	var eMsg []string
 
 	var wg sync.WaitGroup
-	wg.Add(rLen - 1)
+	wg.Add(len(rules) - 1)
 	for _, r := range rules[1:] {
 		rr := r
 		go func() {
-			e := rr.Execute()
+			v, e, bx := rr.Execute()
+			if bx {
+				g.addResult(rr.RuleName, v)
+			}
 			if e != nil {
 				errLock.Lock()
 				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
@@ -505,7 +568,10 @@ func (g *Gengine) ExecuteInverseMixModel(rb *builder.RuleBuilder) error {
 
 	if length <= 2 {
 		for _, r := range rules {
-			e := r.Execute()
+			v, e, bx := r.Execute()
+			if bx {
+				g.addResult(r.RuleName, v)
+			}
 			if e != nil {
 				return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
 			}
@@ -521,7 +587,10 @@ func (g *Gengine) ExecuteInverseMixModel(rb *builder.RuleBuilder) error {
 	for _, r := range rules[:length-1] {
 		rr := r
 		go func() {
-			e := rr.Execute()
+			v, e, bx := rr.Execute()
+			if bx {
+				g.addResult(rr.RuleName, v)
+			}
 			if e != nil {
 				errLock.Lock()
 				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
@@ -536,7 +605,11 @@ func (g *Gengine) ExecuteInverseMixModel(rb *builder.RuleBuilder) error {
 		return errors.New(fmt.Sprintf("%+v", eMsg))
 	}
 
-	return rules[length-1].Execute()
+	v, e, bx := rules[length-1].Execute()
+	if bx {
+		g.addResult(rules[length-1].RuleName, v)
+	}
+	return e
 }
 
 //inverse mix model with user selected
@@ -563,7 +636,10 @@ func (g *Gengine) ExecuteSelectedRulesInverseMixModel(rb *builder.RuleBuilder, n
 
 	if length <= 2 {
 		for _, r := range rules {
-			e := r.Execute()
+			v, e, bx := r.Execute()
+			if bx {
+				g.addResult(r.RuleName, v)
+			}
 			if e != nil {
 				return errors.New(fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", r.RuleName, e))
 			}
@@ -579,7 +655,10 @@ func (g *Gengine) ExecuteSelectedRulesInverseMixModel(rb *builder.RuleBuilder, n
 	for _, r := range rules[:length-1] {
 		rr := r
 		go func() {
-			e := rr.Execute()
+			v, e, bx := rr.Execute()
+			if bx {
+				g.addResult(rr.RuleName, v)
+			}
 			if e != nil {
 				errLock.Lock()
 				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
@@ -594,5 +673,9 @@ func (g *Gengine) ExecuteSelectedRulesInverseMixModel(rb *builder.RuleBuilder, n
 		return errors.New(fmt.Sprintf("%+v", eMsg))
 	}
 
-	return rules[length-1].Execute()
+	v, e, bx := rules[length-1].Execute()
+	if bx {
+		g.addResult(rules[length-1].RuleName, v)
+	}
+	return e
 }

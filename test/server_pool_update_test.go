@@ -144,7 +144,7 @@ func exe1(pool *engine.GenginePool) {
 		data["result"] = result
 
 		sids := []string{"3"}
-		e := pool.ExecuteSelectedRulesConcurrentWithMultiInput(data, sids)
+		e, _ := pool.ExecuteSelectedRulesConcurrentWithMultiInput(data, sids)
 		if e != nil {
 			panic(e)
 		}
@@ -169,13 +169,13 @@ func update(pool *engine.GenginePool) {
 		time.Sleep(3 * time.Second)
 		if i%2 == 0 {
 			e := pool.UpdatePooledRules(rule_to_update2)
-			println("-------1-------index=", i,"number=", pool.GetRulesNumber())
+			println("-------1-------index=", i, "number=", pool.GetRulesNumber())
 			if e != nil {
 				panic("update rule err:" + fmt.Sprintf("%+v", e))
 			}
 		} else {
 			e := pool.UpdatePooledRules(rule_to_update1)
-			println("-------2-------index=", i,"number=", pool.GetRulesNumber())
+			println("-------2-------index=", i, "number=", pool.GetRulesNumber())
 			if e != nil {
 				panic("update rule err:" + fmt.Sprintf("%+v", e))
 			}
@@ -191,7 +191,10 @@ func exe2(egs chan *Sengine) {
 		result := &ResultSet{M: make(map[int]int)}
 		sg.Rb.Dc.Add("result", result)
 		sids := []string{"3"}
-		sg.Eg.ExecuteSelectedRulesConcurrent(sg.Rb, sids)
+		e := sg.Eg.ExecuteSelectedRulesConcurrent(sg.Rb, sids)
+		if e != nil {
+			println(fmt.Sprintf("err:%+v", e))
+		}
 
 		var ne []int
 		for i := 1; i <= 5; i++ {

@@ -6,8 +6,6 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
-	"github.com/google/martian/log"
-
 	"io/ioutil"
 	"strconv"
 	"strings"
@@ -53,23 +51,23 @@ func Test_Multi(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(rule1) //string(bs)
 	end1 := time.Now().UnixNano()
 
-	log.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1)
+	println(fmt.Sprintf("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1))
 
 	if err != nil {
-		log.Errorf("err:%s ", err)
-	} else {
-		eng := engine.NewGengine()
-
-		start := time.Now().UnixNano()
-		err := eng.Execute(ruleBuilder, true)
-		println(user.Age)
-		end := time.Now().UnixNano()
-		if err != nil {
-			log.Errorf("execute rule error: %v", err)
-		}
-		log.Infof("execute rule cost %d ns", end-start)
-		log.Infof("user.Age=%d,Name=%s,Male=%t", user.Age, user.Name, user.Male)
+		panic(err)
 	}
+	eng := engine.NewGengine()
+
+	start := time.Now().UnixNano()
+	err = eng.Execute(ruleBuilder, true)
+	println(user.Age)
+	end := time.Now().UnixNano()
+	if err != nil {
+		panic(err)
+	}
+	println(fmt.Sprintf("execute rule cost %d ns", end-start))
+	println(fmt.Sprintf("user.Age=%d,Name=%s,Male=%t", user.Age, user.Name, user.Male))
+
 }
 
 /*

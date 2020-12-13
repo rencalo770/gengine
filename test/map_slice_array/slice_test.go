@@ -5,8 +5,6 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
-	"github.com/google/martian/log"
-
 	"testing"
 	"time"
 )
@@ -71,20 +69,19 @@ func Test_s1(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(S_1)
 	end1 := time.Now().UnixNano()
 
-	log.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
+	println(fmt.Sprintf("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1))
 
 	if err != nil {
-		log.Errorf("err:%s ", err)
-	} else {
-		eng := engine.NewGengine()
-		start := time.Now().UnixNano()
-		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
-		err := eng.Execute(ruleBuilder, true)
-		end := time.Now().UnixNano()
-		if err != nil {
-			log.Errorf("execute rule error: %v", err)
-		}
-		log.Infof("execute rule cost %d ns", end-start)
+		println(fmt.Sprintf("err:%s ", err))
 	}
+	eng := engine.NewGengine()
+	start := time.Now().UnixNano()
+	// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
+	err = eng.Execute(ruleBuilder, true)
+	end := time.Now().UnixNano()
+	if err != nil {
+		panic(err)
+	}
+	println(fmt.Sprintf("execute rule cost %d ns", end-start))
 
 }

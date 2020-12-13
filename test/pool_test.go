@@ -13,17 +13,13 @@ type Reqest struct {
 	Data float32
 }
 
-type Resp struct {
-	Data uint
-}
-
 const (
 	pool_rule = `
 rule "测试规则名称1" "rule desc"
 begin
 	Req.Data = 10 + 7 + 8
 	//sleep()   
-	// print(Req.Data)
+	 print(Req.Data)
 end
 rule "1" "rule desc"
 begin
@@ -46,14 +42,14 @@ func Test_pool_select_rules(t *testing.T) {
 	apis["print"] = fmt.Println
 	pool, e1 := engine.NewGenginePool(1, 2, 1, pool_rule, apis)
 	if e1 != nil {
-		println(fmt.Sprintf("e1: %+v", e1))
+		panic(e1)
 	}
 	println("build pool cost time:", time.Since(t1), "ns")
 	reqest := &Reqest{}
 	data := make(map[string]interface{})
 	data["Req"] = reqest
 
-	e2 := pool.ExecuteSelectedRulesWithMultiInput(data, []string{"测试规则名称1", "1"})
+	e2, _ := pool.ExecuteSelectedRulesWithMultiInput(data, []string{"测试规则名称1", "1"})
 	if e2 != nil {
 		panic(e2)
 	}
@@ -65,11 +61,11 @@ func Test_pool_no_rules(t *testing.T) {
 	t1 := time.Now()
 	pool, e1 := engine.NewGenginePool(3, 5, 1, "", nil)
 	if e1 != nil {
-		println(fmt.Sprintf("e1: %+v", e1))
+		panic(e1)
 	}
-	e2 := pool.ExecuteRules("", nil, "", nil)
+	e2, _ := pool.ExecuteRules("", nil, "", nil)
 	if e2 != nil {
-		println(fmt.Sprintf("Test_pool_no_rules, e2: %+v", e2))
+		panic(e2)
 	}
 
 	println("cost time:", time.Since(t1), "ns")
@@ -81,11 +77,11 @@ func Test_once(t *testing.T) {
 	apis["print"] = fmt.Println
 	pool, e1 := engine.NewGenginePool(1, 2, 1, pool_rule, apis)
 	if e1 != nil {
-		println(fmt.Sprintf("e1: %+v", e1))
+		panic(e1)
 	}
 	println("build pool cost time:", time.Since(t1), "ns")
 	reqest := &Reqest{}
-	e2 := pool.ExecuteRules("Req", reqest, "", nil)
+	e2, _ := pool.ExecuteRules("Req", reqest, "", nil)
 	if e2 != nil {
 		panic(e2)
 	}
@@ -117,7 +113,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 	apis["sleep"] = Sleep
 	pool, e1 := engine.NewGenginePool(poolMinLen, poolMaxLen, 2, pool_rule, apis)
 	if e1 != nil {
-		println(fmt.Sprintf("e1: %+v", e1))
+		panic(e1)
 	}
 	println("build pool cost time:", time.Since(t1), "ns")
 
@@ -125,7 +121,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 		for {
 			t2 := time.Now()
 			reqest := &Reqest{Data: 1}
-			e2 := pool.ExecuteRules("Req", reqest, "", nil)
+			e2, _ := pool.ExecuteRules("Req", reqest, "", nil)
 			if e2 != nil {
 				println(fmt.Sprintf("e2: %+v", e2))
 			}
@@ -146,7 +142,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 		for {
 			t2 := time.Now()
 			reqest := &Reqest{Data: 1}
-			e2 := pool.ExecuteRules("Req", reqest, "", nil)
+			e2, _ := pool.ExecuteRules("Req", reqest, "", nil)
 			if e2 != nil {
 				println(fmt.Sprintf("e2: %+v", e2))
 			}
@@ -167,7 +163,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 		for {
 			t2 := time.Now()
 			reqest := &Reqest{Data: 1}
-			e2 := pool.ExecuteRules("Req", reqest, "", nil)
+			e2, _ := pool.ExecuteRules("Req", reqest, "", nil)
 			if e2 != nil {
 				println(fmt.Sprintf("e2: %+v", e2))
 			}
@@ -188,7 +184,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 		for {
 			t2 := time.Now()
 			reqest := &Reqest{Data: 1}
-			e2 := pool.ExecuteRules("Req", reqest, "", nil)
+			e2, _ := pool.ExecuteRules("Req", reqest, "", nil)
 			if e2 != nil {
 				println(fmt.Sprintf("e2: %+v", e2))
 			}
@@ -209,7 +205,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 		for {
 			t2 := time.Now()
 			reqest := &Reqest{Data: 1}
-			e2 := pool.ExecuteRules("Req", reqest, "", nil)
+			e2, _ := pool.ExecuteRules("Req", reqest, "", nil)
 			if e2 != nil {
 				println(fmt.Sprintf("e2: %+v", e2))
 			}
@@ -237,5 +233,5 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 	}()
 
 	println("test 10 seconds...")
-	time.Sleep(10 * time.Second)
+	time.Sleep(5 * time.Second)
 }

@@ -32,7 +32,7 @@ func (a *Assignment) Evaluate(Vars map[string]interface{}) (value interface{}, e
 			}
 			buf = buf[:rs]
 			eMsg := fmt.Sprintf("line %d, column %d, code: %s, %+v \n%s", a.LineNum, a.Column, a.Code, e, string(buf))
-			eMsg = strings.ReplaceAll(eMsg,"panic","error")
+			eMsg = strings.ReplaceAll(eMsg, "panic", "error")
 			err = errors.New(eMsg)
 		}
 	}()

@@ -1,4 +1,4 @@
-// Code generated from gengine.g4 by ANTLR 4.9. DO NOT EDIT.
+// Code generated from /Users/renyunyi/gengine/internal/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package parser // gengine
 
@@ -57,6 +57,10 @@ func (v *BasegengineVisitor) VisitExpressionAtom(ctx *ExpressionAtomContext) int
 }
 
 func (v *BasegengineVisitor) VisitAssignment(ctx *AssignmentContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BasegengineVisitor) VisitReturnStmt(ctx *ReturnStmtContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
@@ -140,10 +144,10 @@ func (v *BasegengineVisitor) VisitAtName(ctx *AtNameContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BasegengineVisitor) VisitAtDesc(ctx *AtDescContext) interface{} {
+func (v *BasegengineVisitor) VisitAtId(ctx *AtIdContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BasegengineVisitor) VisitAtId(ctx *AtIdContext) interface{} {
+func (v *BasegengineVisitor) VisitAtDesc(ctx *AtDescContext) interface{} {
 	return v.VisitChildren(ctx)
 }

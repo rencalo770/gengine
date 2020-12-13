@@ -644,3 +644,21 @@ func (g *GengineParserListener) ExitMapVar(ctx *parser.MapVarContext) {
 		g.AddError(err)
 	}
 }
+
+func (g *GengineParserListener) EnterReturnStmt(c *parser.ReturnStmtContext) {
+	if len(g.ParseErrors) > 0 {
+		return
+	}
+	rs := &base.ReturnStatement{}
+	g.Stack.Push(rs)
+}
+
+func (g *GengineParserListener) ExitReturnStmt(c *parser.ReturnStmtContext) {
+	if len(g.ParseErrors) > 0 {
+		return
+	}
+
+	rs := g.Stack.Pop().(*base.ReturnStatement)
+	stats := g.Stack.Peek().(*base.Statements)
+	stats.ReturnStatement = rs
+}

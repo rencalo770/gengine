@@ -33,13 +33,13 @@ func Test_at_id(t *testing.T) {
 	//resolve rules from string
 	err := ruleBuilder.BuildRuleFromString(atIDRule)
 	if err != nil {
-		println(fmt.Sprintf("%+v", err))
+		panic(err)
 	}
 
 	eng := engine.NewGengine()
 	err = eng.Execute(ruleBuilder, false)
 	if err != nil {
-		println(fmt.Sprintf("%+v", err))
+		panic(err)
 	}
 }
 

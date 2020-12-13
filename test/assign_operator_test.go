@@ -95,7 +95,7 @@ func Test_operator(t *testing.T) {
 	// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 	e2 := eng.Execute(ruleBuilder, true)
 	if e2 != nil {
-		println("err-------")
+		println(e2)
 	}
 
 }

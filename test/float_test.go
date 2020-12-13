@@ -31,7 +31,7 @@ end
 
 func Test_float(t *testing.T) {
 
-	x1 := .1E7
+	x1 := .1e7
 	println("x1--->", x1)
 
 	x2 := 6e7
@@ -45,13 +45,13 @@ func Test_float(t *testing.T) {
 	//resolve rules from string
 	err := ruleBuilder.BuildRuleFromString(floatRule)
 	if err != nil {
-		println(fmt.Sprintf("%+v", err))
+		panic(err)
 	}
 
 	eng := engine.NewGengine()
 	err = eng.Execute(ruleBuilder, false)
 	if err != nil {
-		println(fmt.Sprintf("%+v", err))
+		panic(err)
 	}
 
 }

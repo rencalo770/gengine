@@ -198,82 +198,82 @@ func Test_map_conc(t *testing.T) {
 
 	go func() {
 		//for {
-			request := &Request{Uid: 1}
-			data := make(map[string]interface{})
-			data["request"] = request
+		request := &Request{Uid: 1}
+		data := make(map[string]interface{})
+		data["request"] = request
 
-			result := &Result{SidResult: make(map[string]*Ranking)}
-			data["result"] = result
+		result := &Result{SidResult: make(map[string]*Ranking)}
+		data["result"] = result
 
-			e2 := pool.ExecuteSelectedRulesConcurrentWithMultiInput(data, []string{"1"})
-			if e2 != nil {
-				panic(e2)
-			}
-			if result == nil {
-				println("result is nil")
-			}
-			var cache []int64
-			var x1 []*Ranking
-			for _, v := range result.SidResult {
-				//time.Sleep(100*time.Nanosecond)
-				x1 = append(x1, v)
-				//println("1k=", k, fmt.Sprintf("v=%+v", v))
-			}
+		e2, _ := pool.ExecuteSelectedRulesConcurrentWithMultiInput(data, []string{"1"})
+		if e2 != nil {
+			panic(e2)
+		}
+		if result == nil {
+			println("result is nil")
+		}
+		var cache []int64
+		var x1 []*Ranking
+		for _, v := range result.SidResult {
+			//time.Sleep(100*time.Nanosecond)
+			x1 = append(x1, v)
+			//println("1k=", k, fmt.Sprintf("v=%+v", v))
+		}
 
-			if result.SidResult == nil {
-				println("gengine error")
-			}
+		if result.SidResult == nil {
+			println("gengine error")
+		}
 
-			if result.SidResult["3"] == nil {
-				println("gengine error")
-			}
+		if result.SidResult["3"] == nil {
+			println("gengine error")
+		}
 
-			for i := 0; i < len(result.SidResult["3"].Sl); i++ {
-				cache = append(cache, result.SidResult["3"].Sl[i])
-			}
-			println("test finish...")
+		for i := 0; i < len(result.SidResult["3"].Sl); i++ {
+			cache = append(cache, result.SidResult["3"].Sl[i])
+		}
+		println("test finish...")
 		//}
 	}()
 
 	go func() {
 		//for {
-			request := &Request{Uid: 2}
-			data := make(map[string]interface{})
-			data["request"] = request
-			data["println"] = fmt.Println
+		request := &Request{Uid: 2}
+		data := make(map[string]interface{})
+		data["request"] = request
+		data["println"] = fmt.Println
 
-			result := &Result{SidResult: make(map[string]*Ranking)}
-			data["result"] = result
+		result := &Result{SidResult: make(map[string]*Ranking)}
+		data["result"] = result
 
-			e2 := pool.ExecuteSelectedRulesConcurrentWithMultiInput(data, []string{"2"})
-			if e2 != nil {
-				panic(e2)
-			}
+		e2, _ := pool.ExecuteSelectedRulesConcurrentWithMultiInput(data, []string{"2"})
+		if e2 != nil {
+			panic(e2)
+		}
 
-			if result == nil {
-				println("result is nil")
-			}
+		if result == nil {
+			println("result is nil")
+		}
 
-			var x1 []*Ranking
-			for _, v := range result.SidResult {
-				//time.Sleep(200*time.Nanosecond)
-				x1 = append(x1, v)
-				//println("1k=", k, fmt.Sprintf("v=%+v", v))
-			}
+		var x1 []*Ranking
+		for _, v := range result.SidResult {
+			//time.Sleep(200*time.Nanosecond)
+			x1 = append(x1, v)
+			//println("1k=", k, fmt.Sprintf("v=%+v", v))
+		}
 
-			if result.SidResult == nil {
-				println("gengine error")
-			}
+		if result.SidResult == nil {
+			println("gengine error")
+		}
 
-			if result.SidResult["3"] == nil {
-				println("gengine error")
-			}
+		if result.SidResult["3"] == nil {
+			println("gengine error")
+		}
 
-			var cache []int64
-			for i := 0; i < len(result.SidResult["3"].Sl); i++ {
-				cache = append(cache, result.SidResult["3"].Sl[i])
-			}
-			println("test finish...")
+		var cache []int64
+		for i := 0; i < len(result.SidResult["3"].Sl); i++ {
+			cache = append(cache, result.SidResult["3"].Sl[i])
+		}
+		println("test finish...")
 		//}
 
 	}()

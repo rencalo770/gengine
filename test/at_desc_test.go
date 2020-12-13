@@ -7,8 +7,6 @@ import (
 	"gengine/engine"
 	"testing"
 	"time"
-
-	"github.com/google/martian/log"
 )
 
 /**
@@ -44,20 +42,16 @@ func Test_AtDesc(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(atDescRule)
 	end1 := time.Now().UnixNano()
 
-	log.Infof("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1)
+	println(fmt.Sprintf("rules num:%d, load rules cost time:%d ns", len(ruleBuilder.Kc.RuleEntities), end1-start1))
 
 	if err != nil {
-		log.Errorf("err:%s ", err)
-	} else {
-		eng := engine.NewGengine()
-
-		start := time.Now().UnixNano()
-		// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
-		err := eng.Execute(ruleBuilder, true)
-		end := time.Now().UnixNano()
-		if err != nil {
-			log.Errorf("execute rule error: %v", err)
-		}
-		log.Infof("execute rule cost %d ns", end-start)
+		panic(err)
 	}
+	eng := engine.NewGengine()
+	// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
+	err = eng.Execute(ruleBuilder, true)
+	if err != nil {
+		panic(err)
+	}
+
 }

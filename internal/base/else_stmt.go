@@ -10,16 +10,12 @@ type ElseStmt struct {
 	dataCtx       *context.DataContext
 }
 
-func (e *ElseStmt) Evaluate(Vars map[string]interface{}) (interface{}, error) {
+func (e *ElseStmt) Evaluate(Vars map[string]interface{}) (interface{}, error, bool) {
 
 	if e.StatementList != nil {
-		value, err := e.StatementList.Evaluate(Vars)
-		if err != nil {
-			return nil, err
-		}
-		return value, nil
+		return e.StatementList.Evaluate(Vars)
 	} else {
-		return nil, nil
+		return nil, nil, false
 	}
 }
 

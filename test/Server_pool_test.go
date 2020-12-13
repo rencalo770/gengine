@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const rp1  = `
+const rp1 = `
 rule "1" "1"
 begin
 sleep()
@@ -15,7 +15,7 @@ println()
 end
 `
 
-const rp2  = `
+const rp2 = `
 rule "1" "1"
 begin
 sleep()
@@ -28,39 +28,37 @@ println()
 end
 `
 
-func SleepTime()  {
+func SleepTime() {
 	//println("睡觉")
 	//time.Sleep(100 * time.Second )
 }
 
-
-func Test_rp1(t *testing.T){
+func Test_rp1(t *testing.T) {
 
 	apis := make(map[string]interface{})
 	apis["println"] = fmt.Println
 	apis["sleep"] = SleepTime
 	pool, e1 := engine.NewGenginePool(1, 2, 1, rp1, apis)
 	if e1 != nil {
-		println(fmt.Sprintf("e1: %+v", e1))
+		panic(e1)
 	}
 
 	go func() {
-		for   {
+		for {
 
 			data := make(map[string]interface{})
 			sid := []string{"1", "2"}
-			e := pool.ExecuteSelectedRulesConcurrentWithMultiInput(data, sid)
+			e, _ := pool.ExecuteSelectedRulesConcurrentWithMultiInput(data, sid)
 			if e != nil {
-				println("execute err", fmt.Sprintf("%+v",e))
+				println("execute err", fmt.Sprintf("%+v", e))
 			}
 			println("执行...")
-			time.Sleep(1000 *time.Millisecond)
+			time.Sleep(1000 * time.Millisecond)
 		}
 	}()
 
-
 	go func() {
-		for  {
+		for {
 			if pool.IsExist("1") {
 				println("exist 1...")
 			}
@@ -73,18 +71,13 @@ func Test_rp1(t *testing.T){
 		}
 	}()
 
-
-
-
 	go func() {
 		time.Sleep(3 * time.Second)
 		e := pool.UpdatePooledRules(rp2)
-		if e!=nil {
-			println("execute err", fmt.Sprintf("%+v",e))
+		if e != nil {
+			println("execute err", fmt.Sprintf("%+v", e))
 		}
 	}()
-
-
 
 	go func() {
 
@@ -99,31 +92,11 @@ func Test_rp1(t *testing.T){
 		time.Sleep(20 * time.Second)
 		println("更新规则....")
 		e := pool.UpdatePooledRules(rp2)
-		if e!=nil {
-			println("execute err", fmt.Sprintf("%+v",e))
+		if e != nil {
+			println("execute err", fmt.Sprintf("%+v", e))
 		}
 	}()
 
-
-	time.Sleep(20 *time.Second)
-
-
+	time.Sleep(20 * time.Second)
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

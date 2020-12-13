@@ -75,7 +75,7 @@ func Test_increment_1(t *testing.T) {
 	eng := engine.NewGengine()
 	e1 := eng.Execute(ruleBuilder, false)
 	if e1 != nil {
-		println(fmt.Sprintf("%+v", e1))
+		panic(e1)
 	}
 
 	println("------------------1------------------base")
@@ -186,7 +186,6 @@ func Test_increment_1_concurrent(t *testing.T) {
 		}
 	}()
 
-
 	go func() {
 		for i := 0; i < 1000; i++ {
 			e3 := eng.Execute(ruleBuilder, true)
@@ -214,7 +213,7 @@ func Test_increment_pool(t *testing.T) {
 	data := make(map[string]interface{})
 	data["Req"] = reqest
 
-	e2 := pool.ExecuteRulesWithMultiInput(data)
+	e2, _ := pool.ExecuteRulesWithMultiInput(data)
 	if e2 != nil {
 		panic(e2)
 	}
@@ -225,7 +224,7 @@ func Test_increment_pool(t *testing.T) {
 		panic(er1)
 	}
 
-	er2 := pool.ExecuteRulesWithMultiInput(data)
+	er2, _ := pool.ExecuteRulesWithMultiInput(data)
 	if er2 != nil {
 		panic(er2)
 	}
@@ -236,7 +235,7 @@ func Test_increment_pool(t *testing.T) {
 		panic(er3)
 	}
 
-	er4 := pool.ExecuteRulesWithMultiInput(data)
+	er4, _ := pool.ExecuteRulesWithMultiInput(data)
 	if er4 != nil {
 		panic(er4)
 	}
@@ -248,7 +247,7 @@ func Test_increment_pool(t *testing.T) {
 		panic(er5)
 	}
 
-	er6 := pool.ExecuteRulesWithMultiInput(data)
+	er6, _ := pool.ExecuteRulesWithMultiInput(data)
 	if er6 != nil {
 		panic(er6)
 	}
@@ -260,7 +259,7 @@ func Test_increment_pool(t *testing.T) {
 			panic(er5)
 		}*/
 
-	er8 := pool.ExecuteRulesWithMultiInput(data)
+	er8, _ := pool.ExecuteRulesWithMultiInput(data)
 	if er8 != nil {
 		panic(er6)
 	}
@@ -284,7 +283,7 @@ func Test_increment_pool_concurrent(t *testing.T) {
 
 	go func() {
 		for i := 0; i < 10000; i++ {
-			er2 := pool.ExecuteRulesWithMultiInput(data)
+			er2, _ := pool.ExecuteRulesWithMultiInput(data)
 			if er2 != nil {
 				panic(er2)
 			}
@@ -299,7 +298,6 @@ func Test_increment_pool_concurrent(t *testing.T) {
 			}
 		}
 	}()
-
 
 	go func() {
 		for i := 0; i < 100; i++ {

@@ -5,18 +5,29 @@ import (
 )
 
 type Statements struct {
-	StatementList []*Statement
-	dataCtx       *context.DataContext
+	StatementList   []*Statement
+	ReturnStatement *ReturnStatement
+	dataCtx         *context.DataContext
 }
 
-func (s *Statements) Evaluate(Vars map[string]interface{}) (interface{}, error) {
+func (s *Statements) Evaluate(Vars map[string]interface{}) (interface{}, error, bool) {
 	for _, statement := range s.StatementList {
-		_, err := statement.Evaluate(Vars)
+		v, err, b := statement.Evaluate(Vars)
 		if err != nil {
-			return nil, err
+			return nil, err, false
+		}
+
+		if b {
+			//important: meet return，not continue to execute
+			return v, nil, b
 		}
 	}
-	return nil, nil
+	if s.ReturnStatement != nil {
+		return s.ReturnStatement.Evaluate(Vars)
+	} else {
+		return nil, nil, false
+	}
+
 }
 
 func (s *Statements) Initialize(dc *context.DataContext) {
@@ -26,5 +37,9 @@ func (s *Statements) Initialize(dc *context.DataContext) {
 		for _, val := range s.StatementList {
 			val.Initialize(dc)
 		}
+	}
+
+	if s.ReturnStatement != nil {
+		s.ReturnStatement.Initialize(dc)
 	}
 }

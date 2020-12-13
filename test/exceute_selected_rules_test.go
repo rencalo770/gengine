@@ -1,11 +1,10 @@
 package test
 
 import (
+	"fmt"
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
-	"github.com/google/martian/log"
-
 	"testing"
 	"time"
 )
@@ -40,17 +39,20 @@ func Test_selected_sort(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(rule5)
 	end1 := time.Now().UnixNano()
 
-	log.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1)
+	println(fmt.Sprintf("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1))
 
 	if err != nil {
-		log.Errorf("err:%s ", err)
-	} else {
-		eng := engine.NewGengine()
-		start := time.Now().UnixNano()
-		eng.ExecuteSelectedRules(ruleBuilder, []string{"444", "555", "111", "222", "333"})
-		end := time.Now().UnixNano()
-		log.Infof("execute rule cost %d ns", end-start)
+		println(fmt.Sprintf("err:%s ", err))
 	}
+	eng := engine.NewGengine()
+	start := time.Now().UnixNano()
+	err = eng.ExecuteSelectedRules(ruleBuilder, []string{"444", "555", "111", "222", "333"})
+	if err != nil {
+		println(fmt.Sprintf("%+v", err))
+	}
+	end := time.Now().UnixNano()
+	println(fmt.Sprintf("execute rule cost %d ns", end-start))
+
 }
 
 func Test_selected_concurrent(t *testing.T) {
@@ -64,15 +66,18 @@ func Test_selected_concurrent(t *testing.T) {
 	err := ruleBuilder.BuildRuleFromString(rule5)
 	end1 := time.Now().UnixNano()
 
-	log.Infof("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1)
+	println(fmt.Sprintf("rules num:%d, load rules cost time:%d", len(ruleBuilder.Kc.RuleEntities), end1-start1))
 
 	if err != nil {
-		log.Errorf("err:%s ", err)
+		println(fmt.Sprintf("err:%s ", err))
 	} else {
 		eng := engine.NewGengine()
 		start := time.Now().UnixNano()
-		eng.ExecuteSelectedRulesConcurrent(ruleBuilder, []string{"444", "111", "222", "777"})
+		err := eng.ExecuteSelectedRulesConcurrent(ruleBuilder, []string{"444", "111", "222", "777"})
+		if err != nil {
+			panic(err)
+		}
 		end := time.Now().UnixNano()
-		log.Infof("execute rule cost %d ns", end-start)
+		println(fmt.Sprintf("execute rule cost %d ns", end-start))
 	}
 }

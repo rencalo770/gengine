@@ -10,11 +10,11 @@ import (
 func InvokeFunction(obj interface{}, methodName string, parameters []interface{}) (interface{}, error) {
 	objVal := reflect.ValueOf(obj)
 
-	f := objVal.MethodByName(methodName)//.Interface()
+	f := objVal.MethodByName(methodName) //.Interface()
 	var fun interface{}
 	if !f.IsValid() {
 		return nil, errors.New(fmt.Sprintf("NOT FOUND Function: %s", methodName))
-	}else {
+	} else {
 		fun = f.Interface()
 	}
 	//change type for base type params
@@ -83,9 +83,9 @@ func GetRawTypeValue(rs []reflect.Value) (interface{}, error) {
 		case reflect.Chan:
 			return rs[0].Interface(), nil
 		case reflect.Complex64:
-			return complex64(rs[0].Complex()),nil
+			return complex64(rs[0].Complex()), nil
 		case reflect.Complex128:
-			return rs[0].Complex(),nil
+			return rs[0].Complex(), nil
 		case reflect.Func:
 			return rs[0].Interface(), nil
 		default:
@@ -388,7 +388,7 @@ func ParamsTypeChange(f interface{}, params []interface{}) []interface{} {
 		case reflect.Ptr:
 			break
 		case reflect.Interface:
-			if !reflect.ValueOf(params[i]).IsValid(){
+			if !reflect.ValueOf(params[i]).IsValid() {
 				params[i] = reflect.New(tf.In(i)).Interface()
 			}
 		default:

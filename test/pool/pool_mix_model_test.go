@@ -56,13 +56,13 @@ func Test_mix_model(t *testing.T) {
 	Ps := &Ps{}
 	data["Ps"] = Ps
 	data["println"] = fmt.Println
-	/*	e := pool.ExecuteSelectedRulesMixModelWithMultiInput(data, []string{"best", "better", "good"})
+	/*	e,_ := pool.ExecuteSelectedRulesMixModelWithMultiInput(data, []string{"best", "better", "good"})
 		if e != nil {
 			panic(e)
 		}
 		println("Ps.R=", Ps.R)*/
 
-	e := pool.ExecuteSelected(data, []string{"best", "better", "good"})
+	e, _ := pool.ExecuteSelected(data, []string{"best", "better", "good"})
 	if e != nil {
 		panic(e)
 	}

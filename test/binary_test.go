@@ -7,7 +7,7 @@ import (
 
 func Test_binary(t *testing.T) {
 
-	for i := 110; i > 40 ; i -- {
+	for i := 110; i > 40; i-- {
 
 		raw := []int64{100, 90, 80, 70, 70, 60, 50, 50}
 
@@ -24,7 +24,6 @@ func Test_binary(t *testing.T) {
 	}
 
 }
-
 
 func binarySearch(re []int64, salience int64) (int, int) {
 	low := 0

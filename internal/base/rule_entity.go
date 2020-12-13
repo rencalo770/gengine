@@ -41,7 +41,7 @@ func (r *RuleEntity) Initialize(dc *context.DataContext) {
 	}
 }
 
-func (r *RuleEntity) Execute() error {
+func (r *RuleEntity) Execute() (interface{}, error, bool) {
 	r.Vars = make(map[string]interface{})
 	defer r.clearMap()
 	return r.RuleContent.Execute(r.Vars)

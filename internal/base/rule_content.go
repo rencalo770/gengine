@@ -17,12 +17,8 @@ func (t *RuleContent) Initialize(dc *context.DataContext) {
 	}
 }
 
-func (t *RuleContent) Execute(Vars map[string]interface{}) error {
-	_, err := t.Statements.Evaluate(Vars)
-	if err != nil {
-		return err
-	}
-	return nil
+func (t *RuleContent) Execute(Vars map[string]interface{}) (interface{}, error, bool) {
+	return t.Statements.Evaluate(Vars)
 }
 
 func (t *RuleContent) AcceptStatements(stmts *Statements) error {

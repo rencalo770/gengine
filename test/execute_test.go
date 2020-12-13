@@ -45,63 +45,63 @@ func Test_execute(t *testing.T) {
 	println("==================0=================")
 	e1 := gengine.Execute(ruleBuilder, false)
 	if e1 != nil {
-		println("Execute:%+v", e1)
+		panic(fmt.Sprintf("Execute:%+v", e1))
 	}
 	println("==================1=================")
 
-	sTag := &engine.Stag{StopTag:false}
+	sTag := &engine.Stag{StopTag: false}
 	e2 := gengine.ExecuteWithStopTagDirect(ruleBuilder, true, sTag)
 	if e2 != nil {
-		println("ExecuteWithStopTagDirect:%+v",e2)
+		panic(fmt.Sprintf("ExecuteWithStopTagDirect:%+v", e2))
 	}
 	println("==================2=================")
 
 	e3 := gengine.ExecuteConcurrent(ruleBuilder)
 	if e3 != nil {
-		println("ExecuteConcurrent:%+v",e3)
+		panic(fmt.Sprintf("ExecuteConcurrent:%+v", e3))
 	}
 	println("==================3=================")
 
 	e4 := gengine.ExecuteMixModel(ruleBuilder)
 	if e4 != nil {
-		println("ExecuteMixModel:%+v",e4)
+		panic(fmt.Sprintf("ExecuteMixModel:%+v", e4))
 	}
 	println("==================4=================")
 
-	sTag1 := &engine.Stag{StopTag:false}
+	sTag1 := &engine.Stag{StopTag: false}
 	e5 := gengine.ExecuteMixModelWithStopTagDirect(ruleBuilder, sTag1)
 	if e5 != nil {
-		println("ExecuteMixModelWithStopTagDirect:%+v",e5)
+		panic(fmt.Sprintf("ExecuteMixModelWithStopTagDirect:%+v", e5))
 	}
 	println("==================5=================")
 
 	e6 := gengine.ExecuteSelectedRules(ruleBuilder, []string{"1", "2", "6"})
 	if e6 != nil {
-		println("ExecuteSelectedRules:%+v",e6)
+		panic(fmt.Sprintf("ExecuteSelectedRules:%+v", e6))
 	}
 	println("==================6=================")
 
-	e7 := gengine.ExecuteSelectedRulesWithControl(ruleBuilder,true, []string{"1", "2","3"})
+	e7 := gengine.ExecuteSelectedRulesWithControl(ruleBuilder, true, []string{"1", "2", "3"})
 	if e7 != nil {
-		println("ExecuteSelectedRulesWithControl:%+v",e7)
+		panic(fmt.Sprintf("ExecuteSelectedRulesWithControl:%+v", e7))
 	}
 
 	println("==================7=================")
-	sTag2 := &engine.Stag{StopTag:false}
-	e8 := gengine.ExecuteSelectedRulesWithControlAndStopTag(ruleBuilder,true, sTag2, []string{"1", "2", "3", "4"})
+	sTag2 := &engine.Stag{StopTag: false}
+	e8 := gengine.ExecuteSelectedRulesWithControlAndStopTag(ruleBuilder, true, sTag2, []string{"1", "2", "3", "4"})
 	if e8 != nil {
-		println("ExecuteSelectedRulesWithControlAndStopTag:%+v",e8)
+		panic(fmt.Sprintf("ExecuteSelectedRulesWithControlAndStopTag:%+v", e8))
 	}
 	println("==================8=================")
 	e9 := gengine.ExecuteSelectedRulesConcurrent(ruleBuilder, []string{"1", "2", "3", "4"})
 	if e9 != nil {
-		println("ExecuteSelectedRulesConcurrent:%+v",e9)
+		panic(fmt.Sprintf("ExecuteSelectedRulesConcurrent:%+v", e9))
 	}
 	println("==================9=================")
 
 	e10 := gengine.ExecuteSelectedRulesMixModel(ruleBuilder, []string{"1", "2", "3", "4", "5"})
 	if e10 != nil {
-		println("ExecuteSelectedRulesMixModel:%+v",e10)
+		panic(fmt.Sprintf("ExecuteSelectedRulesMixModel:%+v", e10))
 	}
 
 	println("===================10================")

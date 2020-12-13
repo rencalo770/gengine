@@ -7,20 +7,20 @@ import (
 	"testing"
 )
 
-const multi_input_rule  = 	`
+const multi_input_rule = `
 rule "1" ""
 begin
 println("hello", "world")
 end
 `
 
-func Println(as...string){
-	for _,v :=range as  {
+func Println(as ...string) {
+	for _, v := range as {
 		print(v, " ")
 	}
 }
 
-func Test_multi_input_(t *testing.T)  {
+func Test_multi_input_(t *testing.T) {
 
 	dataContext := context.NewDataContext()
 	//inject struct
@@ -41,6 +41,6 @@ func Test_multi_input_(t *testing.T)  {
 	// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
 	e2 := eng.Execute(ruleBuilder, true)
 	if e2 != nil {
-		println("err-------")
+		panic(e2)
 	}
 }
