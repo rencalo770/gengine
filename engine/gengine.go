@@ -679,3 +679,493 @@ func (g *Gengine) ExecuteSelectedRulesInverseMixModel(rb *builder.RuleBuilder, n
 	}
 	return e
 }
+
+// 1.first n piece rules to sort execute based on priority
+// 2.bool b means: when in sort execute stage,if a rule execute error whether continue to execute the last all rules,
+//   if b == true, means continue, if false, means stop and return
+// 3.then m piece rules to concurrent execute based without priority
+func (g *Gengine) ExecuteNSortMConcurrent(nSort, mConcurrent int, rb *builder.RuleBuilder, b bool) error {
+
+	//strictly params check
+	if nSort <= 0 {
+		return errors.New(fmt.Sprintf("params should be bigger than 0, nSort=%d", nSort))
+	}
+
+	if mConcurrent <= 0 {
+		return errors.New(fmt.Sprintf("params should be bigger than 0, mConcurrent=%d", nSort))
+	}
+
+	if nSort+mConcurrent > len(rb.Kc.SortRules) {
+		return errors.New(fmt.Sprintf("not enough rules to complete N-M execute model, nSort+mConcurrent = %d, while rules.len=%d", nSort+mConcurrent, len(rb.Kc.SortRules)))
+	}
+
+	var errLock sync.Mutex
+	var eMsg []string
+
+	//nSort
+	nRules := rb.Kc.SortRules[:nSort]
+	for _, rule := range nRules {
+		v, e, bx := rule.Execute()
+		if bx {
+			g.addResult(rule.RuleName, v)
+		}
+		if b {
+			if e != nil {
+				eMsg = append(eMsg, fmt.Sprintf("%+v", e))
+			}
+		} else {
+			return e
+		}
+	}
+
+	//mConcurrent
+	mRules := rb.Kc.SortRules[nSort:][:mConcurrent]
+	var wg sync.WaitGroup
+	wg.Add(mConcurrent)
+	for _, r := range mRules {
+		rr := r
+		go func() {
+			v, e, bx := rr.Execute()
+			if bx {
+				g.addResult(rr.RuleName, v)
+			}
+			if e != nil {
+				errLock.Lock()
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+				errLock.Unlock()
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+
+	return nil
+}
+
+// 1. first n piece rules to concurrent execute based without priority
+// 2. bool b means: after concurrent execute stage,if a rule execute error whether continue to execute the last all rules,
+//    if b == true, means continue, if false, means stop and return
+// 3. then m piece rules to sort execute based on priority
+func (g *Gengine) ExecuteNConcurrentMSort(nConcurrent, mSort int, rb *builder.RuleBuilder, b bool) error {
+
+	//strictly params check
+	if nConcurrent <= 0 {
+		return errors.New(fmt.Sprintf("params should be bigger than 0, nConcurrent=%d", nConcurrent))
+	}
+
+	if mSort <= 0 {
+		return errors.New(fmt.Sprintf("params should be bigger than 0, mSort=%d", mSort))
+	}
+
+	if nConcurrent+mSort > len(rb.Kc.SortRules) {
+		return errors.New(fmt.Sprintf("not enough rules to complete N-M execute model, nConcurrent+mSort = %d, while rules.len=%d", nConcurrent+mSort, len(rb.Kc.SortRules)))
+	}
+
+	var errLock sync.Mutex
+	var eMsg []string
+
+	//nConcurrent
+	nRules := rb.Kc.SortRules[:nConcurrent]
+	var wg sync.WaitGroup
+	wg.Add(nConcurrent)
+	for _, r := range nRules {
+		rr := r
+		go func() {
+			v, e, bx := rr.Execute()
+			if bx {
+				g.addResult(rr.RuleName, v)
+			}
+			if e != nil {
+				errLock.Lock()
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+				errLock.Unlock()
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+
+	if !b {
+		if len(eMsg) > 0 {
+			return errors.New(fmt.Sprintf("%+v", eMsg))
+		}
+	}
+
+	//mSort
+	mRules := rb.Kc.SortRules[nConcurrent:][:mSort]
+	for _, rule := range mRules {
+		v, e, bx := rule.Execute()
+		if bx {
+			g.addResult(rule.RuleName, v)
+		}
+		if b {
+			if e != nil {
+				eMsg = append(eMsg, fmt.Sprintf("%+v", e))
+			}
+		} else {
+			return e
+		}
+	}
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+
+	return nil
+}
+
+// 1. first n piece rules to concurrent execute based without priority
+// 2. bool b means: if the first stage executed error, whether continue to execute the next concurrent stage
+//    if b == true,   means continue, if false, means stop and return
+// 3. then m piece rules to concurrent execute based without priority
+func (g *Gengine) ExecuteNConcurrentMConcurrent(nConcurrent, mConcurrent int, rb *builder.RuleBuilder, b bool) error {
+
+	//strictly params check
+	if nConcurrent <= 0 {
+		return errors.New(fmt.Sprintf("params should be bigger than 0, nConcurrent=%d", nConcurrent))
+	}
+
+	if mConcurrent <= 0 {
+		return errors.New(fmt.Sprintf("params should be bigger than 0, mConcurrent=%d", mConcurrent))
+	}
+
+	if nConcurrent+mConcurrent > len(rb.Kc.SortRules) {
+		return errors.New(fmt.Sprintf("not enough rules to complete N-M execute model, nConcurrent+mConcurrent = %d, while rules.len=%d", nConcurrent+mConcurrent, len(rb.Kc.SortRules)))
+	}
+
+	var errLock sync.Mutex
+	var eMsg []string
+
+	//nConcurrent
+	nRules := rb.Kc.SortRules[:nConcurrent]
+	var nwg sync.WaitGroup
+	nwg.Add(nConcurrent)
+	for _, r := range nRules {
+		rr := r
+		go func() {
+			v, e, bx := rr.Execute()
+			if bx {
+				g.addResult(rr.RuleName, v)
+			}
+			if e != nil {
+				errLock.Lock()
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+				errLock.Unlock()
+			}
+			nwg.Done()
+		}()
+	}
+	nwg.Wait()
+
+	if !b {
+		if len(eMsg) > 0 {
+			return errors.New(fmt.Sprintf("%+v", eMsg))
+		}
+	}
+
+	//mConcurrent
+	mRules := rb.Kc.SortRules[nConcurrent:][:mConcurrent]
+	var mwg sync.WaitGroup
+	mwg.Add(mConcurrent)
+	for _, r := range mRules {
+		rr := r
+		go func() {
+			v, e, bx := rr.Execute()
+			if bx {
+				g.addResult(rr.RuleName, v)
+			}
+			if e != nil {
+				errLock.Lock()
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+				errLock.Unlock()
+			}
+			mwg.Done()
+		}()
+	}
+	mwg.Wait()
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+
+	return nil
+}
+
+// 0.based on selected rules
+// 1.first n piece rules to sort execute based on priority
+// 2.bool b means: when in sort execute stage,if a rule execute error whether continue to execute the last all rules,
+//   if b == true, means continue, if false, means stop and return
+// 3.then m piece rules to concurrent execute based without priority
+func (g *Gengine) ExecuteSelectedNSortMConcurrent(nSort, mConcurrent int, rb *builder.RuleBuilder, b bool, names []string) error {
+
+	//strictly params check
+	if nSort <= 0 {
+		return errors.New(fmt.Sprintf("params should be bigger than 0, nSort=%d", nSort))
+	}
+
+	if mConcurrent <= 0 {
+		return errors.New(fmt.Sprintf("params should be bigger than 0, mConcurrent=%d", nSort))
+	}
+
+	if nSort+mConcurrent != len(names) {
+		return errors.New(fmt.Sprintf("selected rules' len should equals the nSort+mConcurrent, selected rules' len=%d, nSort+mConcurrent=%d", len(names), nSort+mConcurrent))
+	}
+
+	if nSort+mConcurrent > len(rb.Kc.SortRules) {
+		return errors.New(fmt.Sprintf("not enough selected rules to complete N-M execute model, nSort+mConcurrent = %d, while rules.len=%d", nSort+mConcurrent, len(rb.Kc.SortRules)))
+	}
+
+	//selected based on names
+	var rules []*base.RuleEntity
+	for _, v := range names {
+		if rule, ok := rb.Kc.RuleEntities[v]; ok {
+			rules = append(rules, rule)
+		} else {
+			return errors.New(fmt.Sprintf("not exist rule:%s", rule))
+		}
+	}
+
+	//resort
+	sort.SliceStable(rules, func(i, j int) bool {
+		return rules[i].Salience > rules[j].Salience
+	})
+
+	var errLock sync.Mutex
+	var eMsg []string
+
+	//nSort
+	nRules := rules[:nSort]
+	for _, rule := range nRules {
+		v, e, bx := rule.Execute()
+		if bx {
+			g.addResult(rule.RuleName, v)
+		}
+		if b {
+			if e != nil {
+				eMsg = append(eMsg, fmt.Sprintf("%+v", e))
+			}
+		} else {
+			return e
+		}
+	}
+
+	//mConcurrent
+	mRules := rules[nSort:][:mConcurrent]
+	var wg sync.WaitGroup
+	wg.Add(mConcurrent)
+	for _, r := range mRules {
+		rr := r
+		go func() {
+			v, e, bx := rr.Execute()
+			if bx {
+				g.addResult(rr.RuleName, v)
+			}
+			if e != nil {
+				errLock.Lock()
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+				errLock.Unlock()
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+
+	return nil
+}
+
+// 0. based on selected rules
+// 1. first n piece rules to concurrent execute based without priority
+// 2. bool b means: after concurrent execute stage,if a rule execute error whether continue to execute the last all rules,
+//    if b == true, means continue, if false, means stop and return
+// 3. then m piece rules to sort execute based on priority
+func (g *Gengine) ExecuteSelectedNConcurrentMSort(nConcurrent, mSort int, rb *builder.RuleBuilder, b bool, names []string) error {
+
+	//strictly params check
+	if nConcurrent <= 0 {
+		return errors.New(fmt.Sprintf("params should be bigger than 0, nConcurrent=%d", nConcurrent))
+	}
+
+	if mSort <= 0 {
+		return errors.New(fmt.Sprintf("params should be bigger than 0, mSort=%d", mSort))
+	}
+
+	if nConcurrent+mSort != len(names) {
+		return errors.New(fmt.Sprintf("selected rules' len should equals the nConcurrent+mSort, selected rules' len=%d, nConcurrent+mSort=%d", len(names), nConcurrent+mSort))
+	}
+
+	if nConcurrent+mSort > len(rb.Kc.SortRules) {
+		return errors.New(fmt.Sprintf("not enough selected rules to complete N-M execute model, nConcurrent+mSort = %d, while rules.len=%d", nConcurrent+mSort, len(rb.Kc.SortRules)))
+	}
+
+	//selected based on names
+	var rules []*base.RuleEntity
+	for _, v := range names {
+		if rule, ok := rb.Kc.RuleEntities[v]; ok {
+			rules = append(rules, rule)
+		} else {
+			return errors.New(fmt.Sprintf("not exist rule:%s", rule))
+		}
+	}
+
+	//resort
+	sort.SliceStable(rules, func(i, j int) bool {
+		return rules[i].Salience > rules[j].Salience
+	})
+
+	var errLock sync.Mutex
+	var eMsg []string
+
+	//nConcurrent
+	nRules := rules[:nConcurrent]
+	var wg sync.WaitGroup
+	wg.Add(nConcurrent)
+	for _, r := range nRules {
+		rr := r
+		go func() {
+			v, e, bx := rr.Execute()
+			if bx {
+				g.addResult(rr.RuleName, v)
+			}
+			if e != nil {
+				errLock.Lock()
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+				errLock.Unlock()
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+
+	if !b {
+		if len(eMsg) > 0 {
+			return errors.New(fmt.Sprintf("%+v", eMsg))
+		}
+	}
+
+	//mSort
+	mRules := rules[nConcurrent:][:mSort]
+	for _, rule := range mRules {
+		v, e, bx := rule.Execute()
+		if bx {
+			g.addResult(rule.RuleName, v)
+		}
+		if b {
+			if e != nil {
+				eMsg = append(eMsg, fmt.Sprintf("%+v", e))
+			}
+		} else {
+			return e
+		}
+	}
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+
+	return nil
+}
+
+// based on selected rules
+// 1. first n piece rules to concurrent execute based without priority
+// 2. bool b means: if the first stage executed error, whether continue to execute the next concurrent stage
+//    if b == true,   means continue, if false, means stop and return
+// 3. then m piece rules to concurrent execute based without priority
+func (g *Gengine) ExecuteSelectedNConcurrentMConcurrent(nConcurrent, mConcurrent int, rb *builder.RuleBuilder, b bool, names []string) error {
+
+	//strictly params check
+	if nConcurrent <= 0 {
+		return errors.New(fmt.Sprintf("params should be bigger than 0, nConcurrent=%d", nConcurrent))
+	}
+
+	if mConcurrent <= 0 {
+		return errors.New(fmt.Sprintf("params should be bigger than 0, mConcurrent=%d", mConcurrent))
+	}
+
+	if nConcurrent+mConcurrent != len(names) {
+		return errors.New(fmt.Sprintf("selected rules' len should equals the nConcurrent+mConcurrent, selected rules' len=%d, nConcurrent+mConcurrent=%d", len(names), nConcurrent+mConcurrent))
+	}
+
+	if nConcurrent+mConcurrent > len(rb.Kc.SortRules) {
+		return errors.New(fmt.Sprintf("not enough selected rules to complete N-M execute model, nConcurrent+mConcurrent = %d, while rules.len=%d", nConcurrent+mConcurrent, len(rb.Kc.SortRules)))
+	}
+
+	//selected based on names
+	var rules []*base.RuleEntity
+	for _, v := range names {
+		if rule, ok := rb.Kc.RuleEntities[v]; ok {
+			rules = append(rules, rule)
+		} else {
+			return errors.New(fmt.Sprintf("not exist rule:%s", rule))
+		}
+	}
+
+	//resort
+	sort.SliceStable(rules, func(i, j int) bool {
+		return rules[i].Salience > rules[j].Salience
+	})
+
+	var errLock sync.Mutex
+	var eMsg []string
+
+	//nConcurrent
+	nRules := rules[:nConcurrent]
+	var nwg sync.WaitGroup
+	nwg.Add(nConcurrent)
+	for _, r := range nRules {
+		rr := r
+		go func() {
+			v, e, bx := rr.Execute()
+			if bx {
+				g.addResult(rr.RuleName, v)
+			}
+			if e != nil {
+				errLock.Lock()
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+				errLock.Unlock()
+			}
+			nwg.Done()
+		}()
+	}
+	nwg.Wait()
+
+	if !b {
+		if len(eMsg) > 0 {
+			return errors.New(fmt.Sprintf("%+v", eMsg))
+		}
+	}
+
+	//mConcurrent
+	mRules := rules[nConcurrent:][:mConcurrent]
+	var mwg sync.WaitGroup
+	mwg.Add(mConcurrent)
+	for _, r := range mRules {
+		rr := r
+		go func() {
+			v, e, bx := rr.Execute()
+			if bx {
+				g.addResult(rr.RuleName, v)
+			}
+			if e != nil {
+				errLock.Lock()
+				eMsg = append(eMsg, fmt.Sprintf("rule: \"%s\" executed, error:\n %+v ", rr.RuleName, e))
+				errLock.Unlock()
+			}
+			mwg.Done()
+		}()
+	}
+	mwg.Wait()
+
+	if len(eMsg) > 0 {
+		return errors.New(fmt.Sprintf("%+v", eMsg))
+	}
+
+	return nil
+}

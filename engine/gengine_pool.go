@@ -929,6 +929,154 @@ func (gp *GenginePool) ExecuteSelected(data map[string]interface{}, names []stri
 	return nil, returnResultMap
 }
 
+// see ExecuteNSortMConcurrent
+func (gp *GenginePool) ExecuteNSortMConcurrent(nSort, mConcurrent int, b bool, data map[string]interface{}) (error, map[string]interface{}) {
+
+	returnResultMap := make(map[string]interface{})
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil, returnResultMap
+	}
+
+	gw, e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e, returnResultMap
+	}
+	//release resource
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
+
+	e = gw.gengine.ExecuteNSortMConcurrent(nSort, mConcurrent, gw.rulebuilder, b)
+	returnResultMap, _ = gw.gengine.GetRulesResultMap()
+	return e, returnResultMap
+}
+
+// see ExecuteNConcurrentMSort
+func (gp *GenginePool) ExecuteNConcurrentMSort(nSort, mConcurrent int, b bool, data map[string]interface{}) (error, map[string]interface{}) {
+	returnResultMap := make(map[string]interface{})
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil, returnResultMap
+	}
+
+	gw, e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e, returnResultMap
+	}
+	//release resource
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
+
+	e = gw.gengine.ExecuteNConcurrentMSort(nSort, mConcurrent, gw.rulebuilder, b)
+	returnResultMap, _ = gw.gengine.GetRulesResultMap()
+	return e, returnResultMap
+}
+
+//see ExecuteNConcurrentMConcurrent
+func (gp *GenginePool) ExecuteNConcurrentMConcurrent(nSort, mConcurrent int, b bool, data map[string]interface{}) (error, map[string]interface{}) {
+	returnResultMap := make(map[string]interface{})
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil, returnResultMap
+	}
+
+	gw, e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e, returnResultMap
+	}
+	//release resource
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
+
+	e = gw.gengine.ExecuteNConcurrentMConcurrent(nSort, mConcurrent, gw.rulebuilder, b)
+	returnResultMap, _ = gw.gengine.GetRulesResultMap()
+	return e, returnResultMap
+
+}
+
+// see ExecuteSelectedNSortMConcurrent
+func (gp *GenginePool) ExecuteSelectedNSortMConcurrent(nSort, mConcurrent int, b bool, names []string, data map[string]interface{}) (error, map[string]interface{}) {
+	returnResultMap := make(map[string]interface{})
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil, returnResultMap
+	}
+
+	gw, e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e, returnResultMap
+	}
+	//release resource
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
+
+	e = gw.gengine.ExecuteSelectedNSortMConcurrent(nSort, mConcurrent, gw.rulebuilder, b, names)
+	returnResultMap, _ = gw.gengine.GetRulesResultMap()
+	return e, returnResultMap
+}
+
+// see ExecuteSelectedNConcurrentMSort
+func (gp *GenginePool) ExecuteSelectedNConcurrentMSort(nSort, mConcurrent int, b bool, names []string, data map[string]interface{}) (error, map[string]interface{}) {
+
+	returnResultMap := make(map[string]interface{})
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil, returnResultMap
+	}
+
+	gw, e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e, returnResultMap
+	}
+	//release resource
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
+
+	e = gw.gengine.ExecuteSelectedNConcurrentMSort(nSort, mConcurrent, gw.rulebuilder, b, names)
+	returnResultMap, _ = gw.gengine.GetRulesResultMap()
+	return e, returnResultMap
+}
+
+// see gengine.ExecuteSelectedNConcurrentMConcurrent
+func (gp *GenginePool) ExecuteSelectedNConcurrentMConcurrent(nSort, mConcurrent int, b bool, names []string, data map[string]interface{}) (error, map[string]interface{}) {
+
+	returnResultMap := make(map[string]interface{})
+	//rules has bean cleared
+	if gp.clear {
+		//no data to execute rule
+		return nil, returnResultMap
+	}
+
+	gw, e := gp.prepareWithMultiInput(data)
+	if e != nil {
+		return e, returnResultMap
+	}
+	//release resource
+	defer func() {
+		gw.clearInjected(getKeys(data)...)
+		gp.putGengineLocked(gw)
+	}()
+
+	e = gw.gengine.ExecuteSelectedNConcurrentMConcurrent(nSort, mConcurrent, gw.rulebuilder, b, names)
+	returnResultMap, _ = gw.gengine.GetRulesResultMap()
+	return e, returnResultMap
+}
+
 func getKeys(data map[string]interface{}) []string {
 	var keys []string
 	for k := range data {
