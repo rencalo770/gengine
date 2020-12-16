@@ -47,7 +47,28 @@ func Test_pool_return_statments(t *testing.T) {
 	ix2 := i2.(int)
 	println("ix2--->", ix2)
 
-	i3 := rrm1[ruleName]
-	ix3 := i3.(int)
-	println("ix3--->", ix3)
+	i11 := rrm1[ruleName]
+	ix11 := i11.(int)
+	println("ix11--->", ix11)
+
+	e2, rrm3 := pool.ExecuteRulesWithMultiInput(data)
+	if e2 != nil {
+		panic(e2)
+	}
+
+	i4 := rrm3[ruleName]
+	ix4 := i4.(int)
+	println("ix4---->", ix4)
+
+	i22 := rrm2[ruleName]
+	ix22 := i22.(int)
+	println("ix22--->", ix22)
+
+	i111 := rrm1[ruleName]
+	ix111 := i111.(int)
+	println("ix111--->", ix111)
+
+	if ix1 != ix11 && ix1 != ix111 && ix2 != ix22 {
+		panic("返回值收集状态隔离异常...")
+	}
 }
