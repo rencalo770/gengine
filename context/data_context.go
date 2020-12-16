@@ -27,6 +27,7 @@ func NewDataContext() *DataContext {
 func (dc *DataContext) loadInnerUDF() {
 	strconv := &define.StrconvWrapper{}
 	dc.Add("strconv", strconv)
+	dc.Add("isNil", core.IsNil)
 }
 
 func (dc *DataContext) Add(key string, obj interface{}) {

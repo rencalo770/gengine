@@ -1,6 +1,5 @@
 package map_slice_array
 
-
 import (
 	"fmt"
 	"gengine/builder"
@@ -86,7 +85,7 @@ func Test_Array_nil_value(t *testing.T) {
 	//struct
 	contextObj := [5]Request{}
 	contextObj[0] = Request{
-		S:"a", //此处有值，和无值，最终判别nil是不一样的
+		S: "a", //此处有值，和无值，最终判别nil是不一样的
 	}
 
 	//ptr
@@ -109,7 +108,6 @@ func Test_Array_nil_value(t *testing.T) {
 
 	//string
 	contextStr := [3]string{}
-
 
 	dataContext := context.NewDataContext()
 	//结构体

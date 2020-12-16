@@ -59,7 +59,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 			mv := reflect.ValueOf(value).MapIndex(reflect.ValueOf(m.Strkey))
 			if mv.IsValid() {
 				return mv.Interface(), nil
-			}else {
+			} else {
 				return reflect.Zero(reflect.TypeOf(value).Elem()).Interface(), nil
 			}
 		}
@@ -73,7 +73,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		mv := reflect.ValueOf(value).MapIndex(reflect.ValueOf(wantedKey))
 		if mv.IsValid() {
 			return mv.Interface(), nil
-		}else {
+		} else {
 			return reflect.Zero(reflect.TypeOf(value).Elem()).Interface(), nil
 		}
 	}
@@ -138,7 +138,7 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		mv := reflect.ValueOf(value).Elem().MapIndex(reflect.ValueOf(wantedKey))
 		if mv.IsValid() {
 			return mv.Interface(), nil
-		}else {
+		} else {
 			return reflect.Zero(reflect.TypeOf(value).Elem().Elem()).Interface(), nil
 		}
 	}

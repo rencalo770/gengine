@@ -56,7 +56,7 @@ func Test_pool_select_rules(t *testing.T) {
 }
 
 //test no rules in pool
-func Test_pool_no_rules(t *testing.T) {
+/*func Test_pool_no_rules(t *testing.T) {
 
 	t1 := time.Now()
 	pool, e1 := engine.NewGenginePool(3, 5, 1, "", nil)
@@ -69,7 +69,7 @@ func Test_pool_no_rules(t *testing.T) {
 	}
 
 	println("cost time:", time.Since(t1), "ns")
-}
+}*/
 
 func Test_once(t *testing.T) {
 	t1 := time.Now()

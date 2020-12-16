@@ -81,7 +81,7 @@ func Test_map_nil_value(t *testing.T) {
 	//struct
 	contextObj := make(map[string]Request)
 	contextObj["1"] = Request{
-		S:"a", //此处有值，和无值，最终判别nil是不一样的
+		S: "a", //此处有值，和无值，最终判别nil是不一样的
 	}
 
 	//ptr
@@ -103,7 +103,6 @@ func Test_map_nil_value(t *testing.T) {
 
 	//string
 	contextStr := make(map[string]string)
-
 
 	dataContext := context.NewDataContext()
 	//结构体

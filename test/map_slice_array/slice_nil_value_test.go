@@ -1,4 +1,3 @@
-
 package map_slice_array
 
 import (
@@ -85,7 +84,7 @@ func Test_slice_nil_value(t *testing.T) {
 	//struct
 	contextObj := make([]Request, 8)
 	contextObj[0] = Request{
-		S:"a", //此处有值，和无值，最终判别nil是不一样的!!!
+		S: "a", //此处有值，和无值，最终判别nil是不一样的!!!
 	}
 
 	//ptr
@@ -108,7 +107,6 @@ func Test_slice_nil_value(t *testing.T) {
 
 	//string
 	contextStr := make([]string, 8)
-
 
 	dataContext := context.NewDataContext()
 	//结构体

@@ -4,12 +4,11 @@ import (
 	"reflect"
 )
 
-
 func IsNil(v interface{}) bool {
 	value := reflect.ValueOf(v)
 	kind := value.Kind()
 	switch kind {
-	case reflect.Chan, reflect.Func, reflect.Map, reflect.Ptr, reflect.UnsafePointer, reflect.Interface, reflect.Slice://指针类型
+	case reflect.Chan, reflect.Func, reflect.Map, reflect.Ptr, reflect.UnsafePointer, reflect.Interface, reflect.Slice: //指针类型
 		if value.IsNil() {
 			return true
 		}
