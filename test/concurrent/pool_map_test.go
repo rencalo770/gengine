@@ -193,7 +193,7 @@ func Test_map_conc(t *testing.T) {
 	apis["Check"] = Check
 	pool, e1 := engine.NewGenginePool(1, 2, 1, map_rules, apis)
 	if e1 != nil {
-		println(fmt.Sprintf("e1: %+v", e1))
+		panic(e1)
 	}
 
 	go func() {
@@ -209,8 +209,8 @@ func Test_map_conc(t *testing.T) {
 		if e2 != nil {
 			panic(e2)
 		}
-		if result == nil {
-			println("result is nil")
+		if result == nil { //此处是测试有无并发来改变这个指针
+			panic("very serious!!!")
 		}
 		var cache []int64
 		var x1 []*Ranking
@@ -221,11 +221,11 @@ func Test_map_conc(t *testing.T) {
 		}
 
 		if result.SidResult == nil {
-			println("gengine error")
+			panic("gengine error")
 		}
 
 		if result.SidResult["3"] == nil {
-			println("gengine error")
+			panic("gengine error")
 		}
 
 		for i := 0; i < len(result.SidResult["3"].Sl); i++ {
@@ -250,8 +250,8 @@ func Test_map_conc(t *testing.T) {
 			panic(e2)
 		}
 
-		if result == nil {
-			println("result is nil")
+		if result == nil { //测试并发改动此注入
+			panic("very serious!!!")
 		}
 
 		var x1 []*Ranking
@@ -262,11 +262,11 @@ func Test_map_conc(t *testing.T) {
 		}
 
 		if result.SidResult == nil {
-			println("gengine error")
+			panic("gengine error")
 		}
 
 		if result.SidResult["3"] == nil {
-			println("gengine error")
+			panic("gengine error")
 		}
 
 		var cache []int64

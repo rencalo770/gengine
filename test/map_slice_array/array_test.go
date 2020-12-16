@@ -35,7 +35,10 @@ println("AA[a]--->",AA[a])
 
 //can't set value, but can get value
 //AAA[1] = 30000
-println("AAA[1]---->",AAA[1])
+println("AAA[0]---->",AAA[0])
+
+//未初始化的位置,返回0
+println(AAA[1])
 end
 `
 
@@ -49,7 +52,7 @@ func Test_Array(t *testing.T) {
 	AA = [2]int{1, 2}
 
 	var AAA [2]int
-	AAA = [2]int{1, 2}
+	AAA = [2]int{2}
 
 	dataContext := context.NewDataContext()
 	dataContext.Add("PrintName", fmt.Println)

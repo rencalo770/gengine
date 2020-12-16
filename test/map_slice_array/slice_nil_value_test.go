@@ -1,14 +1,13 @@
 
 package map_slice_array
 
-
 import (
-"fmt"
-"gengine/builder"
-"gengine/context"
-"gengine/engine"
-"gengine/internal/core"
-"testing"
+	"fmt"
+	"gengine/builder"
+	"gengine/context"
+	"gengine/engine"
+	"gengine/internal/core"
+	"testing"
 )
 
 var sliRules = `
@@ -61,10 +60,16 @@ println("g---> ", g)
 println("ptr struct isNil g--->",isNil(g))
 println("--------------------------------------------------")
 
-
+//map存在
 h = contextMap[2] 
 println("h---> ", h)
 println("ptr struct isNil h--->",isNil(h))
+println("--------------------------------------------------")
+
+//map不存在
+i = contextMap[8] 
+println("i---> ", i)
+println("ptr struct isNil i--->",isNil(i))
 println("--------------------------------------------------")
 
 end

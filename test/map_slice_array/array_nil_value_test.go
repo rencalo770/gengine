@@ -60,12 +60,18 @@ println("g---> ", g)
 println("ptr struct isNil g--->",isNil(g))
 println("--------------------------------------------------")
 
-
+//map存在
 h = contextMap[2] 
 println("h---> ", h)
 println("ptr struct isNil h--->",isNil(h))
 println("--------------------------------------------------")
 
+
+//map不存在
+i = contextMap[3] 
+println("i---> ", i)
+println("ptr struct isNil i--->",isNil(i))
+println("--------------------------------------------------")
 
 end
 `
@@ -130,5 +136,4 @@ func Test_Array_nil_value(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-
 }

@@ -34,12 +34,7 @@ func IsNil(v interface{}) bool {
 		return true
 	}
 
-	if value.IsValid() {
-		if value.IsZero() {
-			return true
-		}
-	} else {
-		//无效值，即非法值
+	if !value.IsValid() {
 		return true
 	}
 

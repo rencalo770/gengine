@@ -58,12 +58,15 @@ println("g---> ", g)
 println("ptr struct isNil g--->",isNil(g))
 println("--------------------------------------------------")
 
-
 h = contextMap["1"] 
 println("h---> ", h)
 println("ptr struct isNil h--->",isNil(h))
 println("--------------------------------------------------")
 
+i = contextMap["2"] 
+println("i---> ", i)
+println("ptr struct isNil i--->",isNil(i))
+println("--------------------------------------------------")
 
 end
 `
@@ -89,6 +92,7 @@ func Test_map_nil_value(t *testing.T) {
 	//map
 	contextMap := make(map[string]map[string]string)
 	contextMap["1"] = nil
+	contextMap["2"] = make(map[string]string)
 	//bool
 	contextBool := make(map[string]bool)
 	contextBool["1"] = true
