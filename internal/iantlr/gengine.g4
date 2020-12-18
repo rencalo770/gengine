@@ -50,8 +50,9 @@ constant
     | realLiteral
     | stringLiteral
     | atName
-    | atDesc
     | atId
+    | atDesc
+    | atSal
     ;
 
 functionArgs
@@ -89,7 +90,7 @@ mapVar: variable LSQARE (integer |stringLiteral | variable ) RSQARE;
 atName : '@name';
 atId : '@id';
 atDesc : '@desc';
-
+atSal : '@sal';
 
 fragment DEC_DIGIT          : [0-9];
 fragment A                  : [aA] ;

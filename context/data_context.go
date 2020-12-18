@@ -349,6 +349,11 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 				reflect.ValueOf(value).Elem().Index(int(reflect.ValueOf(key).Int())).Set(reflect.ValueOf(wantedValue))
 				return nil
 			}
+
+			if len(mapVarStrkey) > 0 {
+				return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is \"%s\"", mapVarStrkey))
+			}
+
 			if mapVarIntkey >= 0 {
 				wantedValue, e := core.GetWantedValue(newValue, valueType)
 				if e != nil {
@@ -392,6 +397,10 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 					return nil
 				}
 
+				if len(mapVarStrkey) > 0 {
+					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is \"%s\"", mapVarStrkey))
+				}
+
 				if mapVarIntkey >= 0 {
 					wantedValue, e := core.GetWantedValue(newValue, valueType)
 					if e != nil {
@@ -418,6 +427,10 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 
 					reflect.ValueOf(value).Elem().Index(int(reflect.ValueOf(key).Int())).Set(reflect.ValueOf(wantedValue))
 					return nil
+				}
+
+				if len(mapVarStrkey) > 0 {
+					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is 	\"%s\"", mapVarStrkey))
 				}
 
 				if mapVarIntkey >= 0 {
@@ -510,6 +523,10 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 					return nil
 				}
 
+				if len(mapVarStrkey) > 0 {
+					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is \"%s\"", mapVarStrkey))
+				}
+
 				if mapVarIntkey >= 0 {
 					wantedValue, e := core.GetWantedValue(newValue, valueType)
 					if e != nil {
@@ -557,6 +574,10 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 
 					arr.Index(int(reflect.ValueOf(key).Int())).Set(reflect.ValueOf(wantedValue))
 					return nil
+				}
+
+				if len(mapVarStrkey) > 0 {
+					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is \"%s\"", mapVarStrkey))
 				}
 
 				if mapVarIntkey >= 0 {

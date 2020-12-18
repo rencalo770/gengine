@@ -1,4 +1,4 @@
-// Code generated from /Users/renyunyi/gengine/internal/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
+// Code generated from /Users/renyunyi/go_project/gengine/internal/iantlr/gengine.g4 by ANTLR 4.7.2. DO NOT EDIT.
 
 package parser // gengine
 
@@ -149,5 +149,9 @@ func (v *BasegengineVisitor) VisitAtId(ctx *AtIdContext) interface{} {
 }
 
 func (v *BasegengineVisitor) VisitAtDesc(ctx *AtDescContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BasegengineVisitor) VisitAtSal(ctx *AtSalContext) interface{} {
 	return v.VisitChildren(ctx)
 }

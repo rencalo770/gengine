@@ -1,4 +1,4 @@
-// Code generated from /Users/renyunyi/gengine/internal/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
+// Code generated from /Users/renyunyi/go_project/gengine/internal/iantlr/gengine.g4 by ANTLR 4.7.2. DO NOT EDIT.
 
 package parser // gengine
 
@@ -17,163 +17,167 @@ var _ = strconv.Itoa
 
 
 var parserATN = []uint16{
-	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 52, 312, 
+	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 53, 317, 
 	4, 2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7, 9, 7, 
 	4, 8, 9, 8, 4, 9, 9, 9, 4, 10, 9, 10, 4, 11, 9, 11, 4, 12, 9, 12, 4, 13, 
 	9, 13, 4, 14, 9, 14, 4, 15, 9, 15, 4, 16, 9, 16, 4, 17, 9, 17, 4, 18, 9, 
 	18, 4, 19, 9, 19, 4, 20, 9, 20, 4, 21, 9, 21, 4, 22, 9, 22, 4, 23, 9, 23, 
 	4, 24, 9, 24, 4, 25, 9, 25, 4, 26, 9, 26, 4, 27, 9, 27, 4, 28, 9, 28, 4, 
 	29, 9, 29, 4, 30, 9, 30, 4, 31, 9, 31, 4, 32, 9, 32, 4, 33, 9, 33, 4, 34, 
-	9, 34, 4, 35, 9, 35, 4, 36, 9, 36, 4, 37, 9, 37, 3, 2, 6, 2, 76, 10, 2, 
-	13, 2, 14, 2, 77, 3, 3, 3, 3, 3, 3, 5, 3, 83, 10, 3, 3, 3, 5, 3, 86, 10, 
-	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 4, 3, 5, 3, 5, 3, 6, 3, 6, 3, 6, 3, 
-	7, 3, 7, 3, 8, 7, 8, 102, 10, 8, 12, 8, 14, 8, 105, 11, 8, 3, 8, 5, 8, 
-	108, 10, 8, 3, 9, 3, 9, 3, 9, 3, 9, 3, 9, 5, 9, 115, 10, 9, 3, 10, 3, 10, 
-	3, 10, 3, 10, 3, 10, 7, 10, 122, 10, 10, 12, 10, 14, 10, 125, 11, 10, 3, 
-	10, 3, 10, 3, 11, 3, 11, 3, 11, 5, 11, 132, 10, 11, 3, 11, 3, 11, 5, 11, 
-	136, 10, 11, 3, 11, 3, 11, 3, 11, 3, 11, 5, 11, 142, 10, 11, 3, 11, 3, 
-	11, 3, 11, 3, 11, 3, 11, 3, 11, 3, 11, 3, 11, 7, 11, 152, 10, 11, 12, 11, 
-	14, 11, 155, 11, 11, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 5, 12, 163, 
-	10, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 7, 12, 
-	173, 10, 12, 12, 12, 14, 12, 176, 11, 12, 3, 13, 3, 13, 3, 13, 3, 13, 3, 
-	13, 5, 13, 183, 10, 13, 3, 14, 3, 14, 5, 14, 187, 10, 14, 3, 14, 3, 14, 
-	3, 14, 5, 14, 192, 10, 14, 3, 15, 3, 15, 5, 15, 196, 10, 15, 3, 16, 3, 
-	16, 3, 16, 3, 16, 3, 16, 3, 16, 7, 16, 204, 10, 16, 12, 16, 14, 16, 207, 
-	11, 16, 3, 16, 5, 16, 210, 10, 16, 3, 17, 3, 17, 3, 17, 3, 17, 3, 17, 3, 
-	17, 3, 17, 3, 18, 3, 18, 3, 18, 3, 18, 3, 18, 3, 19, 3, 19, 3, 19, 3, 19, 
-	3, 19, 3, 19, 3, 19, 5, 19, 231, 10, 19, 3, 20, 3, 20, 3, 20, 3, 20, 3, 
-	20, 3, 20, 5, 20, 239, 10, 20, 3, 20, 3, 20, 3, 20, 3, 20, 3, 20, 3, 20, 
-	3, 20, 5, 20, 248, 10, 20, 7, 20, 250, 10, 20, 12, 20, 14, 20, 253, 11, 
-	20, 3, 21, 5, 21, 256, 10, 21, 3, 21, 3, 21, 3, 22, 5, 22, 261, 10, 22, 
-	3, 22, 3, 22, 3, 23, 3, 23, 3, 24, 3, 24, 3, 25, 3, 25, 3, 25, 5, 25, 272, 
-	10, 25, 3, 25, 3, 25, 3, 26, 3, 26, 3, 26, 5, 26, 279, 10, 26, 3, 26, 3, 
-	26, 3, 27, 3, 27, 3, 28, 3, 28, 3, 29, 3, 29, 3, 30, 3, 30, 3, 31, 3, 31, 
-	3, 32, 3, 32, 3, 33, 3, 33, 3, 34, 3, 34, 3, 34, 3, 34, 3, 34, 5, 34, 302, 
-	10, 34, 3, 34, 3, 34, 3, 35, 3, 35, 3, 36, 3, 36, 3, 37, 3, 37, 3, 37, 
-	2, 4, 20, 22, 38, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 
-	32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 
-	68, 70, 72, 2, 9, 3, 2, 15, 16, 4, 2, 21, 21, 49, 49, 3, 2, 23, 24, 3, 
-	2, 25, 26, 3, 2, 27, 32, 3, 2, 9, 10, 3, 2, 34, 39, 2, 328, 2, 75, 3, 2, 
-	2, 2, 4, 79, 3, 2, 2, 2, 6, 91, 3, 2, 2, 2, 8, 93, 3, 2, 2, 2, 10, 95, 
-	3, 2, 2, 2, 12, 98, 3, 2, 2, 2, 14, 103, 3, 2, 2, 2, 16, 114, 3, 2, 2, 
-	2, 18, 116, 3, 2, 2, 2, 20, 141, 3, 2, 2, 2, 22, 162, 3, 2, 2, 2, 24, 182, 
-	3, 2, 2, 2, 26, 186, 3, 2, 2, 2, 28, 193, 3, 2, 2, 2, 30, 197, 3, 2, 2, 
-	2, 32, 211, 3, 2, 2, 2, 34, 218, 3, 2, 2, 2, 36, 230, 3, 2, 2, 2, 38, 238, 
-	3, 2, 2, 2, 40, 255, 3, 2, 2, 2, 42, 260, 3, 2, 2, 2, 44, 264, 3, 2, 2, 
-	2, 46, 266, 3, 2, 2, 2, 48, 268, 3, 2, 2, 2, 50, 275, 3, 2, 2, 2, 52, 282, 
-	3, 2, 2, 2, 54, 284, 3, 2, 2, 2, 56, 286, 3, 2, 2, 2, 58, 288, 3, 2, 2, 
-	2, 60, 290, 3, 2, 2, 2, 62, 292, 3, 2, 2, 2, 64, 294, 3, 2, 2, 2, 66, 296, 
-	3, 2, 2, 2, 68, 305, 3, 2, 2, 2, 70, 307, 3, 2, 2, 2, 72, 309, 3, 2, 2, 
-	2, 74, 76, 5, 4, 3, 2, 75, 74, 3, 2, 2, 2, 76, 77, 3, 2, 2, 2, 77, 75, 
-	3, 2, 2, 2, 77, 78, 3, 2, 2, 2, 78, 3, 3, 2, 2, 2, 79, 80, 7, 8, 2, 2, 
-	80, 82, 5, 6, 4, 2, 81, 83, 5, 8, 5, 2, 82, 81, 3, 2, 2, 2, 82, 83, 3, 
-	2, 2, 2, 83, 85, 3, 2, 2, 2, 84, 86, 5, 10, 6, 2, 85, 84, 3, 2, 2, 2, 85, 
-	86, 3, 2, 2, 2, 86, 87, 3, 2, 2, 2, 87, 88, 7, 19, 2, 2, 88, 89, 5, 12, 
-	7, 2, 89, 90, 7, 20, 2, 2, 90, 5, 3, 2, 2, 2, 91, 92, 5, 44, 23, 2, 92, 
-	7, 3, 2, 2, 2, 93, 94, 5, 44, 23, 2, 94, 9, 3, 2, 2, 2, 95, 96, 7, 18, 
-	2, 2, 96, 97, 5, 40, 21, 2, 97, 11, 3, 2, 2, 2, 98, 99, 5, 14, 8, 2, 99, 
-	13, 3, 2, 2, 2, 100, 102, 5, 16, 9, 2, 101, 100, 3, 2, 2, 2, 102, 105, 
-	3, 2, 2, 2, 103, 101, 3, 2, 2, 2, 103, 104, 3, 2, 2, 2, 104, 107, 3, 2, 
-	2, 2, 105, 103, 3, 2, 2, 2, 106, 108, 5, 28, 15, 2, 107, 106, 3, 2, 2, 
-	2, 107, 108, 3, 2, 2, 2, 108, 15, 3, 2, 2, 2, 109, 115, 5, 30, 16, 2, 110, 
-	115, 5, 50, 26, 2, 111, 115, 5, 48, 25, 2, 112, 115, 5, 26, 14, 2, 113, 
-	115, 5, 18, 10, 2, 114, 109, 3, 2, 2, 2, 114, 110, 3, 2, 2, 2, 114, 111, 
-	3, 2, 2, 2, 114, 112, 3, 2, 2, 2, 114, 113, 3, 2, 2, 2, 115, 17, 3, 2, 
-	2, 2, 116, 117, 7, 11, 2, 2, 117, 123, 7, 43, 2, 2, 118, 122, 5, 50, 26, 
-	2, 119, 122, 5, 48, 25, 2, 120, 122, 5, 26, 14, 2, 121, 118, 3, 2, 2, 2, 
-	121, 119, 3, 2, 2, 2, 121, 120, 3, 2, 2, 2, 122, 125, 3, 2, 2, 2, 123, 
-	121, 3, 2, 2, 2, 123, 124, 3, 2, 2, 2, 124, 126, 3, 2, 2, 2, 125, 123, 
-	3, 2, 2, 2, 126, 127, 7, 44, 2, 2, 127, 19, 3, 2, 2, 2, 128, 129, 8, 11, 
-	1, 2, 129, 142, 5, 22, 12, 2, 130, 132, 5, 64, 33, 2, 131, 130, 3, 2, 2, 
-	2, 131, 132, 3, 2, 2, 2, 132, 133, 3, 2, 2, 2, 133, 142, 5, 24, 13, 2, 
-	134, 136, 5, 64, 33, 2, 135, 134, 3, 2, 2, 2, 135, 136, 3, 2, 2, 2, 136, 
-	137, 3, 2, 2, 2, 137, 138, 7, 45, 2, 2, 138, 139, 5, 20, 11, 2, 139, 140, 
-	7, 46, 2, 2, 140, 142, 3, 2, 2, 2, 141, 128, 3, 2, 2, 2, 141, 131, 3, 2, 
-	2, 2, 141, 135, 3, 2, 2, 2, 142, 153, 3, 2, 2, 2, 143, 144, 12, 6, 2, 2, 
-	144, 145, 5, 58, 30, 2, 145, 146, 5, 20, 11, 7, 146, 152, 3, 2, 2, 2, 147, 
-	148, 12, 5, 2, 2, 148, 149, 5, 60, 31, 2, 149, 150, 5, 20, 11, 6, 150, 
-	152, 3, 2, 2, 2, 151, 143, 3, 2, 2, 2, 151, 147, 3, 2, 2, 2, 152, 155, 
-	3, 2, 2, 2, 153, 151, 3, 2, 2, 2, 153, 154, 3, 2, 2, 2, 154, 21, 3, 2, 
-	2, 2, 155, 153, 3, 2, 2, 2, 156, 157, 8, 12, 1, 2, 157, 163, 5, 24, 13, 
-	2, 158, 159, 7, 45, 2, 2, 159, 160, 5, 22, 12, 2, 160, 161, 7, 46, 2, 2, 
-	161, 163, 3, 2, 2, 2, 162, 156, 3, 2, 2, 2, 162, 158, 3, 2, 2, 2, 163, 
-	174, 3, 2, 2, 2, 164, 165, 12, 6, 2, 2, 165, 166, 5, 56, 29, 2, 166, 167, 
-	5, 22, 12, 7, 167, 173, 3, 2, 2, 2, 168, 169, 12, 5, 2, 2, 169, 170, 5, 
-	54, 28, 2, 170, 171, 5, 22, 12, 6, 171, 173, 3, 2, 2, 2, 172, 164, 3, 2, 
-	2, 2, 172, 168, 3, 2, 2, 2, 173, 176, 3, 2, 2, 2, 174, 172, 3, 2, 2, 2, 
-	174, 175, 3, 2, 2, 2, 175, 23, 3, 2, 2, 2, 176, 174, 3, 2, 2, 2, 177, 183, 
-	5, 50, 26, 2, 178, 183, 5, 48, 25, 2, 179, 183, 5, 36, 19, 2, 180, 183, 
-	5, 66, 34, 2, 181, 183, 5, 52, 27, 2, 182, 177, 3, 2, 2, 2, 182, 178, 3, 
-	2, 2, 2, 182, 179, 3, 2, 2, 2, 182, 180, 3, 2, 2, 2, 182, 181, 3, 2, 2, 
-	2, 183, 25, 3, 2, 2, 2, 184, 187, 5, 66, 34, 2, 185, 187, 5, 52, 27, 2, 
-	186, 184, 3, 2, 2, 2, 186, 185, 3, 2, 2, 2, 187, 188, 3, 2, 2, 2, 188, 
-	191, 5, 62, 32, 2, 189, 192, 5, 22, 12, 2, 190, 192, 5, 20, 11, 2, 191, 
-	189, 3, 2, 2, 2, 191, 190, 3, 2, 2, 2, 192, 27, 3, 2, 2, 2, 193, 195, 7, 
-	14, 2, 2, 194, 196, 5, 20, 11, 2, 195, 194, 3, 2, 2, 2, 195, 196, 3, 2, 
-	2, 2, 196, 29, 3, 2, 2, 2, 197, 198, 7, 12, 2, 2, 198, 199, 5, 20, 11, 
-	2, 199, 200, 7, 43, 2, 2, 200, 201, 5, 14, 8, 2, 201, 205, 7, 44, 2, 2, 
-	202, 204, 5, 32, 17, 2, 203, 202, 3, 2, 2, 2, 204, 207, 3, 2, 2, 2, 205, 
-	203, 3, 2, 2, 2, 205, 206, 3, 2, 2, 2, 206, 209, 3, 2, 2, 2, 207, 205, 
-	3, 2, 2, 2, 208, 210, 5, 34, 18, 2, 209, 208, 3, 2, 2, 2, 209, 210, 3, 
-	2, 2, 2, 210, 31, 3, 2, 2, 2, 211, 212, 7, 13, 2, 2, 212, 213, 7, 12, 2, 
-	2, 213, 214, 5, 20, 11, 2, 214, 215, 7, 43, 2, 2, 215, 216, 5, 14, 8, 2, 
-	216, 217, 7, 44, 2, 2, 217, 33, 3, 2, 2, 2, 218, 219, 7, 13, 2, 2, 219, 
-	220, 7, 43, 2, 2, 220, 221, 5, 14, 8, 2, 221, 222, 7, 44, 2, 2, 222, 35, 
-	3, 2, 2, 2, 223, 231, 5, 46, 24, 2, 224, 231, 5, 40, 21, 2, 225, 231, 5, 
-	42, 22, 2, 226, 231, 5, 44, 23, 2, 227, 231, 5, 68, 35, 2, 228, 231, 5, 
-	72, 37, 2, 229, 231, 5, 70, 36, 2, 230, 223, 3, 2, 2, 2, 230, 224, 3, 2, 
-	2, 2, 230, 225, 3, 2, 2, 2, 230, 226, 3, 2, 2, 2, 230, 227, 3, 2, 2, 2, 
-	230, 228, 3, 2, 2, 2, 230, 229, 3, 2, 2, 2, 231, 37, 3, 2, 2, 2, 232, 239, 
-	5, 36, 19, 2, 233, 239, 5, 52, 27, 2, 234, 239, 5, 48, 25, 2, 235, 239, 
-	5, 50, 26, 2, 236, 239, 5, 66, 34, 2, 237, 239, 5, 20, 11, 2, 238, 232, 
-	3, 2, 2, 2, 238, 233, 3, 2, 2, 2, 238, 234, 3, 2, 2, 2, 238, 235, 3, 2, 
-	2, 2, 238, 236, 3, 2, 2, 2, 238, 237, 3, 2, 2, 2, 239, 251, 3, 2, 2, 2, 
-	240, 247, 7, 3, 2, 2, 241, 248, 5, 36, 19, 2, 242, 248, 5, 52, 27, 2, 243, 
-	248, 5, 48, 25, 2, 244, 248, 5, 50, 26, 2, 245, 248, 5, 66, 34, 2, 246, 
-	248, 5, 20, 11, 2, 247, 241, 3, 2, 2, 2, 247, 242, 3, 2, 2, 2, 247, 243, 
-	3, 2, 2, 2, 247, 244, 3, 2, 2, 2, 247, 245, 3, 2, 2, 2, 247, 246, 3, 2, 
-	2, 2, 248, 250, 3, 2, 2, 2, 249, 240, 3, 2, 2, 2, 250, 253, 3, 2, 2, 2, 
-	251, 249, 3, 2, 2, 2, 251, 252, 3, 2, 2, 2, 252, 39, 3, 2, 2, 2, 253, 251, 
-	3, 2, 2, 2, 254, 256, 7, 24, 2, 2, 255, 254, 3, 2, 2, 2, 255, 256, 3, 2, 
-	2, 2, 256, 257, 3, 2, 2, 2, 257, 258, 7, 22, 2, 2, 258, 41, 3, 2, 2, 2, 
-	259, 261, 7, 24, 2, 2, 260, 259, 3, 2, 2, 2, 260, 261, 3, 2, 2, 2, 261, 
-	262, 3, 2, 2, 2, 262, 263, 7, 50, 2, 2, 263, 43, 3, 2, 2, 2, 264, 265, 
-	7, 48, 2, 2, 265, 45, 3, 2, 2, 2, 266, 267, 9, 2, 2, 2, 267, 47, 3, 2, 
-	2, 2, 268, 269, 7, 21, 2, 2, 269, 271, 7, 45, 2, 2, 270, 272, 5, 38, 20, 
-	2, 271, 270, 3, 2, 2, 2, 271, 272, 3, 2, 2, 2, 272, 273, 3, 2, 2, 2, 273, 
-	274, 7, 46, 2, 2, 274, 49, 3, 2, 2, 2, 275, 276, 7, 49, 2, 2, 276, 278, 
-	7, 45, 2, 2, 277, 279, 5, 38, 20, 2, 278, 277, 3, 2, 2, 2, 278, 279, 3, 
-	2, 2, 2, 279, 280, 3, 2, 2, 2, 280, 281, 7, 46, 2, 2, 281, 51, 3, 2, 2, 
-	2, 282, 283, 9, 3, 2, 2, 283, 53, 3, 2, 2, 2, 284, 285, 9, 4, 2, 2, 285, 
-	55, 3, 2, 2, 2, 286, 287, 9, 5, 2, 2, 287, 57, 3, 2, 2, 2, 288, 289, 9, 
-	6, 2, 2, 289, 59, 3, 2, 2, 2, 290, 291, 9, 7, 2, 2, 291, 61, 3, 2, 2, 2, 
-	292, 293, 9, 8, 2, 2, 293, 63, 3, 2, 2, 2, 294, 295, 7, 33, 2, 2, 295, 
-	65, 3, 2, 2, 2, 296, 297, 5, 52, 27, 2, 297, 301, 7, 40, 2, 2, 298, 302, 
-	5, 40, 21, 2, 299, 302, 5, 44, 23, 2, 300, 302, 5, 52, 27, 2, 301, 298, 
-	3, 2, 2, 2, 301, 299, 3, 2, 2, 2, 301, 300, 3, 2, 2, 2, 302, 303, 3, 2, 
-	2, 2, 303, 304, 7, 41, 2, 2, 304, 67, 3, 2, 2, 2, 305, 306, 7, 4, 2, 2, 
-	306, 69, 3, 2, 2, 2, 307, 308, 7, 5, 2, 2, 308, 71, 3, 2, 2, 2, 309, 310, 
-	7, 6, 2, 2, 310, 73, 3, 2, 2, 2, 33, 77, 82, 85, 103, 107, 114, 121, 123, 
-	131, 135, 141, 151, 153, 162, 172, 174, 182, 186, 191, 195, 205, 209, 230, 
-	238, 247, 251, 255, 260, 271, 278, 301,
+	9, 34, 4, 35, 9, 35, 4, 36, 9, 36, 4, 37, 9, 37, 4, 38, 9, 38, 3, 2, 6, 
+	2, 78, 10, 2, 13, 2, 14, 2, 79, 3, 3, 3, 3, 3, 3, 5, 3, 85, 10, 3, 3, 3, 
+	5, 3, 88, 10, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 4, 3, 5, 3, 5, 3, 6, 
+	3, 6, 3, 6, 3, 7, 3, 7, 3, 8, 7, 8, 104, 10, 8, 12, 8, 14, 8, 107, 11, 
+	8, 3, 8, 5, 8, 110, 10, 8, 3, 9, 3, 9, 3, 9, 3, 9, 3, 9, 5, 9, 117, 10, 
+	9, 3, 10, 3, 10, 3, 10, 3, 10, 3, 10, 7, 10, 124, 10, 10, 12, 10, 14, 10, 
+	127, 11, 10, 3, 10, 3, 10, 3, 11, 3, 11, 3, 11, 5, 11, 134, 10, 11, 3, 
+	11, 3, 11, 5, 11, 138, 10, 11, 3, 11, 3, 11, 3, 11, 3, 11, 5, 11, 144, 
+	10, 11, 3, 11, 3, 11, 3, 11, 3, 11, 3, 11, 3, 11, 3, 11, 3, 11, 7, 11, 
+	154, 10, 11, 12, 11, 14, 11, 157, 11, 11, 3, 12, 3, 12, 3, 12, 3, 12, 3, 
+	12, 3, 12, 5, 12, 165, 10, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 3, 12, 
+	3, 12, 3, 12, 7, 12, 175, 10, 12, 12, 12, 14, 12, 178, 11, 12, 3, 13, 3, 
+	13, 3, 13, 3, 13, 3, 13, 5, 13, 185, 10, 13, 3, 14, 3, 14, 5, 14, 189, 
+	10, 14, 3, 14, 3, 14, 3, 14, 5, 14, 194, 10, 14, 3, 15, 3, 15, 5, 15, 198, 
+	10, 15, 3, 16, 3, 16, 3, 16, 3, 16, 3, 16, 3, 16, 7, 16, 206, 10, 16, 12, 
+	16, 14, 16, 209, 11, 16, 3, 16, 5, 16, 212, 10, 16, 3, 17, 3, 17, 3, 17, 
+	3, 17, 3, 17, 3, 17, 3, 17, 3, 18, 3, 18, 3, 18, 3, 18, 3, 18, 3, 19, 3, 
+	19, 3, 19, 3, 19, 3, 19, 3, 19, 3, 19, 3, 19, 5, 19, 234, 10, 19, 3, 20, 
+	3, 20, 3, 20, 3, 20, 3, 20, 3, 20, 5, 20, 242, 10, 20, 3, 20, 3, 20, 3, 
+	20, 3, 20, 3, 20, 3, 20, 3, 20, 5, 20, 251, 10, 20, 7, 20, 253, 10, 20, 
+	12, 20, 14, 20, 256, 11, 20, 3, 21, 5, 21, 259, 10, 21, 3, 21, 3, 21, 3, 
+	22, 5, 22, 264, 10, 22, 3, 22, 3, 22, 3, 23, 3, 23, 3, 24, 3, 24, 3, 25, 
+	3, 25, 3, 25, 5, 25, 275, 10, 25, 3, 25, 3, 25, 3, 26, 3, 26, 3, 26, 5, 
+	26, 282, 10, 26, 3, 26, 3, 26, 3, 27, 3, 27, 3, 28, 3, 28, 3, 29, 3, 29, 
+	3, 30, 3, 30, 3, 31, 3, 31, 3, 32, 3, 32, 3, 33, 3, 33, 3, 34, 3, 34, 3, 
+	34, 3, 34, 3, 34, 5, 34, 305, 10, 34, 3, 34, 3, 34, 3, 35, 3, 35, 3, 36, 
+	3, 36, 3, 37, 3, 37, 3, 38, 3, 38, 3, 38, 2, 4, 20, 22, 39, 2, 4, 6, 8, 
+	10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 
+	46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 2, 9, 3, 2, 
+	16, 17, 4, 2, 22, 22, 50, 50, 3, 2, 24, 25, 3, 2, 26, 27, 3, 2, 28, 33, 
+	3, 2, 10, 11, 3, 2, 35, 40, 2, 333, 2, 77, 3, 2, 2, 2, 4, 81, 3, 2, 2, 
+	2, 6, 93, 3, 2, 2, 2, 8, 95, 3, 2, 2, 2, 10, 97, 3, 2, 2, 2, 12, 100, 3, 
+	2, 2, 2, 14, 105, 3, 2, 2, 2, 16, 116, 3, 2, 2, 2, 18, 118, 3, 2, 2, 2, 
+	20, 143, 3, 2, 2, 2, 22, 164, 3, 2, 2, 2, 24, 184, 3, 2, 2, 2, 26, 188, 
+	3, 2, 2, 2, 28, 195, 3, 2, 2, 2, 30, 199, 3, 2, 2, 2, 32, 213, 3, 2, 2, 
+	2, 34, 220, 3, 2, 2, 2, 36, 233, 3, 2, 2, 2, 38, 241, 3, 2, 2, 2, 40, 258, 
+	3, 2, 2, 2, 42, 263, 3, 2, 2, 2, 44, 267, 3, 2, 2, 2, 46, 269, 3, 2, 2, 
+	2, 48, 271, 3, 2, 2, 2, 50, 278, 3, 2, 2, 2, 52, 285, 3, 2, 2, 2, 54, 287, 
+	3, 2, 2, 2, 56, 289, 3, 2, 2, 2, 58, 291, 3, 2, 2, 2, 60, 293, 3, 2, 2, 
+	2, 62, 295, 3, 2, 2, 2, 64, 297, 3, 2, 2, 2, 66, 299, 3, 2, 2, 2, 68, 308, 
+	3, 2, 2, 2, 70, 310, 3, 2, 2, 2, 72, 312, 3, 2, 2, 2, 74, 314, 3, 2, 2, 
+	2, 76, 78, 5, 4, 3, 2, 77, 76, 3, 2, 2, 2, 78, 79, 3, 2, 2, 2, 79, 77, 
+	3, 2, 2, 2, 79, 80, 3, 2, 2, 2, 80, 3, 3, 2, 2, 2, 81, 82, 7, 9, 2, 2, 
+	82, 84, 5, 6, 4, 2, 83, 85, 5, 8, 5, 2, 84, 83, 3, 2, 2, 2, 84, 85, 3, 
+	2, 2, 2, 85, 87, 3, 2, 2, 2, 86, 88, 5, 10, 6, 2, 87, 86, 3, 2, 2, 2, 87, 
+	88, 3, 2, 2, 2, 88, 89, 3, 2, 2, 2, 89, 90, 7, 20, 2, 2, 90, 91, 5, 12, 
+	7, 2, 91, 92, 7, 21, 2, 2, 92, 5, 3, 2, 2, 2, 93, 94, 5, 44, 23, 2, 94, 
+	7, 3, 2, 2, 2, 95, 96, 5, 44, 23, 2, 96, 9, 3, 2, 2, 2, 97, 98, 7, 19, 
+	2, 2, 98, 99, 5, 40, 21, 2, 99, 11, 3, 2, 2, 2, 100, 101, 5, 14, 8, 2, 
+	101, 13, 3, 2, 2, 2, 102, 104, 5, 16, 9, 2, 103, 102, 3, 2, 2, 2, 104, 
+	107, 3, 2, 2, 2, 105, 103, 3, 2, 2, 2, 105, 106, 3, 2, 2, 2, 106, 109, 
+	3, 2, 2, 2, 107, 105, 3, 2, 2, 2, 108, 110, 5, 28, 15, 2, 109, 108, 3, 
+	2, 2, 2, 109, 110, 3, 2, 2, 2, 110, 15, 3, 2, 2, 2, 111, 117, 5, 30, 16, 
+	2, 112, 117, 5, 50, 26, 2, 113, 117, 5, 48, 25, 2, 114, 117, 5, 26, 14, 
+	2, 115, 117, 5, 18, 10, 2, 116, 111, 3, 2, 2, 2, 116, 112, 3, 2, 2, 2, 
+	116, 113, 3, 2, 2, 2, 116, 114, 3, 2, 2, 2, 116, 115, 3, 2, 2, 2, 117, 
+	17, 3, 2, 2, 2, 118, 119, 7, 12, 2, 2, 119, 125, 7, 44, 2, 2, 120, 124, 
+	5, 50, 26, 2, 121, 124, 5, 48, 25, 2, 122, 124, 5, 26, 14, 2, 123, 120, 
+	3, 2, 2, 2, 123, 121, 3, 2, 2, 2, 123, 122, 3, 2, 2, 2, 124, 127, 3, 2, 
+	2, 2, 125, 123, 3, 2, 2, 2, 125, 126, 3, 2, 2, 2, 126, 128, 3, 2, 2, 2, 
+	127, 125, 3, 2, 2, 2, 128, 129, 7, 45, 2, 2, 129, 19, 3, 2, 2, 2, 130, 
+	131, 8, 11, 1, 2, 131, 144, 5, 22, 12, 2, 132, 134, 5, 64, 33, 2, 133, 
+	132, 3, 2, 2, 2, 133, 134, 3, 2, 2, 2, 134, 135, 3, 2, 2, 2, 135, 144, 
+	5, 24, 13, 2, 136, 138, 5, 64, 33, 2, 137, 136, 3, 2, 2, 2, 137, 138, 3, 
+	2, 2, 2, 138, 139, 3, 2, 2, 2, 139, 140, 7, 46, 2, 2, 140, 141, 5, 20, 
+	11, 2, 141, 142, 7, 47, 2, 2, 142, 144, 3, 2, 2, 2, 143, 130, 3, 2, 2, 
+	2, 143, 133, 3, 2, 2, 2, 143, 137, 3, 2, 2, 2, 144, 155, 3, 2, 2, 2, 145, 
+	146, 12, 6, 2, 2, 146, 147, 5, 58, 30, 2, 147, 148, 5, 20, 11, 7, 148, 
+	154, 3, 2, 2, 2, 149, 150, 12, 5, 2, 2, 150, 151, 5, 60, 31, 2, 151, 152, 
+	5, 20, 11, 6, 152, 154, 3, 2, 2, 2, 153, 145, 3, 2, 2, 2, 153, 149, 3, 
+	2, 2, 2, 154, 157, 3, 2, 2, 2, 155, 153, 3, 2, 2, 2, 155, 156, 3, 2, 2, 
+	2, 156, 21, 3, 2, 2, 2, 157, 155, 3, 2, 2, 2, 158, 159, 8, 12, 1, 2, 159, 
+	165, 5, 24, 13, 2, 160, 161, 7, 46, 2, 2, 161, 162, 5, 22, 12, 2, 162, 
+	163, 7, 47, 2, 2, 163, 165, 3, 2, 2, 2, 164, 158, 3, 2, 2, 2, 164, 160, 
+	3, 2, 2, 2, 165, 176, 3, 2, 2, 2, 166, 167, 12, 6, 2, 2, 167, 168, 5, 56, 
+	29, 2, 168, 169, 5, 22, 12, 7, 169, 175, 3, 2, 2, 2, 170, 171, 12, 5, 2, 
+	2, 171, 172, 5, 54, 28, 2, 172, 173, 5, 22, 12, 6, 173, 175, 3, 2, 2, 2, 
+	174, 166, 3, 2, 2, 2, 174, 170, 3, 2, 2, 2, 175, 178, 3, 2, 2, 2, 176, 
+	174, 3, 2, 2, 2, 176, 177, 3, 2, 2, 2, 177, 23, 3, 2, 2, 2, 178, 176, 3, 
+	2, 2, 2, 179, 185, 5, 50, 26, 2, 180, 185, 5, 48, 25, 2, 181, 185, 5, 36, 
+	19, 2, 182, 185, 5, 66, 34, 2, 183, 185, 5, 52, 27, 2, 184, 179, 3, 2, 
+	2, 2, 184, 180, 3, 2, 2, 2, 184, 181, 3, 2, 2, 2, 184, 182, 3, 2, 2, 2, 
+	184, 183, 3, 2, 2, 2, 185, 25, 3, 2, 2, 2, 186, 189, 5, 66, 34, 2, 187, 
+	189, 5, 52, 27, 2, 188, 186, 3, 2, 2, 2, 188, 187, 3, 2, 2, 2, 189, 190, 
+	3, 2, 2, 2, 190, 193, 5, 62, 32, 2, 191, 194, 5, 22, 12, 2, 192, 194, 5, 
+	20, 11, 2, 193, 191, 3, 2, 2, 2, 193, 192, 3, 2, 2, 2, 194, 27, 3, 2, 2, 
+	2, 195, 197, 7, 15, 2, 2, 196, 198, 5, 20, 11, 2, 197, 196, 3, 2, 2, 2, 
+	197, 198, 3, 2, 2, 2, 198, 29, 3, 2, 2, 2, 199, 200, 7, 13, 2, 2, 200, 
+	201, 5, 20, 11, 2, 201, 202, 7, 44, 2, 2, 202, 203, 5, 14, 8, 2, 203, 207, 
+	7, 45, 2, 2, 204, 206, 5, 32, 17, 2, 205, 204, 3, 2, 2, 2, 206, 209, 3, 
+	2, 2, 2, 207, 205, 3, 2, 2, 2, 207, 208, 3, 2, 2, 2, 208, 211, 3, 2, 2, 
+	2, 209, 207, 3, 2, 2, 2, 210, 212, 5, 34, 18, 2, 211, 210, 3, 2, 2, 2, 
+	211, 212, 3, 2, 2, 2, 212, 31, 3, 2, 2, 2, 213, 214, 7, 14, 2, 2, 214, 
+	215, 7, 13, 2, 2, 215, 216, 5, 20, 11, 2, 216, 217, 7, 44, 2, 2, 217, 218, 
+	5, 14, 8, 2, 218, 219, 7, 45, 2, 2, 219, 33, 3, 2, 2, 2, 220, 221, 7, 14, 
+	2, 2, 221, 222, 7, 44, 2, 2, 222, 223, 5, 14, 8, 2, 223, 224, 7, 45, 2, 
+	2, 224, 35, 3, 2, 2, 2, 225, 234, 5, 46, 24, 2, 226, 234, 5, 40, 21, 2, 
+	227, 234, 5, 42, 22, 2, 228, 234, 5, 44, 23, 2, 229, 234, 5, 68, 35, 2, 
+	230, 234, 5, 70, 36, 2, 231, 234, 5, 72, 37, 2, 232, 234, 5, 74, 38, 2, 
+	233, 225, 3, 2, 2, 2, 233, 226, 3, 2, 2, 2, 233, 227, 3, 2, 2, 2, 233, 
+	228, 3, 2, 2, 2, 233, 229, 3, 2, 2, 2, 233, 230, 3, 2, 2, 2, 233, 231, 
+	3, 2, 2, 2, 233, 232, 3, 2, 2, 2, 234, 37, 3, 2, 2, 2, 235, 242, 5, 36, 
+	19, 2, 236, 242, 5, 52, 27, 2, 237, 242, 5, 48, 25, 2, 238, 242, 5, 50, 
+	26, 2, 239, 242, 5, 66, 34, 2, 240, 242, 5, 20, 11, 2, 241, 235, 3, 2, 
+	2, 2, 241, 236, 3, 2, 2, 2, 241, 237, 3, 2, 2, 2, 241, 238, 3, 2, 2, 2, 
+	241, 239, 3, 2, 2, 2, 241, 240, 3, 2, 2, 2, 242, 254, 3, 2, 2, 2, 243, 
+	250, 7, 3, 2, 2, 244, 251, 5, 36, 19, 2, 245, 251, 5, 52, 27, 2, 246, 251, 
+	5, 48, 25, 2, 247, 251, 5, 50, 26, 2, 248, 251, 5, 66, 34, 2, 249, 251, 
+	5, 20, 11, 2, 250, 244, 3, 2, 2, 2, 250, 245, 3, 2, 2, 2, 250, 246, 3, 
+	2, 2, 2, 250, 247, 3, 2, 2, 2, 250, 248, 3, 2, 2, 2, 250, 249, 3, 2, 2, 
+	2, 251, 253, 3, 2, 2, 2, 252, 243, 3, 2, 2, 2, 253, 256, 3, 2, 2, 2, 254, 
+	252, 3, 2, 2, 2, 254, 255, 3, 2, 2, 2, 255, 39, 3, 2, 2, 2, 256, 254, 3, 
+	2, 2, 2, 257, 259, 7, 25, 2, 2, 258, 257, 3, 2, 2, 2, 258, 259, 3, 2, 2, 
+	2, 259, 260, 3, 2, 2, 2, 260, 261, 7, 23, 2, 2, 261, 41, 3, 2, 2, 2, 262, 
+	264, 7, 25, 2, 2, 263, 262, 3, 2, 2, 2, 263, 264, 3, 2, 2, 2, 264, 265, 
+	3, 2, 2, 2, 265, 266, 7, 51, 2, 2, 266, 43, 3, 2, 2, 2, 267, 268, 7, 49, 
+	2, 2, 268, 45, 3, 2, 2, 2, 269, 270, 9, 2, 2, 2, 270, 47, 3, 2, 2, 2, 271, 
+	272, 7, 22, 2, 2, 272, 274, 7, 46, 2, 2, 273, 275, 5, 38, 20, 2, 274, 273, 
+	3, 2, 2, 2, 274, 275, 3, 2, 2, 2, 275, 276, 3, 2, 2, 2, 276, 277, 7, 47, 
+	2, 2, 277, 49, 3, 2, 2, 2, 278, 279, 7, 50, 2, 2, 279, 281, 7, 46, 2, 2, 
+	280, 282, 5, 38, 20, 2, 281, 280, 3, 2, 2, 2, 281, 282, 3, 2, 2, 2, 282, 
+	283, 3, 2, 2, 2, 283, 284, 7, 47, 2, 2, 284, 51, 3, 2, 2, 2, 285, 286, 
+	9, 3, 2, 2, 286, 53, 3, 2, 2, 2, 287, 288, 9, 4, 2, 2, 288, 55, 3, 2, 2, 
+	2, 289, 290, 9, 5, 2, 2, 290, 57, 3, 2, 2, 2, 291, 292, 9, 6, 2, 2, 292, 
+	59, 3, 2, 2, 2, 293, 294, 9, 7, 2, 2, 294, 61, 3, 2, 2, 2, 295, 296, 9, 
+	8, 2, 2, 296, 63, 3, 2, 2, 2, 297, 298, 7, 34, 2, 2, 298, 65, 3, 2, 2, 
+	2, 299, 300, 5, 52, 27, 2, 300, 304, 7, 41, 2, 2, 301, 305, 5, 40, 21, 
+	2, 302, 305, 5, 44, 23, 2, 303, 305, 5, 52, 27, 2, 304, 301, 3, 2, 2, 2, 
+	304, 302, 3, 2, 2, 2, 304, 303, 3, 2, 2, 2, 305, 306, 3, 2, 2, 2, 306, 
+	307, 7, 42, 2, 2, 307, 67, 3, 2, 2, 2, 308, 309, 7, 4, 2, 2, 309, 69, 3, 
+	2, 2, 2, 310, 311, 7, 5, 2, 2, 311, 71, 3, 2, 2, 2, 312, 313, 7, 6, 2, 
+	2, 313, 73, 3, 2, 2, 2, 314, 315, 7, 7, 2, 2, 315, 75, 3, 2, 2, 2, 33, 
+	79, 84, 87, 105, 109, 116, 123, 125, 133, 137, 143, 153, 155, 164, 174, 
+	176, 184, 188, 193, 197, 207, 211, 233, 241, 250, 254, 258, 263, 274, 281, 
+	304,
 }
 var deserializer = antlr.NewATNDeserializer(nil)
 var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
 
 var literalNames = []string{
-	"", "','", "'@name'", "'@id'", "'@desc'", "", "", "'&&'", "'||'", "", "", 
-	"", "", "", "", "", "", "", "", "", "", "'+'", "'-'", "'/'", "'*'", "'=='", 
-	"'>'", "'<'", "'>='", "'<='", "'!='", "'!'", "':='", "'='", "'+='", "'-='", 
-	"'*='", "'/='", "'['", "']'", "';'", "'{'", "'}'", "'('", "')'", "'.'",
+	"", "','", "'@name'", "'@id'", "'@desc'", "'@sal'", "", "", "'&&'", "'||'", 
+	"", "", "", "", "", "", "", "", "", "", "", "", "'+'", "'-'", "'/'", "'*'", 
+	"'=='", "'>'", "'<'", "'>='", "'<='", "'!='", "'!'", "':='", "'='", "'+='", 
+	"'-='", "'*='", "'/='", "'['", "']'", "';'", "'{'", "'}'", "'('", "')'", 
+	"'.'",
 }
 var symbolicNames = []string{
-	"", "", "", "", "", "NIL", "RULE", "AND", "OR", "CONC", "IF", "ELSE", "RETURN", 
-	"TRUE", "FALSE", "NULL_LITERAL", "SALIENCE", "BEGIN", "END", "SIMPLENAME", 
-	"INT", "PLUS", "MINUS", "DIV", "MUL", "EQUALS", "GT", "LT", "GTE", "LTE", 
-	"NOTEQUALS", "NOT", "ASSIGN", "SET", "PLUSEQUAL", "MINUSEQUAL", "MULTIEQUAL", 
-	"DIVEQUAL", "LSQARE", "RSQARE", "SEMICOLON", "LR_BRACE", "RR_BRACE", "LR_BRACKET", 
-	"RR_BRACKET", "DOT", "DQUOTA_STRING", "DOTTEDNAME", "REAL_LITERAL", "SL_COMMENT", 
-	"WS",
+	"", "", "", "", "", "", "NIL", "RULE", "AND", "OR", "CONC", "IF", "ELSE", 
+	"RETURN", "TRUE", "FALSE", "NULL_LITERAL", "SALIENCE", "BEGIN", "END", 
+	"SIMPLENAME", "INT", "PLUS", "MINUS", "DIV", "MUL", "EQUALS", "GT", "LT", 
+	"GTE", "LTE", "NOTEQUALS", "NOT", "ASSIGN", "SET", "PLUSEQUAL", "MINUSEQUAL", 
+	"MULTIEQUAL", "DIVEQUAL", "LSQARE", "RSQARE", "SEMICOLON", "LR_BRACE", 
+	"RR_BRACE", "LR_BRACKET", "RR_BRACKET", "DOT", "DQUOTA_STRING", "DOTTEDNAME", 
+	"REAL_LITERAL", "SL_COMMENT", "WS",
 }
 
 var ruleNames = []string{
@@ -183,7 +187,7 @@ var ruleNames = []string{
 	"constant", "functionArgs", "integer", "realLiteral", "stringLiteral", 
 	"booleanLiteral", "functionCall", "methodCall", "variable", "mathPmOperator", 
 	"mathMdOperator", "comparisonOperator", "logicalOperator", "assignOperator", 
-	"notOperator", "mapVar", "atName", "atId", "atDesc",
+	"notOperator", "mapVar", "atName", "atId", "atDesc", "atSal",
 }
 var decisionToDFA = make([]*antlr.DFA, len(deserializedATN.DecisionToState))
 
@@ -218,52 +222,53 @@ const (
 	gengineParserT__1 = 2
 	gengineParserT__2 = 3
 	gengineParserT__3 = 4
-	gengineParserNIL = 5
-	gengineParserRULE = 6
-	gengineParserAND = 7
-	gengineParserOR = 8
-	gengineParserCONC = 9
-	gengineParserIF = 10
-	gengineParserELSE = 11
-	gengineParserRETURN = 12
-	gengineParserTRUE = 13
-	gengineParserFALSE = 14
-	gengineParserNULL_LITERAL = 15
-	gengineParserSALIENCE = 16
-	gengineParserBEGIN = 17
-	gengineParserEND = 18
-	gengineParserSIMPLENAME = 19
-	gengineParserINT = 20
-	gengineParserPLUS = 21
-	gengineParserMINUS = 22
-	gengineParserDIV = 23
-	gengineParserMUL = 24
-	gengineParserEQUALS = 25
-	gengineParserGT = 26
-	gengineParserLT = 27
-	gengineParserGTE = 28
-	gengineParserLTE = 29
-	gengineParserNOTEQUALS = 30
-	gengineParserNOT = 31
-	gengineParserASSIGN = 32
-	gengineParserSET = 33
-	gengineParserPLUSEQUAL = 34
-	gengineParserMINUSEQUAL = 35
-	gengineParserMULTIEQUAL = 36
-	gengineParserDIVEQUAL = 37
-	gengineParserLSQARE = 38
-	gengineParserRSQARE = 39
-	gengineParserSEMICOLON = 40
-	gengineParserLR_BRACE = 41
-	gengineParserRR_BRACE = 42
-	gengineParserLR_BRACKET = 43
-	gengineParserRR_BRACKET = 44
-	gengineParserDOT = 45
-	gengineParserDQUOTA_STRING = 46
-	gengineParserDOTTEDNAME = 47
-	gengineParserREAL_LITERAL = 48
-	gengineParserSL_COMMENT = 49
-	gengineParserWS = 50
+	gengineParserT__4 = 5
+	gengineParserNIL = 6
+	gengineParserRULE = 7
+	gengineParserAND = 8
+	gengineParserOR = 9
+	gengineParserCONC = 10
+	gengineParserIF = 11
+	gengineParserELSE = 12
+	gengineParserRETURN = 13
+	gengineParserTRUE = 14
+	gengineParserFALSE = 15
+	gengineParserNULL_LITERAL = 16
+	gengineParserSALIENCE = 17
+	gengineParserBEGIN = 18
+	gengineParserEND = 19
+	gengineParserSIMPLENAME = 20
+	gengineParserINT = 21
+	gengineParserPLUS = 22
+	gengineParserMINUS = 23
+	gengineParserDIV = 24
+	gengineParserMUL = 25
+	gengineParserEQUALS = 26
+	gengineParserGT = 27
+	gengineParserLT = 28
+	gengineParserGTE = 29
+	gengineParserLTE = 30
+	gengineParserNOTEQUALS = 31
+	gengineParserNOT = 32
+	gengineParserASSIGN = 33
+	gengineParserSET = 34
+	gengineParserPLUSEQUAL = 35
+	gengineParserMINUSEQUAL = 36
+	gengineParserMULTIEQUAL = 37
+	gengineParserDIVEQUAL = 38
+	gengineParserLSQARE = 39
+	gengineParserRSQARE = 40
+	gengineParserSEMICOLON = 41
+	gengineParserLR_BRACE = 42
+	gengineParserRR_BRACE = 43
+	gengineParserLR_BRACKET = 44
+	gengineParserRR_BRACKET = 45
+	gengineParserDOT = 46
+	gengineParserDQUOTA_STRING = 47
+	gengineParserDOTTEDNAME = 48
+	gengineParserREAL_LITERAL = 49
+	gengineParserSL_COMMENT = 50
+	gengineParserWS = 51
 )
 
 // gengineParser rules.
@@ -304,6 +309,7 @@ const (
 	gengineParserRULE_atName = 33
 	gengineParserRULE_atId = 34
 	gengineParserRULE_atDesc = 35
+	gengineParserRULE_atSal = 36
 )
 
 // IPrimaryContext is an interface to support dynamic dispatch.
@@ -424,19 +430,19 @@ func (p *gengineParser) Primary() (localctx IPrimaryContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(73)
+	p.SetState(75)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 
 	for ok := true; ok; ok = _la == gengineParserRULE {
 		{
-			p.SetState(72)
+			p.SetState(74)
 			p.RuleEntity()
 		}
 
 
-		p.SetState(75)
+		p.SetState(77)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 	}
@@ -595,47 +601,47 @@ func (p *gengineParser) RuleEntity() (localctx IRuleEntityContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(77)
+		p.SetState(79)
 		p.Match(gengineParserRULE)
 	}
 	{
-		p.SetState(78)
+		p.SetState(80)
 		p.RuleName()
 	}
-	p.SetState(80)
+	p.SetState(82)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 
 	if _la == gengineParserDQUOTA_STRING {
 		{
-			p.SetState(79)
+			p.SetState(81)
 			p.RuleDescription()
 		}
 
 	}
-	p.SetState(83)
+	p.SetState(85)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 
 	if _la == gengineParserSALIENCE {
 		{
-			p.SetState(82)
+			p.SetState(84)
 			p.Salience()
 		}
 
 	}
 	{
-		p.SetState(85)
+		p.SetState(87)
 		p.Match(gengineParserBEGIN)
 	}
 	{
-		p.SetState(86)
+		p.SetState(88)
 		p.RuleContent()
 	}
 	{
-		p.SetState(87)
+		p.SetState(89)
 		p.Match(gengineParserEND)
 	}
 
@@ -749,7 +755,7 @@ func (p *gengineParser) RuleName() (localctx IRuleNameContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(89)
+		p.SetState(91)
 		p.StringLiteral()
 	}
 
@@ -863,7 +869,7 @@ func (p *gengineParser) RuleDescription() (localctx IRuleDescriptionContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(91)
+		p.SetState(93)
 		p.StringLiteral()
 	}
 
@@ -981,11 +987,11 @@ func (p *gengineParser) Salience() (localctx ISalienceContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(93)
+		p.SetState(95)
 		p.Match(gengineParserSALIENCE)
 	}
 	{
-		p.SetState(94)
+		p.SetState(96)
 		p.Integer()
 	}
 
@@ -1099,7 +1105,7 @@ func (p *gengineParser) RuleContent() (localctx IRuleContentContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(96)
+		p.SetState(98)
 		p.Statements()
 	}
 
@@ -1237,30 +1243,30 @@ func (p *gengineParser) Statements() (localctx IStatementsContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(101)
+	p.SetState(103)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 
 	for (((_la) & -(0x1f+1)) == 0 && ((1 << uint(_la)) & ((1 << gengineParserCONC) | (1 << gengineParserIF) | (1 << gengineParserSIMPLENAME))) != 0) || _la == gengineParserDOTTEDNAME {
 		{
-			p.SetState(98)
+			p.SetState(100)
 			p.Statement()
 		}
 
 
-		p.SetState(103)
+		p.SetState(105)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 	}
-	p.SetState(105)
+	p.SetState(107)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 
 	if _la == gengineParserRETURN {
 		{
-			p.SetState(104)
+			p.SetState(106)
 			p.ReturnStmt()
 		}
 
@@ -1414,13 +1420,13 @@ func (p *gengineParser) Statement() (localctx IStatementContext) {
 		}
 	}()
 
-	p.SetState(112)
+	p.SetState(114)
 	p.GetErrorHandler().Sync(p)
 	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 5, p.GetParserRuleContext()) {
 	case 1:
 		p.EnterOuterAlt(localctx, 1)
 		{
-			p.SetState(107)
+			p.SetState(109)
 			p.IfStmt()
 		}
 
@@ -1428,7 +1434,7 @@ func (p *gengineParser) Statement() (localctx IStatementContext) {
 	case 2:
 		p.EnterOuterAlt(localctx, 2)
 		{
-			p.SetState(108)
+			p.SetState(110)
 			p.MethodCall()
 		}
 
@@ -1436,7 +1442,7 @@ func (p *gengineParser) Statement() (localctx IStatementContext) {
 	case 3:
 		p.EnterOuterAlt(localctx, 3)
 		{
-			p.SetState(109)
+			p.SetState(111)
 			p.FunctionCall()
 		}
 
@@ -1444,7 +1450,7 @@ func (p *gengineParser) Statement() (localctx IStatementContext) {
 	case 4:
 		p.EnterOuterAlt(localctx, 4)
 		{
-			p.SetState(110)
+			p.SetState(112)
 			p.Assignment()
 		}
 
@@ -1452,7 +1458,7 @@ func (p *gengineParser) Statement() (localctx IStatementContext) {
 	case 5:
 		p.EnterOuterAlt(localctx, 5)
 		{
-			p.SetState(111)
+			p.SetState(113)
 			p.ConcStatement()
 		}
 
@@ -1640,50 +1646,50 @@ func (p *gengineParser) ConcStatement() (localctx IConcStatementContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(114)
+		p.SetState(116)
 		p.Match(gengineParserCONC)
 	}
 	{
-		p.SetState(115)
+		p.SetState(117)
 		p.Match(gengineParserLR_BRACE)
 	}
-	p.SetState(121)
+	p.SetState(123)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 
 	for _la == gengineParserSIMPLENAME || _la == gengineParserDOTTEDNAME {
-		p.SetState(119)
+		p.SetState(121)
 		p.GetErrorHandler().Sync(p)
 		switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 6, p.GetParserRuleContext()) {
 		case 1:
 			{
-				p.SetState(116)
+				p.SetState(118)
 				p.MethodCall()
 			}
 
 
 		case 2:
 			{
-				p.SetState(117)
+				p.SetState(119)
 				p.FunctionCall()
 			}
 
 
 		case 3:
 			{
-				p.SetState(118)
+				p.SetState(120)
 				p.Assignment()
 			}
 
 		}
 
-		p.SetState(123)
+		p.SetState(125)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 	}
 	{
-		p.SetState(124)
+		p.SetState(126)
 		p.Match(gengineParserRR_BRACE)
 	}
 
@@ -1881,64 +1887,64 @@ func (p *gengineParser) expression(_p int) (localctx IExpressionContext) {
 	var _alt int
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(139)
+	p.SetState(141)
 	p.GetErrorHandler().Sync(p)
 	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 10, p.GetParserRuleContext()) {
 	case 1:
 		{
-			p.SetState(127)
+			p.SetState(129)
 			p.mathExpression(0)
 		}
 
 
 	case 2:
-		p.SetState(129)
+		p.SetState(131)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 
 
 		if _la == gengineParserNOT {
 			{
-				p.SetState(128)
+				p.SetState(130)
 				p.NotOperator()
 			}
 
 		}
 		{
-			p.SetState(131)
+			p.SetState(133)
 			p.ExpressionAtom()
 		}
 
 
 	case 3:
-		p.SetState(133)
+		p.SetState(135)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 
 
 		if _la == gengineParserNOT {
 			{
-				p.SetState(132)
+				p.SetState(134)
 				p.NotOperator()
 			}
 
 		}
 		{
-			p.SetState(135)
+			p.SetState(137)
 			p.Match(gengineParserLR_BRACKET)
 		}
 		{
-			p.SetState(136)
+			p.SetState(138)
 			p.expression(0)
 		}
 		{
-			p.SetState(137)
+			p.SetState(139)
 			p.Match(gengineParserRR_BRACKET)
 		}
 
 	}
 	p.GetParserRuleContext().SetStop(p.GetTokenStream().LT(-1))
-	p.SetState(151)
+	p.SetState(153)
 	p.GetErrorHandler().Sync(p)
 	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 12, p.GetParserRuleContext())
 
@@ -1948,23 +1954,23 @@ func (p *gengineParser) expression(_p int) (localctx IExpressionContext) {
 				p.TriggerExitRuleEvent()
 			}
 			_prevctx = localctx
-			p.SetState(149)
+			p.SetState(151)
 			p.GetErrorHandler().Sync(p)
 			switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 11, p.GetParserRuleContext()) {
 			case 1:
 				localctx = NewExpressionContext(p, _parentctx, _parentState)
 				p.PushNewRecursionContext(localctx, _startState, gengineParserRULE_expression)
-				p.SetState(141)
+				p.SetState(143)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 4)) {
 					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 4)", ""))
 				}
 				{
-					p.SetState(142)
+					p.SetState(144)
 					p.ComparisonOperator()
 				}
 				{
-					p.SetState(143)
+					p.SetState(145)
 					p.expression(5)
 				}
 
@@ -1972,24 +1978,24 @@ func (p *gengineParser) expression(_p int) (localctx IExpressionContext) {
 			case 2:
 				localctx = NewExpressionContext(p, _parentctx, _parentState)
 				p.PushNewRecursionContext(localctx, _startState, gengineParserRULE_expression)
-				p.SetState(145)
+				p.SetState(147)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 3)) {
 					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 3)", ""))
 				}
 				{
-					p.SetState(146)
+					p.SetState(148)
 					p.LogicalOperator()
 				}
 				{
-					p.SetState(147)
+					p.SetState(149)
 					p.expression(4)
 				}
 
 			}
 
 		}
-		p.SetState(153)
+		p.SetState(155)
 		p.GetErrorHandler().Sync(p)
 		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 12, p.GetParserRuleContext())
 	}
@@ -2166,28 +2172,28 @@ func (p *gengineParser) mathExpression(_p int) (localctx IMathExpressionContext)
 	var _alt int
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(160)
+	p.SetState(162)
 	p.GetErrorHandler().Sync(p)
 
 	switch p.GetTokenStream().LA(1) {
-	case gengineParserT__1, gengineParserT__2, gengineParserT__3, gengineParserTRUE, gengineParserFALSE, gengineParserSIMPLENAME, gengineParserINT, gengineParserMINUS, gengineParserDQUOTA_STRING, gengineParserDOTTEDNAME, gengineParserREAL_LITERAL:
+	case gengineParserT__1, gengineParserT__2, gengineParserT__3, gengineParserT__4, gengineParserTRUE, gengineParserFALSE, gengineParserSIMPLENAME, gengineParserINT, gengineParserMINUS, gengineParserDQUOTA_STRING, gengineParserDOTTEDNAME, gengineParserREAL_LITERAL:
 		{
-			p.SetState(155)
+			p.SetState(157)
 			p.ExpressionAtom()
 		}
 
 
 	case gengineParserLR_BRACKET:
 		{
-			p.SetState(156)
+			p.SetState(158)
 			p.Match(gengineParserLR_BRACKET)
 		}
 		{
-			p.SetState(157)
+			p.SetState(159)
 			p.mathExpression(0)
 		}
 		{
-			p.SetState(158)
+			p.SetState(160)
 			p.Match(gengineParserRR_BRACKET)
 		}
 
@@ -2197,7 +2203,7 @@ func (p *gengineParser) mathExpression(_p int) (localctx IMathExpressionContext)
 		panic(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
 	}
 	p.GetParserRuleContext().SetStop(p.GetTokenStream().LT(-1))
-	p.SetState(172)
+	p.SetState(174)
 	p.GetErrorHandler().Sync(p)
 	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 15, p.GetParserRuleContext())
 
@@ -2207,23 +2213,23 @@ func (p *gengineParser) mathExpression(_p int) (localctx IMathExpressionContext)
 				p.TriggerExitRuleEvent()
 			}
 			_prevctx = localctx
-			p.SetState(170)
+			p.SetState(172)
 			p.GetErrorHandler().Sync(p)
 			switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 14, p.GetParserRuleContext()) {
 			case 1:
 				localctx = NewMathExpressionContext(p, _parentctx, _parentState)
 				p.PushNewRecursionContext(localctx, _startState, gengineParserRULE_mathExpression)
-				p.SetState(162)
+				p.SetState(164)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 4)) {
 					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 4)", ""))
 				}
 				{
-					p.SetState(163)
+					p.SetState(165)
 					p.MathMdOperator()
 				}
 				{
-					p.SetState(164)
+					p.SetState(166)
 					p.mathExpression(5)
 				}
 
@@ -2231,24 +2237,24 @@ func (p *gengineParser) mathExpression(_p int) (localctx IMathExpressionContext)
 			case 2:
 				localctx = NewMathExpressionContext(p, _parentctx, _parentState)
 				p.PushNewRecursionContext(localctx, _startState, gengineParserRULE_mathExpression)
-				p.SetState(166)
+				p.SetState(168)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 3)) {
 					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 3)", ""))
 				}
 				{
-					p.SetState(167)
+					p.SetState(169)
 					p.MathPmOperator()
 				}
 				{
-					p.SetState(168)
+					p.SetState(170)
 					p.mathExpression(4)
 				}
 
 			}
 
 		}
-		p.SetState(174)
+		p.SetState(176)
 		p.GetErrorHandler().Sync(p)
 		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 15, p.GetParserRuleContext())
 	}
@@ -2401,13 +2407,13 @@ func (p *gengineParser) ExpressionAtom() (localctx IExpressionAtomContext) {
 		}
 	}()
 
-	p.SetState(180)
+	p.SetState(182)
 	p.GetErrorHandler().Sync(p)
 	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 16, p.GetParserRuleContext()) {
 	case 1:
 		p.EnterOuterAlt(localctx, 1)
 		{
-			p.SetState(175)
+			p.SetState(177)
 			p.MethodCall()
 		}
 
@@ -2415,7 +2421,7 @@ func (p *gengineParser) ExpressionAtom() (localctx IExpressionAtomContext) {
 	case 2:
 		p.EnterOuterAlt(localctx, 2)
 		{
-			p.SetState(176)
+			p.SetState(178)
 			p.FunctionCall()
 		}
 
@@ -2423,7 +2429,7 @@ func (p *gengineParser) ExpressionAtom() (localctx IExpressionAtomContext) {
 	case 3:
 		p.EnterOuterAlt(localctx, 3)
 		{
-			p.SetState(177)
+			p.SetState(179)
 			p.Constant()
 		}
 
@@ -2431,7 +2437,7 @@ func (p *gengineParser) ExpressionAtom() (localctx IExpressionAtomContext) {
 	case 4:
 		p.EnterOuterAlt(localctx, 4)
 		{
-			p.SetState(178)
+			p.SetState(180)
 			p.MapVar()
 		}
 
@@ -2439,7 +2445,7 @@ func (p *gengineParser) ExpressionAtom() (localctx IExpressionAtomContext) {
 	case 5:
 		p.EnterOuterAlt(localctx, 5)
 		{
-			p.SetState(179)
+			p.SetState(181)
 			p.Variable()
 		}
 
@@ -2593,40 +2599,40 @@ func (p *gengineParser) Assignment() (localctx IAssignmentContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(184)
+	p.SetState(186)
 	p.GetErrorHandler().Sync(p)
 	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 17, p.GetParserRuleContext()) {
 	case 1:
 		{
-			p.SetState(182)
+			p.SetState(184)
 			p.MapVar()
 		}
 
 
 	case 2:
 		{
-			p.SetState(183)
+			p.SetState(185)
 			p.Variable()
 		}
 
 	}
 	{
-		p.SetState(186)
+		p.SetState(188)
 		p.AssignOperator()
 	}
-	p.SetState(189)
+	p.SetState(191)
 	p.GetErrorHandler().Sync(p)
 	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 18, p.GetParserRuleContext()) {
 	case 1:
 		{
-			p.SetState(187)
+			p.SetState(189)
 			p.mathExpression(0)
 		}
 
 
 	case 2:
 		{
-			p.SetState(188)
+			p.SetState(190)
 			p.expression(0)
 		}
 
@@ -2748,17 +2754,17 @@ func (p *gengineParser) ReturnStmt() (localctx IReturnStmtContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(191)
+		p.SetState(193)
 		p.Match(gengineParserRETURN)
 	}
-	p.SetState(193)
+	p.SetState(195)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 
-	if (((_la) & -(0x1f+1)) == 0 && ((1 << uint(_la)) & ((1 << gengineParserT__1) | (1 << gengineParserT__2) | (1 << gengineParserT__3) | (1 << gengineParserTRUE) | (1 << gengineParserFALSE) | (1 << gengineParserSIMPLENAME) | (1 << gengineParserINT) | (1 << gengineParserMINUS) | (1 << gengineParserNOT))) != 0) || ((((_la - 43)) & -(0x1f+1)) == 0 && ((1 << uint((_la - 43))) & ((1 << (gengineParserLR_BRACKET - 43)) | (1 << (gengineParserDQUOTA_STRING - 43)) | (1 << (gengineParserDOTTEDNAME - 43)) | (1 << (gengineParserREAL_LITERAL - 43)))) != 0) {
+	if (((_la) & -(0x1f+1)) == 0 && ((1 << uint(_la)) & ((1 << gengineParserT__1) | (1 << gengineParserT__2) | (1 << gengineParserT__3) | (1 << gengineParserT__4) | (1 << gengineParserTRUE) | (1 << gengineParserFALSE) | (1 << gengineParserSIMPLENAME) | (1 << gengineParserINT) | (1 << gengineParserMINUS))) != 0) || ((((_la - 32)) & -(0x1f+1)) == 0 && ((1 << uint((_la - 32))) & ((1 << (gengineParserNOT - 32)) | (1 << (gengineParserLR_BRACKET - 32)) | (1 << (gengineParserDQUOTA_STRING - 32)) | (1 << (gengineParserDOTTEDNAME - 32)) | (1 << (gengineParserREAL_LITERAL - 32)))) != 0) {
 		{
-			p.SetState(192)
+			p.SetState(194)
 			p.expression(0)
 		}
 
@@ -2933,50 +2939,50 @@ func (p *gengineParser) IfStmt() (localctx IIfStmtContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(195)
+		p.SetState(197)
 		p.Match(gengineParserIF)
 	}
 	{
-		p.SetState(196)
+		p.SetState(198)
 		p.expression(0)
 	}
 	{
-		p.SetState(197)
+		p.SetState(199)
 		p.Match(gengineParserLR_BRACE)
 	}
 	{
-		p.SetState(198)
+		p.SetState(200)
 		p.Statements()
 	}
 	{
-		p.SetState(199)
+		p.SetState(201)
 		p.Match(gengineParserRR_BRACE)
 	}
-	p.SetState(203)
+	p.SetState(205)
 	p.GetErrorHandler().Sync(p)
 	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 20, p.GetParserRuleContext())
 
 	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		if _alt == 1 {
 			{
-				p.SetState(200)
+				p.SetState(202)
 				p.ElseIfStmt()
 			}
 
 
 		}
-		p.SetState(205)
+		p.SetState(207)
 		p.GetErrorHandler().Sync(p)
 		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 20, p.GetParserRuleContext())
 	}
-	p.SetState(207)
+	p.SetState(209)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 
 	if _la == gengineParserELSE {
 		{
-			p.SetState(206)
+			p.SetState(208)
 			p.ElseStmt()
 		}
 
@@ -3118,27 +3124,27 @@ func (p *gengineParser) ElseIfStmt() (localctx IElseIfStmtContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(209)
+		p.SetState(211)
 		p.Match(gengineParserELSE)
 	}
 	{
-		p.SetState(210)
+		p.SetState(212)
 		p.Match(gengineParserIF)
 	}
 	{
-		p.SetState(211)
+		p.SetState(213)
 		p.expression(0)
 	}
 	{
-		p.SetState(212)
+		p.SetState(214)
 		p.Match(gengineParserLR_BRACE)
 	}
 	{
-		p.SetState(213)
+		p.SetState(215)
 		p.Statements()
 	}
 	{
-		p.SetState(214)
+		p.SetState(216)
 		p.Match(gengineParserRR_BRACE)
 	}
 
@@ -3264,19 +3270,19 @@ func (p *gengineParser) ElseStmt() (localctx IElseStmtContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(216)
+		p.SetState(218)
 		p.Match(gengineParserELSE)
 	}
 	{
-		p.SetState(217)
+		p.SetState(219)
 		p.Match(gengineParserLR_BRACE)
 	}
 	{
-		p.SetState(218)
+		p.SetState(220)
 		p.Statements()
 	}
 	{
-		p.SetState(219)
+		p.SetState(221)
 		p.Match(gengineParserRR_BRACE)
 	}
 
@@ -3374,6 +3380,16 @@ func (s *ConstantContext) AtName() IAtNameContext {
 	return t.(IAtNameContext)
 }
 
+func (s *ConstantContext) AtId() IAtIdContext {
+	var t = s.GetTypedRuleContext(reflect.TypeOf((*IAtIdContext)(nil)).Elem(), 0)
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(IAtIdContext)
+}
+
 func (s *ConstantContext) AtDesc() IAtDescContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IAtDescContext)(nil)).Elem(), 0)
 
@@ -3384,14 +3400,14 @@ func (s *ConstantContext) AtDesc() IAtDescContext {
 	return t.(IAtDescContext)
 }
 
-func (s *ConstantContext) AtId() IAtIdContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IAtIdContext)(nil)).Elem(), 0)
+func (s *ConstantContext) AtSal() IAtSalContext {
+	var t = s.GetTypedRuleContext(reflect.TypeOf((*IAtSalContext)(nil)).Elem(), 0)
 
 	if t == nil {
 		return nil
 	}
 
-	return t.(IAtIdContext)
+	return t.(IAtSalContext)
 }
 
 func (s *ConstantContext) GetRuleContext() antlr.RuleContext {
@@ -3448,13 +3464,13 @@ func (p *gengineParser) Constant() (localctx IConstantContext) {
 		}
 	}()
 
-	p.SetState(228)
+	p.SetState(231)
 	p.GetErrorHandler().Sync(p)
 	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 22, p.GetParserRuleContext()) {
 	case 1:
 		p.EnterOuterAlt(localctx, 1)
 		{
-			p.SetState(221)
+			p.SetState(223)
 			p.BooleanLiteral()
 		}
 
@@ -3462,7 +3478,7 @@ func (p *gengineParser) Constant() (localctx IConstantContext) {
 	case 2:
 		p.EnterOuterAlt(localctx, 2)
 		{
-			p.SetState(222)
+			p.SetState(224)
 			p.Integer()
 		}
 
@@ -3470,7 +3486,7 @@ func (p *gengineParser) Constant() (localctx IConstantContext) {
 	case 3:
 		p.EnterOuterAlt(localctx, 3)
 		{
-			p.SetState(223)
+			p.SetState(225)
 			p.RealLiteral()
 		}
 
@@ -3478,7 +3494,7 @@ func (p *gengineParser) Constant() (localctx IConstantContext) {
 	case 4:
 		p.EnterOuterAlt(localctx, 4)
 		{
-			p.SetState(224)
+			p.SetState(226)
 			p.StringLiteral()
 		}
 
@@ -3486,7 +3502,7 @@ func (p *gengineParser) Constant() (localctx IConstantContext) {
 	case 5:
 		p.EnterOuterAlt(localctx, 5)
 		{
-			p.SetState(225)
+			p.SetState(227)
 			p.AtName()
 		}
 
@@ -3494,16 +3510,24 @@ func (p *gengineParser) Constant() (localctx IConstantContext) {
 	case 6:
 		p.EnterOuterAlt(localctx, 6)
 		{
-			p.SetState(226)
-			p.AtDesc()
+			p.SetState(228)
+			p.AtId()
 		}
 
 
 	case 7:
 		p.EnterOuterAlt(localctx, 7)
 		{
-			p.SetState(227)
-			p.AtId()
+			p.SetState(229)
+			p.AtDesc()
+		}
+
+
+	case 8:
+		p.EnterOuterAlt(localctx, 8)
+		{
+			p.SetState(230)
+			p.AtSal()
 		}
 
 	}
@@ -3746,109 +3770,109 @@ func (p *gengineParser) FunctionArgs() (localctx IFunctionArgsContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(236)
+	p.SetState(239)
 	p.GetErrorHandler().Sync(p)
 	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 23, p.GetParserRuleContext()) {
 	case 1:
 		{
-			p.SetState(230)
+			p.SetState(233)
 			p.Constant()
 		}
 
 
 	case 2:
 		{
-			p.SetState(231)
+			p.SetState(234)
 			p.Variable()
 		}
 
 
 	case 3:
 		{
-			p.SetState(232)
+			p.SetState(235)
 			p.FunctionCall()
 		}
 
 
 	case 4:
 		{
-			p.SetState(233)
+			p.SetState(236)
 			p.MethodCall()
 		}
 
 
 	case 5:
 		{
-			p.SetState(234)
+			p.SetState(237)
 			p.MapVar()
 		}
 
 
 	case 6:
 		{
-			p.SetState(235)
+			p.SetState(238)
 			p.expression(0)
 		}
 
 	}
-	p.SetState(249)
+	p.SetState(252)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 
 	for _la == gengineParserT__0 {
 		{
-			p.SetState(238)
+			p.SetState(241)
 			p.Match(gengineParserT__0)
 		}
-		p.SetState(245)
+		p.SetState(248)
 		p.GetErrorHandler().Sync(p)
 		switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 24, p.GetParserRuleContext()) {
 		case 1:
 			{
-				p.SetState(239)
+				p.SetState(242)
 				p.Constant()
 			}
 
 
 		case 2:
 			{
-				p.SetState(240)
+				p.SetState(243)
 				p.Variable()
 			}
 
 
 		case 3:
 			{
-				p.SetState(241)
+				p.SetState(244)
 				p.FunctionCall()
 			}
 
 
 		case 4:
 			{
-				p.SetState(242)
+				p.SetState(245)
 				p.MethodCall()
 			}
 
 
 		case 5:
 			{
-				p.SetState(243)
+				p.SetState(246)
 				p.MapVar()
 			}
 
 
 		case 6:
 			{
-				p.SetState(244)
+				p.SetState(247)
 				p.expression(0)
 			}
 
 		}
 
 
-		p.SetState(251)
+		p.SetState(254)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 	}
@@ -3962,20 +3986,20 @@ func (p *gengineParser) Integer() (localctx IIntegerContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(253)
+	p.SetState(256)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 
 	if _la == gengineParserMINUS {
 		{
-			p.SetState(252)
+			p.SetState(255)
 			p.Match(gengineParserMINUS)
 		}
 
 	}
 	{
-		p.SetState(255)
+		p.SetState(258)
 		p.Match(gengineParserINT)
 	}
 
@@ -4088,20 +4112,20 @@ func (p *gengineParser) RealLiteral() (localctx IRealLiteralContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(258)
+	p.SetState(261)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 
 	if _la == gengineParserMINUS {
 		{
-			p.SetState(257)
+			p.SetState(260)
 			p.Match(gengineParserMINUS)
 		}
 
 	}
 	{
-		p.SetState(260)
+		p.SetState(263)
 		p.Match(gengineParserREAL_LITERAL)
 	}
 
@@ -4209,7 +4233,7 @@ func (p *gengineParser) StringLiteral() (localctx IStringLiteralContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(262)
+		p.SetState(265)
 		p.Match(gengineParserDQUOTA_STRING)
 	}
 
@@ -4323,7 +4347,7 @@ func (p *gengineParser) BooleanLiteral() (localctx IBooleanLiteralContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(264)
+		p.SetState(267)
 		_la = p.GetTokenStream().LA(1)
 
 		if !(_la == gengineParserTRUE || _la == gengineParserFALSE) {
@@ -4458,27 +4482,27 @@ func (p *gengineParser) FunctionCall() (localctx IFunctionCallContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(266)
+		p.SetState(269)
 		p.Match(gengineParserSIMPLENAME)
 	}
 	{
-		p.SetState(267)
+		p.SetState(270)
 		p.Match(gengineParserLR_BRACKET)
 	}
-	p.SetState(269)
+	p.SetState(272)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 
-	if (((_la) & -(0x1f+1)) == 0 && ((1 << uint(_la)) & ((1 << gengineParserT__1) | (1 << gengineParserT__2) | (1 << gengineParserT__3) | (1 << gengineParserTRUE) | (1 << gengineParserFALSE) | (1 << gengineParserSIMPLENAME) | (1 << gengineParserINT) | (1 << gengineParserMINUS) | (1 << gengineParserNOT))) != 0) || ((((_la - 43)) & -(0x1f+1)) == 0 && ((1 << uint((_la - 43))) & ((1 << (gengineParserLR_BRACKET - 43)) | (1 << (gengineParserDQUOTA_STRING - 43)) | (1 << (gengineParserDOTTEDNAME - 43)) | (1 << (gengineParserREAL_LITERAL - 43)))) != 0) {
+	if (((_la) & -(0x1f+1)) == 0 && ((1 << uint(_la)) & ((1 << gengineParserT__1) | (1 << gengineParserT__2) | (1 << gengineParserT__3) | (1 << gengineParserT__4) | (1 << gengineParserTRUE) | (1 << gengineParserFALSE) | (1 << gengineParserSIMPLENAME) | (1 << gengineParserINT) | (1 << gengineParserMINUS))) != 0) || ((((_la - 32)) & -(0x1f+1)) == 0 && ((1 << uint((_la - 32))) & ((1 << (gengineParserNOT - 32)) | (1 << (gengineParserLR_BRACKET - 32)) | (1 << (gengineParserDQUOTA_STRING - 32)) | (1 << (gengineParserDOTTEDNAME - 32)) | (1 << (gengineParserREAL_LITERAL - 32)))) != 0) {
 		{
-			p.SetState(268)
+			p.SetState(271)
 			p.FunctionArgs()
 		}
 
 	}
 	{
-		p.SetState(271)
+		p.SetState(274)
 		p.Match(gengineParserRR_BRACKET)
 	}
 
@@ -4606,27 +4630,27 @@ func (p *gengineParser) MethodCall() (localctx IMethodCallContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(273)
+		p.SetState(276)
 		p.Match(gengineParserDOTTEDNAME)
 	}
 	{
-		p.SetState(274)
+		p.SetState(277)
 		p.Match(gengineParserLR_BRACKET)
 	}
-	p.SetState(276)
+	p.SetState(279)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 
-	if (((_la) & -(0x1f+1)) == 0 && ((1 << uint(_la)) & ((1 << gengineParserT__1) | (1 << gengineParserT__2) | (1 << gengineParserT__3) | (1 << gengineParserTRUE) | (1 << gengineParserFALSE) | (1 << gengineParserSIMPLENAME) | (1 << gengineParserINT) | (1 << gengineParserMINUS) | (1 << gengineParserNOT))) != 0) || ((((_la - 43)) & -(0x1f+1)) == 0 && ((1 << uint((_la - 43))) & ((1 << (gengineParserLR_BRACKET - 43)) | (1 << (gengineParserDQUOTA_STRING - 43)) | (1 << (gengineParserDOTTEDNAME - 43)) | (1 << (gengineParserREAL_LITERAL - 43)))) != 0) {
+	if (((_la) & -(0x1f+1)) == 0 && ((1 << uint(_la)) & ((1 << gengineParserT__1) | (1 << gengineParserT__2) | (1 << gengineParserT__3) | (1 << gengineParserT__4) | (1 << gengineParserTRUE) | (1 << gengineParserFALSE) | (1 << gengineParserSIMPLENAME) | (1 << gengineParserINT) | (1 << gengineParserMINUS))) != 0) || ((((_la - 32)) & -(0x1f+1)) == 0 && ((1 << uint((_la - 32))) & ((1 << (gengineParserNOT - 32)) | (1 << (gengineParserLR_BRACKET - 32)) | (1 << (gengineParserDQUOTA_STRING - 32)) | (1 << (gengineParserDOTTEDNAME - 32)) | (1 << (gengineParserREAL_LITERAL - 32)))) != 0) {
 		{
-			p.SetState(275)
+			p.SetState(278)
 			p.FunctionArgs()
 		}
 
 	}
 	{
-		p.SetState(278)
+		p.SetState(281)
 		p.Match(gengineParserRR_BRACKET)
 	}
 
@@ -4740,7 +4764,7 @@ func (p *gengineParser) Variable() (localctx IVariableContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(280)
+		p.SetState(283)
 		_la = p.GetTokenStream().LA(1)
 
 		if !(_la == gengineParserSIMPLENAME || _la == gengineParserDOTTEDNAME) {
@@ -4861,7 +4885,7 @@ func (p *gengineParser) MathPmOperator() (localctx IMathPmOperatorContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(282)
+		p.SetState(285)
 		_la = p.GetTokenStream().LA(1)
 
 		if !(_la == gengineParserPLUS || _la == gengineParserMINUS) {
@@ -4982,7 +5006,7 @@ func (p *gengineParser) MathMdOperator() (localctx IMathMdOperatorContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(284)
+		p.SetState(287)
 		_la = p.GetTokenStream().LA(1)
 
 		if !(_la == gengineParserDIV || _la == gengineParserMUL) {
@@ -5119,7 +5143,7 @@ func (p *gengineParser) ComparisonOperator() (localctx IComparisonOperatorContex
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(286)
+		p.SetState(289)
 		_la = p.GetTokenStream().LA(1)
 
 		if !((((_la) & -(0x1f+1)) == 0 && ((1 << uint(_la)) & ((1 << gengineParserEQUALS) | (1 << gengineParserGT) | (1 << gengineParserLT) | (1 << gengineParserGTE) | (1 << gengineParserLTE) | (1 << gengineParserNOTEQUALS))) != 0)) {
@@ -5240,7 +5264,7 @@ func (p *gengineParser) LogicalOperator() (localctx ILogicalOperatorContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(288)
+		p.SetState(291)
 		_la = p.GetTokenStream().LA(1)
 
 		if !(_la == gengineParserAND || _la == gengineParserOR) {
@@ -5377,10 +5401,10 @@ func (p *gengineParser) AssignOperator() (localctx IAssignOperatorContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(290)
+		p.SetState(293)
 		_la = p.GetTokenStream().LA(1)
 
-		if !(((((_la - 32)) & -(0x1f+1)) == 0 && ((1 << uint((_la - 32))) & ((1 << (gengineParserASSIGN - 32)) | (1 << (gengineParserSET - 32)) | (1 << (gengineParserPLUSEQUAL - 32)) | (1 << (gengineParserMINUSEQUAL - 32)) | (1 << (gengineParserMULTIEQUAL - 32)) | (1 << (gengineParserDIVEQUAL - 32)))) != 0)) {
+		if !(((((_la - 33)) & -(0x1f+1)) == 0 && ((1 << uint((_la - 33))) & ((1 << (gengineParserASSIGN - 33)) | (1 << (gengineParserSET - 33)) | (1 << (gengineParserPLUSEQUAL - 33)) | (1 << (gengineParserMINUSEQUAL - 33)) | (1 << (gengineParserMULTIEQUAL - 33)) | (1 << (gengineParserDIVEQUAL - 33)))) != 0)) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)
@@ -5492,7 +5516,7 @@ func (p *gengineParser) NotOperator() (localctx INotOperatorContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(292)
+		p.SetState(295)
 		p.Match(gengineParserNOT)
 	}
 
@@ -5647,34 +5671,34 @@ func (p *gengineParser) MapVar() (localctx IMapVarContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(294)
+		p.SetState(297)
 		p.Variable()
 	}
 	{
-		p.SetState(295)
+		p.SetState(298)
 		p.Match(gengineParserLSQARE)
 	}
-	p.SetState(299)
+	p.SetState(302)
 	p.GetErrorHandler().Sync(p)
 
 	switch p.GetTokenStream().LA(1) {
 	case gengineParserINT, gengineParserMINUS:
 		{
-			p.SetState(296)
+			p.SetState(299)
 			p.Integer()
 		}
 
 
 	case gengineParserDQUOTA_STRING:
 		{
-			p.SetState(297)
+			p.SetState(300)
 			p.StringLiteral()
 		}
 
 
 	case gengineParserSIMPLENAME, gengineParserDOTTEDNAME:
 		{
-			p.SetState(298)
+			p.SetState(301)
 			p.Variable()
 		}
 
@@ -5684,7 +5708,7 @@ func (p *gengineParser) MapVar() (localctx IMapVarContext) {
 		panic(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
 	}
 	{
-		p.SetState(301)
+		p.SetState(304)
 		p.Match(gengineParserRSQARE)
 	}
 
@@ -5787,7 +5811,7 @@ func (p *gengineParser) AtName() (localctx IAtNameContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(303)
+		p.SetState(306)
 		p.Match(gengineParserT__1)
 	}
 
@@ -5890,7 +5914,7 @@ func (p *gengineParser) AtId() (localctx IAtIdContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(305)
+		p.SetState(308)
 		p.Match(gengineParserT__2)
 	}
 
@@ -5993,8 +6017,111 @@ func (p *gengineParser) AtDesc() (localctx IAtDescContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(307)
+		p.SetState(310)
 		p.Match(gengineParserT__3)
+	}
+
+
+
+	return localctx
+}
+
+
+// IAtSalContext is an interface to support dynamic dispatch.
+type IAtSalContext interface {
+	antlr.ParserRuleContext
+
+	// GetParser returns the parser.
+	GetParser() antlr.Parser
+
+	// IsAtSalContext differentiates from other interfaces.
+	IsAtSalContext()
+}
+
+type AtSalContext struct {
+	*antlr.BaseParserRuleContext
+	parser antlr.Parser
+}
+
+func NewEmptyAtSalContext() *AtSalContext {
+	var p = new(AtSalContext)
+	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	p.RuleIndex = gengineParserRULE_atSal
+	return p
+}
+
+func (*AtSalContext) IsAtSalContext() {}
+
+func NewAtSalContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *AtSalContext {
+	var p = new(AtSalContext)
+
+	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+
+	p.parser = parser
+	p.RuleIndex = gengineParserRULE_atSal
+
+	return p
+}
+
+func (s *AtSalContext) GetParser() antlr.Parser { return s.parser }
+func (s *AtSalContext) GetRuleContext() antlr.RuleContext {
+	return s
+}
+
+func (s *AtSalContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
+	return antlr.TreesStringTree(s, ruleNames, recog)
+}
+
+
+func (s *AtSalContext) EnterRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(gengineListener); ok {
+		listenerT.EnterAtSal(s)
+	}
+}
+
+func (s *AtSalContext) ExitRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(gengineListener); ok {
+		listenerT.ExitAtSal(s)
+	}
+}
+
+func (s *AtSalContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+	switch t := visitor.(type) {
+	case gengineVisitor:
+		return t.VisitAtSal(s)
+
+	default:
+		return t.VisitChildren(s)
+	}
+}
+
+
+
+
+func (p *gengineParser) AtSal() (localctx IAtSalContext) {
+	localctx = NewAtSalContext(p, p.GetParserRuleContext(), p.GetState())
+	p.EnterRule(localctx, 72, gengineParserRULE_atSal)
+
+	defer func() {
+		p.ExitRule()
+	}()
+
+	defer func() {
+		if err := recover(); err != nil {
+			if v, ok := err.(antlr.RecognitionException); ok {
+				localctx.SetException(v)
+				p.GetErrorHandler().ReportError(p, v)
+				p.GetErrorHandler().Recover(p, v)
+			} else {
+				panic(err)
+			}
+		}
+	}()
+
+	p.EnterOuterAlt(localctx, 1)
+	{
+		p.SetState(312)
+		p.Match(gengineParserT__4)
 	}
 
 

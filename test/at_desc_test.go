@@ -20,7 +20,7 @@ begin
   Print(@name + " : " + @desc)
 end
 
-rule "rule name 2" "我是描述，desc" salience 10
+rule "rule name 2" //"我是描述，desc" salience 10
 begin
   desc = @desc
   Print(desc)

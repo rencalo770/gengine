@@ -1,4 +1,4 @@
-// Code generated from /Users/renyunyi/gengine/internal/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
+// Code generated from /Users/renyunyi/go_project/gengine/internal/iantlr/gengine.g4 by ANTLR 4.7.2. DO NOT EDIT.
 
 package parser // gengine
 
@@ -236,3 +236,9 @@ func (s *BasegengineListener) EnterAtDesc(ctx *AtDescContext) {}
 
 // ExitAtDesc is called when production atDesc is exited.
 func (s *BasegengineListener) ExitAtDesc(ctx *AtDescContext) {}
+
+// EnterAtSal is called when production atSal is entered.
+func (s *BasegengineListener) EnterAtSal(ctx *AtSalContext) {}
+
+// ExitAtSal is called when production atSal is exited.
+func (s *BasegengineListener) ExitAtSal(ctx *AtSalContext) {}

@@ -16,8 +16,8 @@ import (
 func NewGengineParserListener(ctx *base.KnowledgeContext) *GengineParserListener {
 	return &GengineParserListener{
 		Stack:            stack.New(),
-		KnowledgeContext: ctx,
 		ParseErrors:      make([]string, 0),
+		KnowledgeContext: ctx,
 	}
 }
 
@@ -29,6 +29,7 @@ type GengineParserListener struct {
 	Stack            *stack.Stack
 	ruleName         string
 	ruleDescription  string
+	salience         int64
 }
 
 func (g *GengineParserListener) AddError(e error) {
@@ -53,7 +54,13 @@ func (g *GengineParserListener) EnterRuleEntity(ctx *parser.RuleEntityContext) {
 	if len(g.ParseErrors) > 0 {
 		return
 	}
-	entity := &base.RuleEntity{}
+	entity := &base.RuleEntity{
+		Salience: 0,
+	}
+	//init
+	g.ruleName = ""
+	g.ruleDescription = ""
+	g.salience = 0
 	g.Stack.Push(entity)
 }
 
@@ -89,7 +96,21 @@ func (g *GengineParserListener) ExitRuleName(ctx *parser.RuleNameContext) {
 func (g *GengineParserListener) EnterSalience(ctx *parser.SalienceContext) {
 }
 
-func (g *GengineParserListener) ExitSalience(ctx *parser.SalienceContext) {}
+func (g *GengineParserListener) ExitSalience(ctx *parser.SalienceContext) {
+
+	if len(g.ParseErrors) > 0 {
+		return
+	}
+	text := ctx.GetText()
+	lower := strings.ToLower(text)
+	is := strings.ReplaceAll(lower, "salience", "")
+	i, err := strconv.ParseInt(is, 10, 64)
+	if err != nil {
+		g.AddError(errors.New(fmt.Sprintf("salience is not int, salience = \"%s\"", text)))
+		return
+	}
+	g.salience = i
+}
 
 func (g *GengineParserListener) EnterRuleDescription(ctx *parser.RuleDescriptionContext) {}
 
@@ -619,6 +640,19 @@ func (g *GengineParserListener) ExitAtId(ctx *parser.AtIdContext) {
 	}
 
 	err := holder.AcceptId(i)
+	if err != nil {
+		g.AddError(err)
+	}
+}
+
+func (g *GengineParserListener) EnterAtSal(ctx *parser.AtSalContext) {}
+
+func (g *GengineParserListener) ExitAtSal(ctx *parser.AtSalContext) {
+	if len(g.ParseErrors) > 0 {
+		return
+	}
+	holder := g.Stack.Peek().(base.AtSalienceHolder)
+	err := holder.AcceptSalience(g.salience)
 	if err != nil {
 		g.AddError(err)
 	}

@@ -1,4 +1,4 @@
-// Code generated from /Users/renyunyi/gengine/internal/iantlr/gengine.g4 by ANTLR 4.8. DO NOT EDIT.
+// Code generated from /Users/renyunyi/go_project/gengine/internal/iantlr/gengine.g4 by ANTLR 4.7.2. DO NOT EDIT.
 
 package parser // gengine
 
@@ -116,6 +116,9 @@ type gengineListener interface {
 	// EnterAtDesc is called when entering the atDesc production.
 	EnterAtDesc(c *AtDescContext)
 
+	// EnterAtSal is called when entering the atSal production.
+	EnterAtSal(c *AtSalContext)
+
 	// ExitPrimary is called when exiting the primary production.
 	ExitPrimary(c *PrimaryContext)
 
@@ -223,4 +226,7 @@ type gengineListener interface {
 
 	// ExitAtDesc is called when exiting the atDesc production.
 	ExitAtDesc(c *AtDescContext)
+
+	// ExitAtSal is called when exiting the atSal production.
+	ExitAtSal(c *AtSalContext)
 }

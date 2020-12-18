@@ -43,3 +43,8 @@ func (cons *Constant) AcceptDesc(desc string) error {
 	cons.ConstantValue = desc
 	return nil
 }
+
+func (cons *Constant) AcceptSalience(sal int64) error {
+	cons.ConstantValue = sal
+	return nil
+}
