@@ -21,7 +21,7 @@ begin
 	//sleep()   
 	 print(Req.Data)
 end
-rule "1" "rule desc"
+rule "1"
 begin
 	Req.Data = 10 + 7 + 8
 	//sleep()
@@ -37,14 +37,13 @@ end`
 
 func Test_pool_select_rules(t *testing.T) {
 
-	t1 := time.Now()
 	apis := make(map[string]interface{})
 	apis["print"] = fmt.Println
 	pool, e1 := engine.NewGenginePool(1, 2, 1, pool_rule, apis)
 	if e1 != nil {
 		panic(e1)
 	}
-	println("build pool cost time:", time.Since(t1), "ns")
+
 	reqest := &Reqest{}
 	data := make(map[string]interface{})
 	data["Req"] = reqest
@@ -53,6 +52,23 @@ func Test_pool_select_rules(t *testing.T) {
 	if e2 != nil {
 		panic(e2)
 	}
+
+	println("pool.GetRulesNumber()---->", pool.GetRulesNumber())
+	sal, e1 := pool.GetRuleSalience("2")
+	if e1 != nil {
+		panic(e1)
+	}
+	println("sal --->", sal)
+
+	desc, e2 := pool.GetRuleDesc("1")
+	if e2 != nil {
+		panic(e2)
+	}
+	println("desc--->", desc)
+
+	exist := pool.IsExist("333")
+	println("rule 333 exist--->", exist)
+
 }
 
 //test no rules in pool
@@ -72,19 +88,22 @@ func Test_pool_select_rules(t *testing.T) {
 }*/
 
 func Test_once(t *testing.T) {
-	t1 := time.Now()
+
 	apis := make(map[string]interface{})
 	apis["print"] = fmt.Println
 	pool, e1 := engine.NewGenginePool(1, 2, 1, pool_rule, apis)
 	if e1 != nil {
 		panic(e1)
 	}
-	println("build pool cost time:", time.Since(t1), "ns")
+
 	reqest := &Reqest{}
+
+	t1 := time.Now()
 	e2, _ := pool.ExecuteRules("Req", reqest, "", nil)
 	if e2 != nil {
 		panic(e2)
 	}
+	println("build pool cost time:", time.Since(t1), "ns")
 }
 
 func Sleep() {
