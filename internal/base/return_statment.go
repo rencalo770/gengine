@@ -3,6 +3,7 @@ package base
 import (
 	"gengine/context"
 	"gengine/internal/core/errors"
+	"reflect"
 )
 
 type ReturnStatement struct {
@@ -10,12 +11,12 @@ type ReturnStatement struct {
 	dataCtx    *context.DataContext
 }
 
-func (rs *ReturnStatement) Evaluate(Vars map[string]interface{}) (interface{}, error, bool) {
+func (rs *ReturnStatement) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error, bool) {
 	if rs.Expression != nil {
 		value, e := rs.Expression.Evaluate(Vars)
 		return value, e, true
 	}
-	return nil, nil, true
+	return reflect.ValueOf(nil), nil, true
 }
 
 func (rs *ReturnStatement) Initialize(dc *context.DataContext) {

@@ -2,6 +2,7 @@ package base
 
 import (
 	"gengine/context"
+	"reflect"
 )
 
 type Args struct {
@@ -67,11 +68,11 @@ func (as *Args) AcceptExpression(exp *Expression) error {
 	return nil
 }
 
-func (as *Args) Evaluate(Vars map[string]interface{}) ([]interface{}, error) {
+func (as *Args) Evaluate(Vars map[string]reflect.Value) ([]reflect.Value, error) {
 	if as.ArgList == nil || len(as.ArgList) == 0 {
-		return make([]interface{}, 0), nil
+		return make([]reflect.Value, 0), nil
 	}
-	retVal := make([]interface{}, len(as.ArgList))
+	retVal := make([]reflect.Value, len(as.ArgList))
 	for i, v := range as.ArgList {
 		rv, err := v.Evaluate(Vars)
 		if err != nil {

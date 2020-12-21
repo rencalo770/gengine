@@ -462,7 +462,7 @@ func (g *GengineParserListener) ExitBooleanLiteral(ctx *parser.BooleanLiteralCon
 		g.AddError(e)
 		return
 	}
-	cons.ConstantValue = b
+	cons.ConstantValue = reflect.ValueOf(b)
 }
 
 func (g *GengineParserListener) EnterRealLiteral(ctx *parser.RealLiteralContext) {}
@@ -477,7 +477,7 @@ func (g *GengineParserListener) ExitRealLiteral(ctx *parser.RealLiteralContext) 
 		g.AddError(errors.New(fmt.Sprintf("string to float conversion error. String is not real type '%s'", ctx.GetText())))
 		return
 	}
-	cons.ConstantValue = flo
+	cons.ConstantValue = reflect.ValueOf(flo)
 }
 
 func (g *GengineParserListener) EnterIfStmt(ctx *parser.IfStmtContext) {

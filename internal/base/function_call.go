@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gengine/context"
 	"gengine/internal/core/errors"
+	"reflect"
 	"runtime"
 	"strings"
 )
@@ -28,7 +29,7 @@ func (fc *FunctionCall) Initialize(dc *context.DataContext) {
 	}
 }
 
-func (fc *FunctionCall) Evaluate(Vars map[string]interface{}) (res interface{}, err error) {
+func (fc *FunctionCall) Evaluate(Vars map[string]reflect.Value) (res reflect.Value, err error) {
 
 	defer func() {
 		if e := recover(); e != nil {
@@ -45,20 +46,20 @@ func (fc *FunctionCall) Evaluate(Vars map[string]interface{}) (res interface{}, 
 		}
 	}()
 
-	var argumentValues []interface{}
+	var argumentValues []reflect.Value
 	if fc.FunctionArgs == nil {
 		argumentValues = nil
 	} else {
 		av, err := fc.FunctionArgs.Evaluate(Vars)
 		if err != nil {
-			return nil, err
+			return reflect.ValueOf(nil), err
 		}
 		argumentValues = av
 	}
 
 	res, e := fc.dataCtx.ExecFunc(fc.FunctionName, argumentValues)
 	if e != nil {
-		return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", fc.LineNum, fc.Column, fc.Code, e))
+		return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", fc.LineNum, fc.Column, fc.Code, e))
 	}
 	return //res, nil
 }

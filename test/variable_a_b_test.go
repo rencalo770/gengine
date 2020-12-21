@@ -5,7 +5,6 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
-	"reflect"
 	"testing"
 )
 
@@ -16,10 +15,10 @@ func Test_hello(t *testing.T) {
 	}
 
 	type CTX struct {
-		Result Result
+		Result *Result
 	}
 
-	result := Result{
+	result := &Result{
 		RiskLevel:"hello",
 	}
 	ctx := &CTX{Result:result}
@@ -33,7 +32,7 @@ func Test_hello(t *testing.T) {
 rule "1" 
 begin
 result = ctx.Result
-//result.RiskLevel = "E"
+result.RiskLevel = "E"
 end
 `)
 	if e1 != nil {
@@ -65,7 +64,31 @@ func Test_in_in(t *testing.T)  {
 		RiskLevel:"hello",
 	}
 	ctx := &CTX{Result:result}
-	reflect.ValueOf(ctx).Elem().FieldByName("Result").FieldByName("RiskLevel").SetString("yyyyyyy")
+	/*reflect.ValueOf(ctx).Elem().FieldByName("Result").FieldByName("RiskLevel").SetString("yyyyyyy")
+	println("---x->",ctx.Result.RiskLevel)*/
+
+	dataContext := context.NewDataContext()
+	dataContext.Add("ctx", ctx)
+	dataContext.Add("println", fmt.Println)
+
+	ruleBuilder := builder.NewRuleBuilder(dataContext)
+	e1 := ruleBuilder.BuildRuleFromString(`
+rule "1" 
+begin
+result = ctx.Result
+result.RiskLevel = "E"
+end
+`)
+	if e1 != nil {
+		panic(e1)
+	}
+
+	gengine := engine.NewGengine()
+	e := gengine.Execute(ruleBuilder, true)
+	if e != nil {
+		panic(e)
+	}
+
 	println("---x->",ctx.Result.RiskLevel)
 
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gengine/context"
 	"gengine/internal/core/errors"
+	"reflect"
 	"runtime"
 	"strings"
 )
@@ -31,7 +32,7 @@ func (mc *MethodCall) AcceptArgs(funcArg *Args) error {
 	return errors.New("methodArgs set twice!")
 }
 
-func (mc *MethodCall) Evaluate(Vars map[string]interface{}) (mr interface{}, err error) {
+func (mc *MethodCall) Evaluate(Vars map[string]reflect.Value) (mr reflect.Value, err error) {
 
 	defer func() {
 		if e := recover(); e != nil {
@@ -48,20 +49,20 @@ func (mc *MethodCall) Evaluate(Vars map[string]interface{}) (mr interface{}, err
 		}
 	}()
 
-	var argumentValues []interface{}
+	var argumentValues []reflect.Value
 	if mc.MethodArgs == nil {
-		argumentValues = make([]interface{}, 0)
+		argumentValues = make([]reflect.Value, 0)
 	} else {
 		av, err := mc.MethodArgs.Evaluate(Vars)
 		if err != nil {
-			return nil, err
+			return reflect.ValueOf(nil), err
 		}
 		argumentValues = av
 	}
 
 	mr, err = mc.dataCtx.ExecMethod(mc.MethodName, argumentValues)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", mc.LineNum, mc.Column, mc.Code, err))
+		return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", mc.LineNum, mc.Column, mc.Code, err))
 	}
 	return
 }

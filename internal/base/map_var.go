@@ -23,58 +23,118 @@ func (m *MapVar) Initialize(dc *context.DataContext) {
 	m.dataCtx = dc
 }
 
-func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
+func (m *MapVar) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) {
 
 	value, e := m.dataCtx.GetValue(Vars, m.Name)
+	println("m.Name---->",m.Name)
 	if e != nil {
-		return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
+		return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 	}
-	typeName := reflect.TypeOf(value).String()
+	typeName := value.Kind().String()
+	//println("typeName--->", typeName, value.Elem().Kind().String())
+
+	if value.Kind() == reflect.Ptr {
+
+		newValue := value.Elem()
+		if newValue.Kind() == reflect.Map {
+			keyType := newValue.Type().Key().String()
+
+			if len(m.Varkey) > 0 {
+				key, e := m.dataCtx.GetValue(Vars, m.Varkey)
+				if e != nil {
+					return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
+				}
+				wantedKey, e := core.GetWantedValue(key, keyType)
+				if e != nil {
+					return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
+				}
+
+				mv := value.Elem().MapIndex(wantedKey)
+				if mv.IsValid() {
+					return mv, nil
+				} else {
+					return reflect.Zero(value.Type().Elem().Elem()), nil
+				}
+			}
+
+			if len(m.Strkey) > 0 {
+				println("-----111---->",m.Strkey)
+				mv := value.Elem().MapIndex(reflect.ValueOf(m.Strkey))
+				if mv.IsValid() {
+					return mv, nil
+				} else {
+					return reflect.Zero(value.Type().Elem().Elem()), nil
+				}
+			}
+
+			wantedKey, e := core.GetWantedValue(reflect.ValueOf(m.Intkey), keyType)
+			if e != nil {
+				return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
+			}
+
+			mv := value.Elem().MapIndex(wantedKey)
+			if mv.IsValid() {
+				return mv, nil
+			} else {
+				return reflect.Zero(value.Type().Elem().Elem()), nil
+			}
+
+
+
+
+
+
+		}
+
+
+
+
+	}
 
 	// map
 	if strings.HasPrefix(typeName, "map[") {
 
-		keyType := reflect.TypeOf(value).Key().String()
+		keyType := value.Type().Key().String()
 
 		if len(m.Varkey) > 0 {
 			key, e := m.dataCtx.GetValue(Vars, m.Varkey)
 			if e != nil {
-				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
+				return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 			}
 
 			wantedKey, e := core.GetWantedValue(key, keyType)
 			if e != nil {
-				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
+				return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 			}
 
-			mv := reflect.ValueOf(value).MapIndex(reflect.ValueOf(wantedKey))
+			mv := value.MapIndex(wantedKey)
 			if mv.IsValid() {
-				return mv.Interface(), nil
+				return mv, nil
 			} else {
-				return reflect.Zero(reflect.TypeOf(value).Elem()).Interface(), nil
+				return reflect.Zero(value.Type().Elem()), nil
 			}
 		}
 
 		if len(m.Strkey) > 0 {
-			mv := reflect.ValueOf(value).MapIndex(reflect.ValueOf(m.Strkey))
+			mv := value.MapIndex(reflect.ValueOf(m.Strkey))
 			if mv.IsValid() {
-				return mv.Interface(), nil
+				return mv, nil
 			} else {
-				return reflect.Zero(reflect.TypeOf(value).Elem()).Interface(), nil
+				return reflect.Zero(value.Type().Elem()), nil
 			}
 		}
 
 		//intKey
-		wantedKey, e := core.GetWantedValue(m.Intkey, keyType)
+		wantedKey, e := core.GetWantedValue(reflect.ValueOf(m.Intkey), keyType)
 		if e != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 		}
 
-		mv := reflect.ValueOf(value).MapIndex(reflect.ValueOf(wantedKey))
+		mv := value.MapIndex(wantedKey)
 		if mv.IsValid() {
-			return mv.Interface(), nil
+			return mv, nil
 		} else {
-			return reflect.Zero(reflect.TypeOf(value).Elem()).Interface(), nil
+			return reflect.Zero(value.Type().Elem()), nil
 		}
 	}
 
@@ -83,19 +143,19 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		if len(m.Varkey) > 0 {
 			wantedKey, e := m.dataCtx.GetValue(Vars, m.Varkey)
 			if e != nil {
-				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
+				return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 			}
-			return reflect.ValueOf(value).Index(int(reflect.ValueOf(wantedKey).Int())).Interface(), nil
+			return value.Index(int(wantedKey.Int())), nil
 		}
 
 		if len(m.Strkey) > 0 {
-			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %s", m.LineNum, m.Column, m.Code, " the index of array and slice should not be string"))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %s", m.LineNum, m.Column, m.Code, " the index of array and slice should not be string"))
 		}
 
 		if m.Intkey >= 0 {
-			return reflect.ValueOf(value).Index(int(m.Intkey)).Interface(), nil
+			return value.Index(int(m.Intkey)), nil
 		} else {
-			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, Slice or Array index must be non-negative!", m.LineNum, m.Column, m.Code))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, Slice or Array index must be non-negative!", m.LineNum, m.Column, m.Code))
 		}
 	}
 
@@ -106,40 +166,41 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		if len(m.Varkey) > 0 {
 			key, e := m.dataCtx.GetValue(Vars, m.Varkey)
 			if e != nil {
-				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
+				return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 			}
 			wantedKey, e := core.GetWantedValue(key, keyType)
 			if e != nil {
-				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
+				return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 			}
 
-			mv := reflect.ValueOf(value).Elem().MapIndex(reflect.ValueOf(wantedKey))
+			mv := value.Elem().MapIndex(wantedKey)
 			if mv.IsValid() {
-				return mv.Interface(), nil
+				return mv, nil
 			} else {
-				return reflect.Zero(reflect.TypeOf(value).Elem().Elem()).Interface(), nil
+				return reflect.Zero(value.Type().Elem().Elem()), nil
 			}
 		}
 
 		if len(m.Strkey) > 0 {
-			mv := reflect.ValueOf(value).Elem().MapIndex(reflect.ValueOf(m.Strkey))
+			println("-----111---->",m.Strkey)
+			mv := value.Elem().MapIndex(reflect.ValueOf(m.Strkey))
 			if mv.IsValid() {
-				return mv.Interface(), nil
+				return mv, nil
 			} else {
-				return reflect.Zero(reflect.TypeOf(value).Elem().Elem()).Interface(), nil
+				return reflect.Zero(value.Type().Elem().Elem()), nil
 			}
 		}
 
-		wantedKey, e := core.GetWantedValue(m.Intkey, keyType)
+		wantedKey, e := core.GetWantedValue(reflect.ValueOf(m.Intkey), keyType)
 		if e != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 		}
 
-		mv := reflect.ValueOf(value).Elem().MapIndex(reflect.ValueOf(wantedKey))
+		mv := value.Elem().MapIndex(wantedKey)
 		if mv.IsValid() {
-			return mv.Interface(), nil
+			return mv, nil
 		} else {
-			return reflect.Zero(reflect.TypeOf(value).Elem().Elem()).Interface(), nil
+			return reflect.Zero(value.Type().Elem().Elem()), nil
 		}
 	}
 
@@ -149,23 +210,23 @@ func (m *MapVar) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		if len(m.Varkey) > 0 {
 			wantedKey, e := m.dataCtx.GetValue(Vars, m.Varkey)
 			if e != nil {
-				return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
+				return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 			}
-			return reflect.ValueOf(value).Elem().Index(int(reflect.ValueOf(wantedKey).Int())).Interface(), nil
+			return value.Elem().Index(int(wantedKey.Int())), nil
 		}
 
 		if len(m.Strkey) > 0 {
-			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %s", m.LineNum, m.Column, m.Code, " the index of array and slice should not be string"))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %s", m.LineNum, m.Column, m.Code, " the index of array and slice should not be string"))
 		}
 
 		if m.Intkey >= 0 {
-			return reflect.ValueOf(value).Elem().Index(int(m.Intkey)).Interface(), nil
+			return value.Elem().Index(int(m.Intkey)), nil
 		} else {
-			return nil, errors.New(fmt.Sprintf("line %d, column %d, code %s, Slice or Array index must be non-negative!", m.LineNum, m.Column, m.Code))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code %s, Slice or Array index must be non-negative!", m.LineNum, m.Column, m.Code))
 		}
 	}
 
-	return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, Evaluate MapVarValue Only support directly-Pointer-Map, directly-Pointer-Slice and directly-Pointer-Array  or Map, Slice and Array in Pointer-Struct!", m.LineNum, m.Column, m.Code))
+	return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, Evaluate MapVarValue Only support directly-Pointer-Map, directly-Pointer-Slice and directly-Pointer-Array  or Map, Slice and Array in Pointer-Struct!", m.LineNum, m.Column, m.Code))
 }
 
 func (m *MapVar) AcceptVariable(name string) error {

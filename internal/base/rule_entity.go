@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gengine/context"
 	"gengine/internal/core/errors"
+	"reflect"
 )
 
 type RuleEntity struct {
@@ -12,7 +13,7 @@ type RuleEntity struct {
 	RuleDescription string
 	RuleContent     *RuleContent
 	dataCtx         *context.DataContext
-	Vars            map[string]interface{} //belongs to current rule,rule execute finish, it will be clear
+	Vars            map[string]reflect.Value //belongs to current rule,rule execute finish, it will be clear
 }
 
 func (r *RuleEntity) AcceptString(s string) error {
@@ -42,11 +43,12 @@ func (r *RuleEntity) Initialize(dc *context.DataContext) {
 }
 
 func (r *RuleEntity) Execute() (interface{}, error, bool) {
-	r.Vars = make(map[string]interface{})
+	r.Vars = make(map[string]reflect.Value)
 	defer r.clearMap()
-	return r.RuleContent.Execute(r.Vars)
+	v, e, b := r.RuleContent.Execute(r.Vars)
+	return reflect.ValueOf(v).Interface(), e, b
 }
 
 func (r *RuleEntity) clearMap() {
-	r.Vars = make(map[string]interface{})
+	r.Vars = make(map[string]reflect.Value)
 }

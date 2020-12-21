@@ -7,10 +7,10 @@ import (
 	"strings"
 )
 
-func Add(ax, bx interface{}) (interface{}, error) {
-	a := reflect.ValueOf(ax)
+func Add(ax, bx reflect.Value) (interface{}, error) {
+	a := ax //reflect.ValueOf(ax)
 	akind := a.Kind().String()
-	b := reflect.ValueOf(bx)
+	b := bx//reflect.ValueOf(bx)
 	bkind := b.Kind().String()
 
 	if !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float")) || akind == "string") && !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float")) || bkind == "sting") {
@@ -72,9 +72,9 @@ func Add(ax, bx interface{}) (interface{}, error) {
 	return nil, errors.New(fmt.Sprintf("ADD(+) can't be used between %s and %s", akind, bkind))
 }
 
-func Sub(ax, bx interface{}) (interface{}, error) {
-	a := reflect.ValueOf(ax)
-	b := reflect.ValueOf(bx)
+func Sub(ax, bx reflect.Value) (interface{}, error) {
+	a := ax//reflect.ValueOf(ax)
+	b := bx//reflect.ValueOf(bx)
 	akind := a.Kind().String()
 	bkind := b.Kind().String()
 
@@ -126,9 +126,9 @@ func Sub(ax, bx interface{}) (interface{}, error) {
 	return nil, errors.New(fmt.Sprintf("Sub(-) can't be used between %s and %s", akind, bkind))
 }
 
-func Mul(ax, bx interface{}) (interface{}, error) {
-	a := reflect.ValueOf(ax)
-	b := reflect.ValueOf(bx)
+func Mul(ax, bx reflect.Value) (interface{}, error) {
+	a := ax//reflect.ValueOf(ax)
+	b := bx//reflect.ValueOf(bx)
 	akind := a.Kind().String()
 	bkind := b.Kind().String()
 
@@ -180,9 +180,9 @@ func Mul(ax, bx interface{}) (interface{}, error) {
 	return nil, errors.New(fmt.Sprintf("Mul(*) can't be used between %s and %s", akind, bkind))
 }
 
-func Div(ax, bx interface{}) (interface{}, error) {
-	a := reflect.ValueOf(ax)
-	b := reflect.ValueOf(bx)
+func Div(ax, bx reflect.Value) (interface{}, error) {
+	a := ax//reflect.ValueOf(ax)
+	b := bx//reflect.ValueOf(bx)
 	akind := a.Kind().String()
 	bkind := b.Kind().String()
 

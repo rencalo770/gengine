@@ -3,6 +3,7 @@ package base
 import (
 	"gengine/context"
 	"gengine/internal/core/errors"
+	"reflect"
 )
 
 type ExpressionAtom struct {
@@ -75,7 +76,7 @@ func (e *ExpressionAtom) AcceptMapVar(mapVar *MapVar) error {
 	return errors.New("MapVar already defined")
 }
 
-func (e *ExpressionAtom) Evaluate(Vars map[string]interface{}) (interface{}, error) {
+func (e *ExpressionAtom) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) {
 	if len(e.Variable) > 0 {
 		return e.dataCtx.GetValue(Vars, e.Variable)
 	} else if e.Constant != nil {
@@ -88,5 +89,5 @@ func (e *ExpressionAtom) Evaluate(Vars map[string]interface{}) (interface{}, err
 		return e.MapVar.Evaluate(Vars)
 	}
 	//todo
-	return nil, errors.New("ExpressionAtom Evaluate error!")
+	return reflect.ValueOf(nil), errors.New("ExpressionAtom Evaluate error!")
 }

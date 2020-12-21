@@ -12,20 +12,20 @@ type ElseIfStmt struct {
 	dataCtx       *context.DataContext
 }
 
-func (ef *ElseIfStmt) Evaluate(Vars map[string]interface{}) (interface{}, error, bool) {
+func (ef *ElseIfStmt) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error, bool) {
 	it, err := ef.Expression.Evaluate(Vars)
 	if err != nil {
-		return nil, err, false
+		return reflect.ValueOf(nil), err, false
 	}
 
-	if reflect.ValueOf(it).Bool() {
+	if it.Bool() {
 		if ef.StatementList == nil {
-			return nil, nil, false
+			return reflect.ValueOf(nil), nil, false
 		} else {
 			return ef.StatementList.Evaluate(Vars)
 		}
 	} else {
-		return nil, nil, false
+		return reflect.ValueOf(nil), nil, false
 	}
 }
 

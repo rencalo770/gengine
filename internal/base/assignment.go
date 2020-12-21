@@ -5,6 +5,7 @@ import (
 	"gengine/context"
 	"gengine/internal/core"
 	"gengine/internal/core/errors"
+	"reflect"
 	"runtime"
 	"strings"
 )
@@ -20,7 +21,7 @@ type Assignment struct {
 	dataCtx        *context.DataContext
 }
 
-func (a *Assignment) Evaluate(Vars map[string]interface{}) (value interface{}, err error) {
+func (a *Assignment) Evaluate(Vars map[string]reflect.Value) (value reflect.Value, err error) {
 
 	defer func() {
 		if e := recover(); e != nil {
@@ -37,23 +38,23 @@ func (a *Assignment) Evaluate(Vars map[string]interface{}) (value interface{}, e
 		}
 	}()
 
-	var mv interface{}
+	var mv reflect.Value
 
 	if a.MathExpression != nil {
 		mv, err = a.MathExpression.Evaluate(Vars)
 		if err != nil {
-			return nil, err
+			return reflect.ValueOf(nil), err
 		}
 	}
 
 	if a.Expression != nil {
 		mv, err = a.Expression.Evaluate(Vars)
 		if err != nil {
-			return nil, err
+			return reflect.ValueOf(nil), err
 		}
 	}
 
-	var sv interface{}
+	var sv reflect.Value
 
 	if a.AssignOperator == "=" || a.AssignOperator == ":=" {
 		goto END
@@ -62,47 +63,51 @@ func (a *Assignment) Evaluate(Vars map[string]interface{}) (value interface{}, e
 	if len(a.Variable) > 0 {
 		sv, err = a.dataCtx.GetValue(Vars, a.Variable)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
 		}
 	}
 
 	if a.MapVar != nil {
 		sv, err = a.MapVar.Evaluate(Vars)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
 		}
 	}
 
 	//var pv interface{}
 	if a.AssignOperator == "+=" {
-		mv, err = core.Add(sv, mv)
+		_mv, err := core.Add(sv, mv)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
 		}
+		mv = reflect.ValueOf(_mv)
 		goto END
 	}
 
 	if a.AssignOperator == "-=" {
-		mv, err = core.Sub(sv, mv)
+		_mv, err := core.Sub(sv, mv)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
 		}
+		mv = reflect.ValueOf(_mv)
 		goto END
 	}
 
 	if a.AssignOperator == "*=" {
-		mv, err = core.Mul(sv, mv)
+		_mv, err := core.Mul(sv, mv)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
 		}
+		mv = reflect.ValueOf(_mv)
 		goto END
 	}
 
 	if a.AssignOperator == "/=" {
-		mv, err = core.Div(sv, mv)
+		_mv, err := core.Div(sv, mv)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
 		}
+		mv = reflect.ValueOf(_mv)
 		goto END
 	}
 
@@ -110,7 +115,7 @@ END:
 	if len(a.Variable) > 0 {
 		err = a.dataCtx.SetValue(Vars, a.Variable, mv)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", a.LineNum, a.Column, a.Code, err))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", a.LineNum, a.Column, a.Code, err))
 		}
 		return
 	}
@@ -118,7 +123,7 @@ END:
 	if a.MapVar != nil {
 		err = a.dataCtx.SetMapVarValue(Vars, a.MapVar.Name, a.MapVar.Strkey, a.MapVar.Varkey, a.MapVar.Intkey, mv)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
 		}
 		return
 	}

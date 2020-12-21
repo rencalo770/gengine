@@ -3,6 +3,7 @@ package base
 import (
 	"errors"
 	"gengine/context"
+	"reflect"
 )
 
 type Arg struct {
@@ -38,7 +39,7 @@ func (a *Arg) Initialize(dc *context.DataContext) {
 
 }
 
-func (a *Arg) Evaluate(Vars map[string]interface{}) (interface{}, error) {
+func (a *Arg) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) {
 	if len(a.Variable) > 0 {
 		return a.dataCtx.GetValue(Vars, a.Variable)
 	}
@@ -63,5 +64,5 @@ func (a *Arg) Evaluate(Vars map[string]interface{}) (interface{}, error) {
 		return a.Expression.Evaluate(Vars)
 	}
 
-	return nil, errors.New("argHolder holder has more values than want！")
+	return reflect.ValueOf(nil), errors.New("argHolder holder has more values than want！")
 }

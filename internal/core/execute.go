@@ -7,26 +7,26 @@ import (
 	"strings"
 )
 
-func InvokeFunction(obj interface{}, methodName string, parameters []interface{}) (interface{}, error) {
-	objVal := reflect.ValueOf(obj)
+func InvokeFunction(obj reflect.Value, methodName string, parameters []reflect.Value) (reflect.Value, error) {
+	objVal := obj //reflect.ValueOf(obj)
 
-	f := objVal.MethodByName(methodName) //.Interface()
-	var fun interface{}
+	fun := objVal.MethodByName(methodName) //.Interface()
+	/*var fun interface{}
 	if !f.IsValid() {
 		return nil, errors.New(fmt.Sprintf("NOT FOUND Function: %s", methodName))
 	} else {
 		fun = f.Interface()
-	}
+	}*/
 	//change type for base type params
 	params := ParamsTypeChange(fun, parameters)
-	args := make([]reflect.Value, 0)
+	/*args := make([]reflect.Value, 0)
 	for _, param := range params {
 		args = append(args, reflect.ValueOf(param))
-	}
-	rs := reflect.ValueOf(fun).Call(args)
+	}*/
+	rs := fun.Call(params)
 	raw, e := GetRawTypeValue(rs)
 	if e != nil {
-		return nil, e
+		return reflect.ValueOf(nil), e
 	}
 	return raw, nil
 }
@@ -34,6 +34,14 @@ func InvokeFunction(obj interface{}, methodName string, parameters []interface{}
 /**
 if want to support multi return ,change this method implements
 */
+func GetRawTypeValue(rs []reflect.Value) (reflect.Value, error) {
+	if len(rs) == 0 {
+		return reflect.ValueOf(nil), nil
+	}else {
+		return rs[0], nil
+	}
+}
+/*
 func GetRawTypeValue(rs []reflect.Value) (interface{}, error) {
 	if len(rs) == 0 {
 		return nil, nil
@@ -92,7 +100,7 @@ func GetRawTypeValue(rs []reflect.Value) (interface{}, error) {
 			return nil, errors.New(fmt.Sprintf("Can't be handled type: %s", rs[0].Kind().String()))
 		}
 	}
-}
+}*/
 
 func ValueToInterface(v reflect.Value) interface{} {
 	switch v.Type().Kind() {
@@ -131,9 +139,10 @@ func ValueToInterface(v reflect.Value) interface{} {
 	case reflect.Slice:
 		return v.Interface()
 	case reflect.Ptr:
-		newPtr := reflect.New(v.Elem().Type())
-		newPtr.Elem().Set(v.Elem())
-		return newPtr.Interface()
+		return v.Interface()
+		//newPtr := reflect.New(v.Elem().Type())
+		//newPtr.Elem().Set(v.Elem())
+		//return newPtr.Interface()
 	case reflect.Struct:
 		if v.CanInterface() {
 			return v.Interface()
@@ -144,24 +153,25 @@ func ValueToInterface(v reflect.Value) interface{} {
 	}
 }
 
-func GetStructAttributeValue(obj interface{}, fieldName string) (interface{}, error) {
-	stru := reflect.ValueOf(obj)
+func GetStructAttributeValue(obj reflect.Value, fieldName string) (reflect.Value, error) {
+	stru := obj//reflect.ValueOf(obj)
 	var attrVal reflect.Value
 	if stru.Kind() == reflect.Ptr {
 		attrVal = stru.Elem().FieldByName(fieldName)
 	} else {
 		attrVal = stru.FieldByName(fieldName)
 	}
-	return ValueToInterface(attrVal), nil
+	return attrVal, nil
+	//return ValueToInterface(attrVal), nil
 }
 
 /**
 set field value
 */
-func SetAttributeValue(obj interface{}, fieldName string, value interface{}) error {
+func SetAttributeValue(obj reflect.Value, fieldName string, value reflect.Value) error {
 	var field = reflect.ValueOf(nil)
-	objType := reflect.TypeOf(obj)
-	objVal := reflect.ValueOf(obj)
+	objType := obj.Type()//reflect.TypeOf(obj)
+	objVal :=  obj//reflect.ValueOf(obj)
 	if objType.Kind() == reflect.Ptr {
 		//it points to struct
 		if objType.Elem().Kind() == reflect.Struct {
@@ -179,66 +189,66 @@ func SetAttributeValue(obj interface{}, fieldName string, value interface{}) err
 	}
 
 	if field.CanSet() {
-		typeName := reflect.ValueOf(value).Type().String()
+		typeName := value.Type().String()
 		switch field.Type().Kind() {
 		case reflect.String:
-			field.SetString(reflect.ValueOf(value).String())
+			field.SetString(value.String())
 			break
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 			if strings.HasPrefix(typeName, "uint") {
-				field.SetInt(int64(reflect.ValueOf(value).Uint()))
+				field.SetInt(int64(value.Uint()))
 				return nil
 			}
 			if strings.HasPrefix(typeName, "float") {
-				field.SetInt(int64(reflect.ValueOf(value).Float()))
+				field.SetInt(int64(value.Float()))
 				return nil
 			}
-			field.SetInt(reflect.ValueOf(value).Int())
+			field.SetInt(value.Int())
 			break
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			if strings.HasPrefix(typeName, "int") && reflect.ValueOf(value).Int() >= 0 {
-				field.SetUint(uint64(reflect.ValueOf(value).Int()))
+			if strings.HasPrefix(typeName, "int") && value.Int() >= 0 {
+				field.SetUint(uint64(value.Int()))
 				return nil
 			}
-			if strings.HasPrefix(typeName, "float") && reflect.ValueOf(value).Float() >= 0 {
-				field.SetUint(uint64(reflect.ValueOf(value).Float()))
+			if strings.HasPrefix(typeName, "float") && value.Float() >= 0 {
+				field.SetUint(uint64(value.Float()))
 				return nil
 			}
-			field.SetUint(reflect.ValueOf(value).Uint())
+			field.SetUint(value.Uint())
 			break
 		case reflect.Float32, reflect.Float64:
 			if strings.HasPrefix(typeName, "int") {
-				field.SetFloat(float64(reflect.ValueOf(value).Int()))
+				field.SetFloat(float64(value.Int()))
 				return nil
 			}
 			if strings.HasPrefix(typeName, "uint") {
-				field.SetFloat(float64(reflect.ValueOf(value).Uint()))
+				field.SetFloat(float64(value.Uint()))
 				return nil
 			}
-			field.SetFloat(reflect.ValueOf(value).Float())
+			field.SetFloat(value.Float())
 			break
 		case reflect.Bool:
-			field.SetBool(reflect.ValueOf(value).Bool())
+			field.SetBool(value.Bool())
 			break
 		case reflect.Slice:
-			field.Set(reflect.ValueOf(value))
+			field.Set(value)
 			break
 		case reflect.Map:
-			field.Set(reflect.ValueOf(value))
+			field.Set(value)
 		case reflect.Array:
-			field.Set(reflect.ValueOf(value))
+			field.Set(value)
 		case reflect.Struct:
-			field.Set(reflect.ValueOf(value))
+			field.Set(value)
 		case reflect.Interface:
-			field.Set(reflect.ValueOf(value))
+			field.Set(value)
 		case reflect.Chan:
-			field.Set(reflect.ValueOf(value))
+			field.Set(value)
 		case reflect.Complex64:
-			field.SetComplex(reflect.ValueOf(value).Complex())
+			field.SetComplex(value.Complex())
 		case reflect.Complex128:
-			field.SetComplex(reflect.ValueOf(value).Complex())
+			field.SetComplex(value.Complex())
 		case reflect.Func:
-			field.Set(reflect.ValueOf(value))
+			field.Set(value)
 		default:
 			return errors.New(fmt.Sprintf("Not support type:%s", field.Type().Kind().String()))
 		}
@@ -257,8 +267,8 @@ const (
 /*
 number type exchange
 */
-func ParamsTypeChange(f interface{}, params []interface{}) []interface{} {
-	tf := reflect.TypeOf(f)
+func ParamsTypeChange(f reflect.Value, params []reflect.Value) []reflect.Value {
+	tf := f.Type()
 	if tf.Kind() == reflect.Ptr {
 		tf = tf.Elem()
 	}
@@ -268,128 +278,128 @@ func ParamsTypeChange(f interface{}, params []interface{}) []interface{} {
 		case reflect.Int:
 			tag := getNumType(params[i])
 			if tag == _int {
-				params[i] = int(reflect.ValueOf(params[i]).Int())
+				params[i] = reflect.ValueOf(int(params[i].Int()))
 			} else if tag == _uint {
-				params[i] = int(reflect.ValueOf(params[i]).Uint())
+				params[i] = reflect.ValueOf(int(params[i].Uint()))
 			} else {
-				params[i] = int(reflect.ValueOf(params[i]).Float())
+				params[i] = reflect.ValueOf(int(params[i].Float()))
 			}
 			break
 		case reflect.Int8:
 			tag := getNumType(params[i])
 			if tag == _int {
-				params[i] = int8(reflect.ValueOf(params[i]).Int())
+				params[i] = reflect.ValueOf(int8(params[i].Int()))
 			} else if tag == _uint {
-				params[i] = int8(reflect.ValueOf(params[i]).Uint())
+				params[i] = reflect.ValueOf(int8(params[i].Uint()))
 			} else {
-				params[i] = int8(reflect.ValueOf(params[i]).Float())
+				params[i] = reflect.ValueOf(int8(params[i].Float()))
 			}
 			break
 		case reflect.Int16:
 			tag := getNumType(params[i])
 			if tag == _int {
-				params[i] = int16(reflect.ValueOf(params[i]).Int())
+				params[i] = reflect.ValueOf(int16(params[i].Int()))
 			} else if tag == _uint {
-				params[i] = int16(reflect.ValueOf(params[i]).Uint())
+				params[i] = reflect.ValueOf(int16(params[i].Uint()))
 			} else {
-				params[i] = int16(reflect.ValueOf(params[i]).Float())
+				params[i] = reflect.ValueOf(int16(params[i].Float()))
 			}
 			break
 		case reflect.Int32:
 			tag := getNumType(params[i])
 			if tag == _int {
-				params[i] = int32(reflect.ValueOf(params[i]).Int())
+				params[i] = reflect.ValueOf(int32(params[i].Int()))
 			} else if tag == _uint {
-				params[i] = int32(reflect.ValueOf(params[i]).Uint())
+				params[i] = reflect.ValueOf(int32(params[i].Uint()))
 			} else {
-				params[i] = int32(reflect.ValueOf(params[i]).Float())
+				params[i] = reflect.ValueOf(int32(params[i].Float()))
 			}
 			break
 		case reflect.Int64:
 			tag := getNumType(params[i])
 			if tag == _int {
-				params[i] = reflect.ValueOf(params[i]).Int()
+				params[i] = reflect.ValueOf(params[i].Int())
 			} else if tag == _uint {
-				params[i] = int64(reflect.ValueOf(params[i]).Uint())
+				params[i] = reflect.ValueOf(int64(params[i].Uint()))
 			} else {
-				params[i] = int64(reflect.ValueOf(params[i]).Float())
+				params[i] = reflect.ValueOf(int64(params[i].Float()))
 			}
 			break
 		case reflect.Uint:
 			tag := getNumType(params[i])
 			if tag == _int {
-				params[i] = uint(reflect.ValueOf(params[i]).Int())
+				params[i] = reflect.ValueOf(uint(params[i].Int()))
 			} else if tag == _uint {
-				params[i] = uint(reflect.ValueOf(params[i]).Uint())
+				params[i] = reflect.ValueOf(uint(params[i].Uint()))
 			} else {
-				params[i] = uint(reflect.ValueOf(params[i]).Float())
+				params[i] = reflect.ValueOf(uint(params[i].Float()))
 			}
 			break
 		case reflect.Uint8:
 			tag := getNumType(params[i])
 			if tag == _int {
-				params[i] = uint8(reflect.ValueOf(params[i]).Int())
+				params[i] = reflect.ValueOf(uint8(params[i].Int()))
 			} else if tag == _uint {
-				params[i] = uint8(reflect.ValueOf(params[i]).Uint())
+				params[i] = reflect.ValueOf(uint8(params[i].Uint()))
 			} else {
-				params[i] = uint8(reflect.ValueOf(params[i]).Float())
+				params[i] = reflect.ValueOf(uint8(params[i].Float()))
 			}
 			break
 		case reflect.Uint16:
 			tag := getNumType(params[i])
 			if tag == _int {
-				params[i] = uint16(reflect.ValueOf(params[i]).Int())
+				params[i] = reflect.ValueOf(uint16(params[i].Int()))
 			} else if tag == _uint {
-				params[i] = uint16(reflect.ValueOf(params[i]).Uint())
+				params[i] = reflect.ValueOf(uint16(params[i].Uint()))
 			} else {
-				params[i] = uint16(reflect.ValueOf(params[i]).Float())
+				params[i] = reflect.ValueOf(uint16(params[i].Float()))
 			}
 			break
 		case reflect.Uint32:
 			tag := getNumType(params[i])
 			if tag == _int {
-				params[i] = uint32(reflect.ValueOf(params[i]).Int())
+				params[i] = reflect.ValueOf(uint32(params[i].Int()))
 			} else if tag == _uint {
-				params[i] = uint32(reflect.ValueOf(params[i]).Uint())
+				params[i] = reflect.ValueOf(uint32(params[i].Uint()))
 			} else {
-				params[i] = uint32(reflect.ValueOf(params[i]).Float())
+				params[i] = reflect.ValueOf(uint32(params[i].Float()))
 			}
 			break
 		case reflect.Uint64:
 			tag := getNumType(params[i])
 			if tag == _int {
-				params[i] = uint64(reflect.ValueOf(params[i]).Int())
+				params[i] = reflect.ValueOf(uint64(params[i].Int()))
 			} else if tag == _uint {
-				params[i] = reflect.ValueOf(params[i]).Uint()
+				params[i] = reflect.ValueOf(params[i].Uint())
 			} else {
-				params[i] = uint64(reflect.ValueOf(params[i]).Float())
+				params[i] = reflect.ValueOf(uint64(params[i].Float()))
 			}
 			break
 		case reflect.Float32:
 			tag := getNumType(params[i])
 			if tag == _int {
-				params[i] = float32(reflect.ValueOf(params[i]).Int())
+				params[i] = reflect.ValueOf(float32(params[i].Int()))
 			} else if tag == _uint {
-				params[i] = float32(reflect.ValueOf(params[i]).Uint())
+				params[i] = reflect.ValueOf(float32(params[i].Uint()))
 			} else {
-				params[i] = float32(reflect.ValueOf(params[i]).Float())
+				params[i] = reflect.ValueOf(float32(params[i].Float()))
 			}
 			break
 		case reflect.Float64:
 			tag := getNumType(params[i])
 			if tag == _int {
-				params[i] = float64(reflect.ValueOf(params[i]).Int())
+				params[i] = reflect.ValueOf(float64(params[i].Int()))
 			} else if tag == _uint {
-				params[i] = float64(reflect.ValueOf(params[i]).Uint())
+				params[i] = reflect.ValueOf(float64(params[i].Uint()))
 			} else {
-				params[i] = reflect.ValueOf(params[i]).Float()
+				params[i] = reflect.ValueOf(params[i].Float())
 			}
 			break
 		case reflect.Ptr:
 			break
 		case reflect.Interface:
 			if !reflect.ValueOf(params[i]).IsValid() {
-				params[i] = reflect.New(tf.In(i)).Interface()
+				params[i] = reflect.New(tf.In(i))
 			}
 		default:
 			continue
@@ -398,8 +408,8 @@ func ParamsTypeChange(f interface{}, params []interface{}) []interface{} {
 	return params
 }
 
-func getNumType(param interface{}) int {
-	ts := reflect.ValueOf(param).Kind().String()
+func getNumType(param reflect.Value) int {
+	ts := param.Kind().String()
 	if strings.HasPrefix(ts, "int") {
 		return _int
 	}
@@ -415,39 +425,40 @@ func getNumType(param interface{}) int {
 	panic(fmt.Sprintf("it is not number type, type is %s !", ts))
 }
 
-func GetWantedValue(newValue interface{}, toKind string) (interface{}, error) {
-	rawKind := reflect.ValueOf(newValue).Kind().String()
+func GetWantedValue(newValue reflect.Value, toKind string) (reflect.Value, error) {
+	rawKind := newValue.Kind().String()
+	//rawKind := newValue.Kind().String()
 	if rawKind == toKind {
 		return newValue, nil
 	}
 
 	switch toKind {
 	case "int":
-		return int(reflect.ValueOf(newValue).Int()), nil
+		return reflect.ValueOf(newValue.Int()), nil
 	case "int8":
-		return int8(reflect.ValueOf(newValue).Int()), nil
+		return reflect.ValueOf(int8(newValue.Int())), nil
 	case "int16":
-		return int16(reflect.ValueOf(newValue).Int()), nil
+		return reflect.ValueOf(int16(newValue.Int())), nil
 	case "int32":
-		return int32(reflect.ValueOf(newValue).Int()), nil
+		return reflect.ValueOf(int32(newValue.Int())), nil
 	case "int64":
-		return reflect.ValueOf(newValue).Int(), nil
+		return newValue, nil
 
 	case "uint":
-		return uint(reflect.ValueOf(newValue).Uint()), nil
+		return reflect.ValueOf(uint(newValue.Uint())), nil
 	case "uint8":
-		return uint8(reflect.ValueOf(newValue).Uint()), nil
+		return reflect.ValueOf(uint8(newValue.Uint())), nil
 	case "uint16":
-		return uint16(reflect.ValueOf(newValue).Uint()), nil
+		return reflect.ValueOf(uint16(newValue.Uint())), nil
 	case "uint32":
-		return uint32(reflect.ValueOf(newValue).Uint()), nil
+		return reflect.ValueOf(uint32(newValue.Uint())), nil
 	case "uint64":
-		return reflect.ValueOf(newValue).Uint(), nil
+		return newValue, nil
 
 	case "float32":
-		return float32(reflect.ValueOf(newValue).Float()), nil
+		return reflect.ValueOf(float32(newValue.Float())), nil
 	case "float64":
-		return reflect.ValueOf(newValue).Float(), nil
+		return newValue, nil
 	}
 
 	return newValue, nil

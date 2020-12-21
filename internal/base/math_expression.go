@@ -5,6 +5,7 @@ import (
 	"gengine/context"
 	"gengine/internal/core"
 	"gengine/internal/core/errors"
+	"reflect"
 )
 
 type MathExpression struct {
@@ -53,7 +54,7 @@ func (e *MathExpression) AcceptExpressionAtom(atom *ExpressionAtom) error {
 	return errors.New("ExpressionAtom already set twice!")
 }
 
-func (e *MathExpression) Evaluate(Vars map[string]interface{}) (interface{}, error) {
+func (e *MathExpression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) {
 
 	//priority to calculate single value
 	if e.ExpressionAtom != nil {
@@ -67,43 +68,43 @@ func (e *MathExpression) Evaluate(Vars map[string]interface{}) (interface{}, err
 
 	lv, err := e.MathExpressionLeft.Evaluate(Vars)
 	if err != nil {
-		return nil, err
+		return reflect.ValueOf(nil), err
 	}
 	rv, err := e.MathExpressionRight.Evaluate(Vars)
 	if err != nil {
-		return nil, err
+		return reflect.ValueOf(nil), err
 	}
 
 	if e.MathPmOperator == "+" {
 		add, err := core.Add(lv, rv)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", e.LineNum, e.Column, e.Code, err))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", e.LineNum, e.Column, e.Code, err))
 		}
-		return add, nil
+		return reflect.ValueOf(add), nil
 	}
 
 	if e.MathPmOperator == "-" {
 		sub, err := core.Sub(lv, rv)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", e.LineNum, e.Column, e.Code, err))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", e.LineNum, e.Column, e.Code, err))
 		}
-		return sub, nil
+		return reflect.ValueOf(sub), nil
 	}
 
 	if e.MathMdOperator == "*" {
 		mul, err := core.Mul(lv, rv)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", e.LineNum, e.Column, e.Code, err))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", e.LineNum, e.Column, e.Code, err))
 		}
-		return mul, nil
+		return reflect.ValueOf(mul), nil
 	}
 
 	if e.MathMdOperator == "/" {
 		div, err := core.Div(lv, rv)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", e.LineNum, e.Column, e.Code, err))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", e.LineNum, e.Column, e.Code, err))
 		}
-		return div, nil
+		return reflect.ValueOf(div), nil
 	}
-	return nil, errors.New(fmt.Sprintf("line %d, column %d, code: %s, MathExpression calculate evaluate error", e.LineNum, e.Column, e.Code))
+	return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, MathExpression calculate evaluate error", e.LineNum, e.Column, e.Code))
 }

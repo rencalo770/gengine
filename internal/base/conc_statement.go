@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gengine/context"
 	"gengine/internal/core/errors"
+	"reflect"
 	"sync"
 )
 
@@ -52,14 +53,14 @@ func (cs *ConcStatement) AcceptMethodCall(methodCall *MethodCall) error {
 	return nil
 }
 
-func (cs *ConcStatement) Evaluate(Vars map[string]interface{}) (interface{}, error) {
+func (cs *ConcStatement) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) {
 
 	aLen := len(cs.Assignments)
 	fLen := len(cs.FunctionCalls)
 	mLen := len(cs.MethodCalls)
 	l := aLen + fLen + mLen
 	if l <= 0 {
-		return nil, nil
+		return reflect.ValueOf(nil), nil
 
 	} else if l == 1 {
 		if aLen > 0 {
@@ -121,8 +122,8 @@ func (cs *ConcStatement) Evaluate(Vars map[string]interface{}) (interface{}, err
 		wg.Wait()
 
 		if len(eMsg) > 0 {
-			return nil, errors.New(fmt.Sprintf("%+v", eMsg))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("%+v", eMsg))
 		}
 	}
-	return nil, nil
+	return reflect.ValueOf(nil), nil
 }

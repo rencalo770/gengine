@@ -75,7 +75,6 @@ type Request struct {
 var ruleInitTest = `
 rule "rule_init_test" "rule_init"  salience 0
 begin
- 
  println(contextInt["a"])
  println(container.CurrentTimeOfMs())
  //println(contextInt["b"]) //此处如果是基础类型，如果没有对应的key，也应该返回对应的默认值

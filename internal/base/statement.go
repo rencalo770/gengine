@@ -3,6 +3,7 @@ package base
 import (
 	"gengine/context"
 	"gengine/internal/core/errors"
+	"reflect"
 )
 
 type Statement struct {
@@ -14,7 +15,7 @@ type Statement struct {
 	dataCtx       *context.DataContext
 }
 
-func (s *Statement) Evaluate(Vars map[string]interface{}) (interface{}, error, bool) {
+func (s *Statement) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error, bool) {
 
 	if s.IfStmt != nil {
 		return s.IfStmt.Evaluate(Vars)
@@ -40,7 +41,7 @@ func (s *Statement) Evaluate(Vars map[string]interface{}) (interface{}, error, b
 		return v, e, false
 	}
 
-	return nil, errors.New("Statement evaluate error!"), false
+	return reflect.ValueOf(nil), errors.New("Statement evaluate error!"), false
 }
 
 func (s *Statement) Initialize(dc *context.DataContext) {

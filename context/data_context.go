@@ -13,12 +13,12 @@ import (
 type DataContext struct {
 	lockVars sync.Mutex
 	lockBase sync.Mutex
-	base     map[string]interface{}
+	base     map[string]reflect.Value
 }
 
 func NewDataContext() *DataContext {
 	dc := &DataContext{
-		base: make(map[string]interface{}),
+		base: make(map[string]reflect.Value),
 	}
 	dc.loadInnerUDF()
 	return dc
@@ -32,7 +32,7 @@ func (dc *DataContext) loadInnerUDF() {
 
 func (dc *DataContext) Add(key string, obj interface{}) {
 	dc.lockBase.Lock()
-	dc.base[key] = obj
+	dc.base[key] = reflect.ValueOf(obj)
 	dc.lockBase.Unlock()
 }
 
@@ -47,14 +47,14 @@ func (dc *DataContext) Del(keys ...string) {
 	dc.lockBase.Unlock()
 }
 
-func (dc *DataContext) Get(key string) (interface{}, error) {
+func (dc *DataContext) Get(key string) (reflect.Value, error) {
 	dc.lockBase.Lock()
-	v := dc.base[key]
+	v,ok := dc.base[key]
 	dc.lockBase.Unlock()
-	if v != nil {
+	if ok {
 		return v, nil
 	} else {
-		return nil, errors.New(fmt.Sprintf("NOT FOUND key :%s ", key))
+		return reflect.ValueOf(nil), errors.New(fmt.Sprintf("NOT FOUND key :%s ", key))
 	}
 }
 
@@ -62,26 +62,26 @@ func (dc *DataContext) Get(key string) (interface{}, error) {
 execute the injected functions
 function execute supply multi return values, but simplify ,just return one value
 */
-func (dc *DataContext) ExecFunc(funcName string, parameters []interface{}) (interface{}, error) {
+func (dc *DataContext) ExecFunc(funcName string, parameters []reflect.Value) (reflect.Value, error) {
 	dc.lockBase.Lock()
-	v := dc.base[funcName]
+	v,ok := dc.base[funcName]
 	dc.lockBase.Unlock()
 
-	if v != nil {
+	if ok {
 		params := core.ParamsTypeChange(v, parameters)
-		fun := reflect.ValueOf(v)
+		fun := v
 		args := make([]reflect.Value, 0)
 		for _, param := range params {
-			args = append(args, reflect.ValueOf(param))
+			args = append(args, param)
 		}
 		res := fun.Call(args)
 		raw, e := core.GetRawTypeValue(res)
 		if e != nil {
-			return nil, e
+			return reflect.ValueOf(nil), e
 		}
 		return raw, nil
 	} else {
-		return nil, errors.New(fmt.Sprintf("NOT FOUND function \"%s\"", funcName))
+		return reflect.ValueOf(nil), errors.New(fmt.Sprintf("NOT FOUND function \"%s\"", funcName))
 	}
 }
 
@@ -89,44 +89,44 @@ func (dc *DataContext) ExecFunc(funcName string, parameters []interface{}) (inte
 execute the struct's functions
 function execute supply multi return values, but simplify ,just return one value
 */
-func (dc *DataContext) ExecMethod(methodName string, args []interface{}) (interface{}, error) {
+func (dc *DataContext) ExecMethod(methodName string, args []reflect.Value) (reflect.Value, error) {
 	structAndMethod := strings.Split(methodName, ".")
 	//Dimit rule
 	if len(structAndMethod) != 2 {
-		return nil, errors.New(fmt.Sprintf("Not supported call, just support struct.method call, now length is %d", len(structAndMethod)))
+		return reflect.ValueOf(nil), errors.New(fmt.Sprintf("Not supported call, just support struct.method call, now length is %d", len(structAndMethod)))
 	}
 
 	dc.lockBase.Lock()
-	v := dc.base[structAndMethod[0]]
+	v,ok := dc.base[structAndMethod[0]]
 	dc.lockBase.Unlock()
 
-	if v != nil {
+	if ok {
 		res, err := core.InvokeFunction(v, structAndMethod[1], args)
 		if err != nil {
-			return nil, err
+			return reflect.ValueOf(nil), err
 		}
 		return res, nil
 	}
-	return nil, errors.New(fmt.Sprintf("Not found method: %s", methodName))
+	return reflect.ValueOf(nil), errors.New(fmt.Sprintf("Not found method: %s", methodName))
 }
 
 /**
 get the value user set
 */
-func (dc *DataContext) GetValue(Vars map[string]interface{}, variable string) (interface{}, error) {
+func (dc *DataContext) GetValue(Vars map[string]reflect.Value, variable string) (reflect.Value, error) {
 	if strings.Contains(variable, ".") {
 		//in dataContext
 		structAndField := strings.Split(variable, ".")
 		//Dimit rule
 		if len(structAndField) != 2 {
-			return nil, errors.New(fmt.Sprintf("Not supported Field, just support struct.field, now length is %d", len(structAndField)))
+			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("Not supported Field, just support struct.field, now length is %d", len(structAndField)))
 		}
 
 		dc.lockBase.Lock()
-		v := dc.base[structAndField[0]]
+		v,ok := dc.base[structAndField[0]]
 		dc.lockBase.Unlock()
 
-		if v != nil {
+		if ok {
 			return core.GetStructAttributeValue(v, structAndField[1])
 		}
 
@@ -140,22 +140,25 @@ func (dc *DataContext) GetValue(Vars map[string]interface{}, variable string) (i
 	} else {
 		//user set
 		dc.lockBase.Lock()
-		v := dc.base[variable]
+		v,ok := dc.base[variable]
 		dc.lockBase.Unlock()
 
-		if v != nil {
+		if ok {
 			return v, nil
 		}
 		//in RuleEntity
 		dc.lockVars.Lock()
-		res := Vars[variable]
+		res,rok := Vars[variable]
 		dc.lockVars.Unlock()
-		return res, nil
+		if rok {
+			return res, nil
+		}
+
 	}
-	return nil, errors.New(fmt.Sprintf("Did not found variable : %s ", variable))
+	return reflect.ValueOf(nil), errors.New(fmt.Sprintf("Did not found variable : %s ", variable))
 }
 
-func (dc *DataContext) SetValue(Vars map[string]interface{}, variable string, newValue interface{}) error {
+func (dc *DataContext) SetValue(Vars map[string]reflect.Value, variable string, newValue reflect.Value) error {
 	if strings.Contains(variable, ".") {
 		structAndField := strings.Split(variable, ".")
 		//Dimit rule
@@ -164,11 +167,18 @@ func (dc *DataContext) SetValue(Vars map[string]interface{}, variable string, ne
 		}
 
 		dc.lockBase.Lock()
-		v := dc.base[structAndField[0]]
+		v,ok := dc.base[structAndField[0]]
 		dc.lockBase.Unlock()
 
-		if v != nil {
+		if ok {
 			return core.SetAttributeValue(v, structAndField[1], newValue)
+		}else {
+			dc.lockVars.Lock()
+			vv,vok := Vars[structAndField[0]]
+			dc.lockVars.Unlock()
+			if vok {
+				return core.SetAttributeValue(vv, structAndField[1], newValue)
+			}
 		}
 	} else {
 		dc.lockBase.Lock()
@@ -188,61 +198,61 @@ func (dc *DataContext) SetValue(Vars map[string]interface{}, variable string, ne
 }
 
 //set single value
-func (dc *DataContext) setSingleValue(obj interface{}, fieldName string, value interface{}) error {
+func (dc *DataContext) setSingleValue(obj reflect.Value, fieldName string, value reflect.Value) error {
 
-	if reflect.ValueOf(obj).Kind() == reflect.Ptr {
-		if reflect.ValueOf(value).Kind() == reflect.Ptr {
+	if obj.Kind() == reflect.Ptr {
+		if value.Kind() == reflect.Ptr {
 			//both ptr
-			value = reflect.ValueOf(value).Elem().Interface()
+			//value = reflect.ValueOf(value).Elem().Interface()
 		}
 
-		objKind := reflect.ValueOf(obj).Elem().Kind()
-		valueKind := reflect.ValueOf(value).Kind()
+		objKind := obj.Elem().Kind()
+		valueKind := value.Kind()
 		if objKind == valueKind {
-			reflect.ValueOf(obj).Elem().Set(reflect.ValueOf(value))
+			obj.Elem().Set(value)
 			return nil
 		} else {
 			valueKindStr := valueKind.String()
 			switch objKind {
 			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 				if strings.HasPrefix(valueKindStr, "int") {
-					reflect.ValueOf(obj).Elem().SetInt(reflect.ValueOf(value).Int())
+					obj.Elem().SetInt(value.Int())
 					return nil
 				}
 				if strings.HasPrefix(valueKindStr, "float") {
-					reflect.ValueOf(obj).Elem().SetInt(int64(reflect.ValueOf(value).Float()))
+					obj.Elem().SetInt(int64(value.Float()))
 					return nil
 				}
 				if strings.HasPrefix(valueKindStr, "uint") {
-					reflect.ValueOf(obj).Elem().SetInt(int64(reflect.ValueOf(value).Uint()))
+					obj.Elem().SetInt(int64(value.Uint()))
 					return nil
 				}
 				break
 			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-				if strings.HasPrefix(valueKindStr, "int") && reflect.ValueOf(value).Int() >= 0 {
-					reflect.ValueOf(obj).Elem().SetUint(uint64(reflect.ValueOf(value).Int()))
+				if strings.HasPrefix(valueKindStr, "int") && value.Int() >= 0 {
+					obj.Elem().SetUint(uint64(value.Int()))
 					return nil
 				}
-				if strings.HasPrefix(valueKindStr, "float") && reflect.ValueOf(value).Float() >= 0 {
-					reflect.ValueOf(obj).Elem().SetUint(uint64(reflect.ValueOf(value).Float()))
+				if strings.HasPrefix(valueKindStr, "float") && value.Float() >= 0 {
+					obj.Elem().SetUint(uint64(value.Float()))
 					return nil
 				}
 				if strings.HasPrefix(valueKindStr, "uint") {
-					reflect.ValueOf(obj).Elem().SetUint(reflect.ValueOf(value).Uint())
+					obj.Elem().SetUint(value.Uint())
 					return nil
 				}
 				break
 			case reflect.Float32, reflect.Float64:
 				if strings.HasPrefix(valueKindStr, "int") {
-					reflect.ValueOf(obj).Elem().SetFloat(float64(reflect.ValueOf(value).Int()))
+					obj.Elem().SetFloat(float64(value.Int()))
 					return nil
 				}
 				if strings.HasPrefix(valueKindStr, "float") {
-					reflect.ValueOf(obj).Elem().SetFloat(reflect.ValueOf(value).Float())
+					obj.Elem().SetFloat(value.Float())
 					return nil
 				}
 				if strings.HasPrefix(valueKindStr, "uint") {
-					reflect.ValueOf(obj).Elem().SetFloat(float64(reflect.ValueOf(value).Uint()))
+					obj.Elem().SetFloat(float64(value.Uint()))
 					return nil
 				}
 				break
@@ -254,15 +264,15 @@ func (dc *DataContext) setSingleValue(obj interface{}, fieldName string, value i
 	}
 }
 
-func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, mapVarStrkey, mapVarVarkey string, mapVarIntkey int64, newValue interface{}) error {
+func (dc *DataContext) SetMapVarValue(Vars map[string]reflect.Value, mapVarName, mapVarStrkey, mapVarVarkey string, mapVarIntkey int64, newValue reflect.Value) error {
 
 	//value is map or slice or array
 	value, e := dc.GetValue(Vars, mapVarName)
 	if e != nil {
 		return e
 	}
-
-	typeName := reflect.TypeOf(value).String()
+	typeName := value.Type().String()
+	//typeName := reflect.TypeOf(value).String()
 
 	ptr := false
 	typeNum := -1
@@ -323,7 +333,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 			}
 
 			//int key
-			wantedKey, e := core.GetWantedValue(mapVarIntkey, keyType)
+			wantedKey, e := core.GetWantedValue(reflect.ValueOf(mapVarIntkey), keyType)
 			if e != nil {
 				return e
 			}
@@ -487,7 +497,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 					return nil
 				}
 
-				wantedKey, e := core.GetWantedValue(mapVarIntkey, keyType)
+				wantedKey, e := core.GetWantedValue(reflect.ValueOf(mapVarIntkey), keyType)
 				if e != nil {
 					return e
 				}

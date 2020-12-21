@@ -3,6 +3,7 @@ package base
 import (
 	"gengine/context"
 	"gengine/internal/core/errors"
+	"reflect"
 )
 
 type RuleContent struct {
@@ -17,7 +18,7 @@ func (t *RuleContent) Initialize(dc *context.DataContext) {
 	}
 }
 
-func (t *RuleContent) Execute(Vars map[string]interface{}) (interface{}, error, bool) {
+func (t *RuleContent) Execute(Vars map[string]reflect.Value) (reflect.Value, error, bool) {
 	return t.Statements.Evaluate(Vars)
 }
 

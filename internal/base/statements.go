@@ -2,6 +2,7 @@ package base
 
 import (
 	"gengine/context"
+	"reflect"
 )
 
 type Statements struct {
@@ -10,11 +11,11 @@ type Statements struct {
 	dataCtx         *context.DataContext
 }
 
-func (s *Statements) Evaluate(Vars map[string]interface{}) (interface{}, error, bool) {
+func (s *Statements) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error, bool) {
 	for _, statement := range s.StatementList {
 		v, err, b := statement.Evaluate(Vars)
 		if err != nil {
-			return nil, err, false
+			return reflect.ValueOf(nil), err, false
 		}
 
 		if b {
@@ -25,7 +26,7 @@ func (s *Statements) Evaluate(Vars map[string]interface{}) (interface{}, error, 
 	if s.ReturnStatement != nil {
 		return s.ReturnStatement.Evaluate(Vars)
 	} else {
-		return nil, nil, false
+		return reflect.ValueOf(nil), nil, false
 	}
 
 }
