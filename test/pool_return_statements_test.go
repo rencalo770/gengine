@@ -29,7 +29,7 @@ func Test_pool_return_statments(t *testing.T) {
 	}
 
 	data := make(map[string]interface{})
-	e2, rrm1 := pool.ExecuteRulesWithMultiInput(data)
+	e2, rrm1 := pool.ExecuteRulesWithMultiInputWithSpecifiedEM(data)
 	if e2 != nil {
 		panic(e2)
 	}
@@ -38,7 +38,7 @@ func Test_pool_return_statments(t *testing.T) {
 	ix1 := i1.(int)
 	println("ix1--->", ix1)
 
-	e3, rrm2 := pool.ExecuteRulesWithMultiInput(data)
+	e3, rrm2 := pool.ExecuteRulesWithMultiInputWithSpecifiedEM(data)
 	if e3 != nil {
 		panic(e2)
 	}
@@ -51,7 +51,7 @@ func Test_pool_return_statments(t *testing.T) {
 	ix11 := i11.(int)
 	println("ix11--->", ix11)
 
-	e2, rrm3 := pool.ExecuteRulesWithMultiInput(data)
+	e2, rrm3 := pool.ExecuteRulesWithMultiInputWithSpecifiedEM(data)
 	if e2 != nil {
 		panic(e2)
 	}

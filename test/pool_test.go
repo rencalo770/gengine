@@ -48,7 +48,7 @@ func Test_pool_select_rules(t *testing.T) {
 	data := make(map[string]interface{})
 	data["Req"] = reqest
 
-	e2, _ := pool.ExecuteSelectedRulesWithMultiInput(data, []string{"测试规则名称1", "1"})
+	e2, _ := pool.ExecuteSelectedRules(data, []string{"测试规则名称1", "1"})
 	if e2 != nil {
 		panic(e2)
 	}
@@ -99,7 +99,7 @@ func Test_once(t *testing.T) {
 	reqest := &Reqest{}
 
 	t1 := time.Now()
-	e2, _ := pool.ExecuteRules("Req", reqest, "", nil)
+	e2, _ := pool.ExecuteRulesWithSpecifiedEM("Req", reqest, "", nil)
 	if e2 != nil {
 		panic(e2)
 	}
@@ -140,7 +140,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 		for {
 			t2 := time.Now()
 			reqest := &Reqest{Data: 1}
-			e2, _ := pool.ExecuteRules("Req", reqest, "", nil)
+			e2, _ := pool.ExecuteRulesWithSpecifiedEM("Req", reqest, "", nil)
 			if e2 != nil {
 				println(fmt.Sprintf("e2: %+v", e2))
 			}
@@ -161,7 +161,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 		for {
 			t2 := time.Now()
 			reqest := &Reqest{Data: 1}
-			e2, _ := pool.ExecuteRules("Req", reqest, "", nil)
+			e2, _ := pool.ExecuteRulesWithSpecifiedEM("Req", reqest, "", nil)
 			if e2 != nil {
 				println(fmt.Sprintf("e2: %+v", e2))
 			}
@@ -182,7 +182,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 		for {
 			t2 := time.Now()
 			reqest := &Reqest{Data: 1}
-			e2, _ := pool.ExecuteRules("Req", reqest, "", nil)
+			e2, _ := pool.ExecuteRulesWithSpecifiedEM("Req", reqest, "", nil)
 			if e2 != nil {
 				println(fmt.Sprintf("e2: %+v", e2))
 			}
@@ -203,7 +203,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 		for {
 			t2 := time.Now()
 			reqest := &Reqest{Data: 1}
-			e2, _ := pool.ExecuteRules("Req", reqest, "", nil)
+			e2, _ := pool.ExecuteRulesWithSpecifiedEM("Req", reqest, "", nil)
 			if e2 != nil {
 				println(fmt.Sprintf("e2: %+v", e2))
 			}
@@ -224,7 +224,7 @@ func Test_pool_with_rules_for_goruntine(t *testing.T) {
 		for {
 			t2 := time.Now()
 			reqest := &Reqest{Data: 1}
-			e2, _ := pool.ExecuteRules("Req", reqest, "", nil)
+			e2, _ := pool.ExecuteRulesWithSpecifiedEM("Req", reqest, "", nil)
 			if e2 != nil {
 				println(fmt.Sprintf("e2: %+v", e2))
 			}

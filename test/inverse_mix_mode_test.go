@@ -99,7 +99,7 @@ func Test_inverse_pool(t *testing.T) {
 	data := make(map[string]interface{})
 	data["cal"] = calculate
 
-	e2, _ := pool.ExecuteInverseMixModelWithMultiInput(data)
+	e2, _ := pool.ExecuteInverseMixModel(data)
 	if e2 != nil {
 		panic(e2)
 	}
@@ -119,7 +119,7 @@ func Test_inverse_select_pool(t *testing.T) {
 	data := make(map[string]interface{})
 	data["cal"] = calculate
 
-	e2, _ := pool.ExecuteSelectedRulesInverseMixModelWithMultiInput(data, []string{"996", "1000"})
+	e2, _ := pool.ExecuteSelectedRulesInverseMixModel(data, []string{"996", "1000"})
 	if e2 != nil {
 		panic(e2)
 	}
@@ -139,7 +139,7 @@ func Test_select_pool(t *testing.T) {
 	data := make(map[string]interface{})
 	data["cal"] = calculate
 
-	e2, _ := pool.ExecuteSelected(data, []string{"996", "1000"})
+	e2, _ := pool.ExecuteSelectedWithSpecifiedEM(data, []string{"996", "1000"})
 	if e2 != nil {
 		panic(e2)
 	}
@@ -160,7 +160,7 @@ func Test_base_pool(t *testing.T) {
 	data["cal"] = calculate
 
 	//e2 := pool.ExecuteRulesWithMultiInputAndStopTag(data, &engine.Stag{StopTag:false})
-	e2, _ := pool.ExecuteRulesWithMultiInput(data)
+	e2, _ := pool.ExecuteRulesWithMultiInputWithSpecifiedEM(data)
 	if e2 != nil {
 		panic(e2)
 	}
