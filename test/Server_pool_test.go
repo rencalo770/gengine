@@ -48,7 +48,7 @@ func Test_rp1(t *testing.T) {
 
 			data := make(map[string]interface{})
 			sid := []string{"1", "2"}
-			e, _ := pool.ExecuteSelectedRulesConcurrentWithMultiInput(data, sid)
+			e, _ := pool.ExecuteSelectedRulesConcurrent(data, sid)
 			if e != nil {
 				println("execute err", fmt.Sprintf("%+v", e))
 			}

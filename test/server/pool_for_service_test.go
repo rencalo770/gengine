@@ -90,7 +90,7 @@ func (ms *MyService) Service(req *Request) (*Response, error) {
 	room := &Room{}
 	data["room"] = room
 
-	e, _ := ms.Pool.ExecuteSelectedRulesWithMultiInput(data, req.RuleNames)
+	e, _ := ms.Pool.ExecuteSelectedRules(data, req.RuleNames)
 	if e != nil {
 		println(fmt.Sprintf("pool execute rules error: %+v", e))
 		return nil, e

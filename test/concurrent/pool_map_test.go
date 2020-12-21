@@ -205,7 +205,7 @@ func Test_map_conc(t *testing.T) {
 		result := &Result{SidResult: make(map[string]*Ranking)}
 		data["result"] = result
 
-		e2, _ := pool.ExecuteSelectedRulesConcurrentWithMultiInput(data, []string{"1"})
+		e2, _ := pool.ExecuteSelectedRulesConcurrent(data, []string{"1"})
 		if e2 != nil {
 			panic(e2)
 		}
@@ -245,7 +245,7 @@ func Test_map_conc(t *testing.T) {
 		result := &Result{SidResult: make(map[string]*Ranking)}
 		data["result"] = result
 
-		e2, _ := pool.ExecuteSelectedRulesConcurrentWithMultiInput(data, []string{"2"})
+		e2, _ := pool.ExecuteSelectedRulesConcurrent(data, []string{"2"})
 		if e2 != nil {
 			panic(e2)
 		}

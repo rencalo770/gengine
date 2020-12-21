@@ -138,7 +138,7 @@ func TestRuleInitTest_pool(t *testing.T) {
 	data["contextString"] = &contextString
 
 	//execute 需要用什么模式，就调用什么方法
-	e2, _ := pool.ExecuteRulesWithMultiInput(data)
+	e2, _ := pool.ExecuteRulesWithMultiInputWithSpecifiedEM(data)
 	if e2 != nil {
 		panic(e2)
 	}

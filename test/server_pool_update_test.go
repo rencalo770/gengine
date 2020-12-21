@@ -144,7 +144,7 @@ func exe1(pool *engine.GenginePool) {
 		data["result"] = result
 
 		sids := []string{"3"}
-		e, _ := pool.ExecuteSelectedRulesConcurrentWithMultiInput(data, sids)
+		e, _ := pool.ExecuteSelectedRulesConcurrent(data, sids)
 		if e != nil {
 			panic(e)
 		}

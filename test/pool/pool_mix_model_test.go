@@ -62,7 +62,7 @@ func Test_mix_model(t *testing.T) {
 		}
 		println("Ps.R=", Ps.R)*/
 
-	e, _ := pool.ExecuteSelected(data, []string{"best", "better", "good"})
+	e, _ := pool.ExecuteSelectedWithSpecifiedEM(data, []string{"best", "better", "good"})
 	if e != nil {
 		panic(e)
 	}

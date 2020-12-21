@@ -213,7 +213,7 @@ func Test_increment_pool(t *testing.T) {
 	data := make(map[string]interface{})
 	data["Req"] = reqest
 
-	e2, _ := pool.ExecuteRulesWithMultiInput(data)
+	e2, _ := pool.ExecuteRulesWithMultiInputWithSpecifiedEM(data)
 	if e2 != nil {
 		panic(e2)
 	}
@@ -224,7 +224,7 @@ func Test_increment_pool(t *testing.T) {
 		panic(er1)
 	}
 
-	er2, _ := pool.ExecuteRulesWithMultiInput(data)
+	er2, _ := pool.ExecuteRulesWithMultiInputWithSpecifiedEM(data)
 	if er2 != nil {
 		panic(er2)
 	}
@@ -235,7 +235,7 @@ func Test_increment_pool(t *testing.T) {
 		panic(er3)
 	}
 
-	er4, _ := pool.ExecuteRulesWithMultiInput(data)
+	er4, _ := pool.ExecuteRulesWithMultiInputWithSpecifiedEM(data)
 	if er4 != nil {
 		panic(er4)
 	}
@@ -247,7 +247,7 @@ func Test_increment_pool(t *testing.T) {
 		panic(er5)
 	}
 
-	er6, _ := pool.ExecuteRulesWithMultiInput(data)
+	er6, _ := pool.ExecuteRulesWithMultiInputWithSpecifiedEM(data)
 	if er6 != nil {
 		panic(er6)
 	}
@@ -259,7 +259,7 @@ func Test_increment_pool(t *testing.T) {
 			panic(er5)
 		}*/
 
-	er8, _ := pool.ExecuteRulesWithMultiInput(data)
+	er8, _ := pool.ExecuteRulesWithMultiInputWithSpecifiedEM(data)
 	if er8 != nil {
 		panic(er6)
 	}
@@ -283,7 +283,7 @@ func Test_increment_pool_concurrent(t *testing.T) {
 
 	go func() {
 		for i := 0; i < 10000; i++ {
-			er2, _ := pool.ExecuteRulesWithMultiInput(data)
+			er2, _ := pool.ExecuteRulesWithMultiInputWithSpecifiedEM(data)
 			if er2 != nil {
 				panic(er2)
 			}
