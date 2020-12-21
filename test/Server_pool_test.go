@@ -11,7 +11,7 @@ const rp1 = `
 rule "1" "1"
 begin
 sleep()
-println()
+println("hello")
 end
 `
 
@@ -75,9 +75,18 @@ func Test_rp1(t *testing.T) {
 		time.Sleep(3 * time.Second)
 		e := pool.UpdatePooledRules(rp2)
 		if e != nil {
-			println("execute err", fmt.Sprintf("%+v", e))
+			panic(e)
 		}
 	}()
+
+	go func() {
+		time.Sleep(3 * time.Second)
+		e := pool.UpdatePooledRules(rp1)
+		if e != nil {
+			panic(e)
+		}
+	}()
+
 
 	go func() {
 

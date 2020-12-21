@@ -351,7 +351,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 			}
 
 			if len(mapVarStrkey) > 0 {
-				return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is \"%s\"", mapVarStrkey))
+				return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is str \"%s\"", mapVarStrkey))
 			}
 
 			if mapVarIntkey >= 0 {
@@ -398,7 +398,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 				}
 
 				if len(mapVarStrkey) > 0 {
-					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is \"%s\"", mapVarStrkey))
+					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is str\"%s\"", mapVarStrkey))
 				}
 
 				if mapVarIntkey >= 0 {
@@ -430,7 +430,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 				}
 
 				if len(mapVarStrkey) > 0 {
-					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is 	\"%s\"", mapVarStrkey))
+					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is str \"%s\"", mapVarStrkey))
 				}
 
 				if mapVarIntkey >= 0 {
@@ -524,7 +524,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 				}
 
 				if len(mapVarStrkey) > 0 {
-					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is \"%s\"", mapVarStrkey))
+					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is str \"%s\"", mapVarStrkey))
 				}
 
 				if mapVarIntkey >= 0 {
@@ -577,7 +577,7 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]interface{}, mapVarName, m
 				}
 
 				if len(mapVarStrkey) > 0 {
-					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is \"%s\"", mapVarStrkey))
+					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is str \"%s\"", mapVarStrkey))
 				}
 
 				if mapVarIntkey >= 0 {

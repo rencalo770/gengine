@@ -406,6 +406,7 @@ func (gp *GenginePool) SetExecModel(execModel int) error {
 	return nil
 }
 
+//get the execute model the user set
 func (gp *GenginePool) GetExecModel() int {
 	return gp.execModel
 }
@@ -422,6 +423,39 @@ func (gp *GenginePool) IsExist(ruleName string) bool {
 	return ok
 }
 
+//get the rule's salience
+func (gp *GenginePool) GetRuleSalience(ruleName string) (int64, error) {
+	gp.updateLock.Lock()
+	defer gp.updateLock.Unlock()
+
+	if gp.clear || gp.ruleBuilder == nil {
+		return 0, errors.New("no rules in pool!")
+	}
+
+	if rule, ok := gp.ruleBuilder.Kc.RuleEntities[ruleName];ok{
+		return rule.Salience, nil
+	}else {
+		return 0, errors.New(fmt.Sprintf("no such rules in pool:\"%s\"", ruleName))
+	}
+}
+
+//get the rule's description
+func (gp *GenginePool) GetRuleDesc(ruleName string) (string, error) {
+	gp.updateLock.Lock()
+	defer gp.updateLock.Unlock()
+
+	if gp.clear || gp.ruleBuilder == nil {
+		return "", errors.New("no rules in pool!")
+	}
+
+	if rule, ok := gp.ruleBuilder.Kc.RuleEntities[ruleName];ok{
+		return rule.RuleDescription, nil
+	}else {
+		return "", errors.New(fmt.Sprintf("no such rules in pool:\"%s\"", ruleName))
+	}
+}
+
+// count how many different rules in pool
 func (gp *GenginePool) GetRulesNumber() int {
 	gp.updateLock.Lock()
 	defer gp.updateLock.Unlock()
