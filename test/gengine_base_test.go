@@ -82,6 +82,8 @@ func PrintReal(real float64) {
 func exe(user *User) {
 	dataContext := context.NewDataContext()
 	//inject struct
+	strconv := &StrconvWrapper{}
+	dataContext.Add("strconv", strconv)
 	dataContext.Add("User", user)
 	//rename and inject
 	dataContext.Add("Sout", fmt.Println)

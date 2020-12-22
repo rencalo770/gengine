@@ -5,6 +5,7 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
+	"gengine/test"
 
 	"io/ioutil"
 	"os"
@@ -67,6 +68,8 @@ func exe_concurrent(user *User, s string) {
 
 	dataContext := context.NewDataContext()
 	//inject struct
+	strconv := &test.StrconvWrapper{}
+	dataContext.Add("strconv", strconv)
 	dataContext.Add("User", user)
 	//rename and inject
 	dataContext.Add("Sout", fmt.Println)

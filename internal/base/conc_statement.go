@@ -1,9 +1,9 @@
 package base
 
 import (
+	"errors"
 	"fmt"
 	"gengine/context"
-	"gengine/internal/core/errors"
 	"reflect"
 	"sync"
 )

@@ -58,7 +58,7 @@ ff = live.Setfun()
 live.Getfun(ff)
 
 ii = live.GetInterf()
-live.SetInterf(8888)
+live.SetInterf(ii)
 //live.x()
 end
 `
@@ -247,8 +247,9 @@ func (l *Live) GetInterf() interface{} {
 func (l *Live) SetInterf(i interface{}) {
 	if i == nil {
 		println("interface is nil")
+		return
 	}
-	println("SetInterf...", reflect.ValueOf(i).String())
+	println("SetInterf...", reflect.ValueOf(i).Int())
 }
 
 func Test_return_nil(t *testing.T) {

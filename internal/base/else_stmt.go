@@ -1,8 +1,8 @@
 package base
 
 import (
+	"errors"
 	"gengine/context"
-	"gengine/internal/core/errors"
 	"reflect"
 )
 

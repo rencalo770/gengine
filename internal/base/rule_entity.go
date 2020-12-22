@@ -1,9 +1,9 @@
 package base
 
 import (
+	"errors"
 	"fmt"
 	"gengine/context"
-	"gengine/internal/core/errors"
 	"reflect"
 )
 
@@ -46,7 +46,10 @@ func (r *RuleEntity) Execute() (interface{}, error, bool) {
 	r.Vars = make(map[string]reflect.Value)
 	defer r.clearMap()
 	v, e, b := r.RuleContent.Execute(r.Vars)
-	return reflect.ValueOf(v).Interface(), e, b
+	if v == reflect.ValueOf(nil) {
+		return nil, e, b
+	}
+	return v.Interface(), e, b
 }
 
 func (r *RuleEntity) clearMap() {

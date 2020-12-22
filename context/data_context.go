@@ -1,10 +1,9 @@
 package context
 
 import (
+	"errors"
 	"fmt"
 	"gengine/internal/core"
-	"gengine/internal/core/errors"
-	"gengine/internal/define"
 	"reflect"
 	"strings"
 	"sync"
@@ -25,8 +24,6 @@ func NewDataContext() *DataContext {
 }
 
 func (dc *DataContext) loadInnerUDF() {
-	strconv := &define.StrconvWrapper{}
-	dc.Add("strconv", strconv)
 	dc.Add("isNil", core.IsNil)
 }
 
@@ -49,7 +46,7 @@ func (dc *DataContext) Del(keys ...string) {
 
 func (dc *DataContext) Get(key string) (reflect.Value, error) {
 	dc.lockBase.Lock()
-	v,ok := dc.base[key]
+	v, ok := dc.base[key]
 	dc.lockBase.Unlock()
 	if ok {
 		return v, nil
@@ -62,34 +59,41 @@ func (dc *DataContext) Get(key string) (reflect.Value, error) {
 execute the injected functions
 function execute supply multi return values, but simplify ,just return one value
 */
-func (dc *DataContext) ExecFunc(funcName string, parameters []reflect.Value) (reflect.Value, error) {
+func (dc *DataContext) ExecFunc(Vars map[string]reflect.Value, funcName string, parameters []reflect.Value) (reflect.Value, error) {
 	dc.lockBase.Lock()
-	v,ok := dc.base[funcName]
+	v, ok := dc.base[funcName]
 	dc.lockBase.Unlock()
 
 	if ok {
-		params := core.ParamsTypeChange(v, parameters)
-		fun := v
-		args := make([]reflect.Value, 0)
-		for _, param := range params {
-			args = append(args, param)
-		}
-		res := fun.Call(args)
+		args := core.ParamsTypeChange(v, parameters)
+		res := v.Call(args)
 		raw, e := core.GetRawTypeValue(res)
 		if e != nil {
 			return reflect.ValueOf(nil), e
 		}
 		return raw, nil
-	} else {
-		return reflect.ValueOf(nil), errors.New(fmt.Sprintf("NOT FOUND function \"%s\"", funcName))
 	}
+
+	dc.lockVars.Lock()
+	vv, vok := Vars[funcName]
+	dc.lockVars.Unlock()
+	if vok {
+		args := core.ParamsTypeChange(vv, parameters)
+		res := vv.Call(args)
+		raw, e := core.GetRawTypeValue(res)
+		if e != nil {
+			return reflect.ValueOf(nil), e
+		}
+		return raw, nil
+	}
+	return reflect.ValueOf(nil), errors.New(fmt.Sprintf("NOT FOUND function \"%s\"", funcName))
 }
 
 /**
 execute the struct's functions
 function execute supply multi return values, but simplify ,just return one value
 */
-func (dc *DataContext) ExecMethod(methodName string, args []reflect.Value) (reflect.Value, error) {
+func (dc *DataContext) ExecMethod(Vars map[string]reflect.Value, methodName string, args []reflect.Value) (reflect.Value, error) {
 	structAndMethod := strings.Split(methodName, ".")
 	//Dimit rule
 	if len(structAndMethod) != 2 {
@@ -97,11 +101,22 @@ func (dc *DataContext) ExecMethod(methodName string, args []reflect.Value) (refl
 	}
 
 	dc.lockBase.Lock()
-	v,ok := dc.base[structAndMethod[0]]
+	v, ok := dc.base[structAndMethod[0]]
 	dc.lockBase.Unlock()
 
 	if ok {
 		res, err := core.InvokeFunction(v, structAndMethod[1], args)
+		if err != nil {
+			return reflect.ValueOf(nil), err
+		}
+		return res, nil
+	}
+
+	dc.lockVars.Lock()
+	vv, vok := Vars[structAndMethod[0]]
+	dc.lockVars.Unlock()
+	if vok {
+		res, err := core.InvokeFunction(vv, structAndMethod[1], args)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
@@ -123,7 +138,7 @@ func (dc *DataContext) GetValue(Vars map[string]reflect.Value, variable string) 
 		}
 
 		dc.lockBase.Lock()
-		v,ok := dc.base[structAndField[0]]
+		v, ok := dc.base[structAndField[0]]
 		dc.lockBase.Unlock()
 
 		if ok {
@@ -140,7 +155,7 @@ func (dc *DataContext) GetValue(Vars map[string]reflect.Value, variable string) 
 	} else {
 		//user set
 		dc.lockBase.Lock()
-		v,ok := dc.base[variable]
+		v, ok := dc.base[variable]
 		dc.lockBase.Unlock()
 
 		if ok {
@@ -148,7 +163,7 @@ func (dc *DataContext) GetValue(Vars map[string]reflect.Value, variable string) 
 		}
 		//in RuleEntity
 		dc.lockVars.Lock()
-		res,rok := Vars[variable]
+		res, rok := Vars[variable]
 		dc.lockVars.Unlock()
 		if rok {
 			return res, nil
@@ -167,14 +182,14 @@ func (dc *DataContext) SetValue(Vars map[string]reflect.Value, variable string, 
 		}
 
 		dc.lockBase.Lock()
-		v,ok := dc.base[structAndField[0]]
+		v, ok := dc.base[structAndField[0]]
 		dc.lockBase.Unlock()
 
 		if ok {
 			return core.SetAttributeValue(v, structAndField[1], newValue)
-		}else {
+		} else {
 			dc.lockVars.Lock()
-			vv,vok := Vars[structAndField[0]]
+			vv, vok := Vars[structAndField[0]]
 			dc.lockVars.Unlock()
 			if vok {
 				return core.SetAttributeValue(vv, structAndField[1], newValue)
@@ -203,7 +218,7 @@ func (dc *DataContext) setSingleValue(obj reflect.Value, fieldName string, value
 	if obj.Kind() == reflect.Ptr {
 		if value.Kind() == reflect.Ptr {
 			//both ptr
-			//value = reflect.ValueOf(value).Elem().Interface()
+			value = value.Elem()
 		}
 
 		objKind := obj.Elem().Kind()
@@ -257,54 +272,26 @@ func (dc *DataContext) setSingleValue(obj reflect.Value, fieldName string, value
 				}
 				break
 			}
-			return errors.New(fmt.Sprintf("\"%s\" value type \"%s\" is different from \"%s\" ", fieldName, reflect.ValueOf(obj).Elem().Kind().String(), reflect.ValueOf(value).Kind()))
+			return errors.New(fmt.Sprintf("\"%s\" value type \"%s\" is different from \"%s\" ", fieldName, obj.Elem().Kind().String(), value.Kind().String()))
 		}
 	} else {
 		return errors.New(fmt.Sprintf("\"%s\" value is unassignable!", fieldName))
 	}
 }
 
-func (dc *DataContext) SetMapVarValue(Vars map[string]reflect.Value, mapVarName, mapVarStrkey, mapVarVarkey string, mapVarIntkey int64, newValue reflect.Value) error {
+func (dc *DataContext) SetMapVarValue(Vars map[string]reflect.Value, mapVarName, mapVarStrkey, mapVarVarkey string, mapVarIntkey int64, setValue reflect.Value) error {
 
-	//value is map or slice or array
 	value, e := dc.GetValue(Vars, mapVarName)
 	if e != nil {
 		return e
 	}
-	typeName := value.Type().String()
-	//typeName := reflect.TypeOf(value).String()
 
-	ptr := false
-	typeNum := -1
-	keyType := ""
-	valueType := ""
-	inTypeName := ""
-	if strings.HasPrefix(typeName, "*") {
-		ptr = true
-		inTypeName = strings.ReplaceAll(typeName, "*", "")
-		typeName = inTypeName
-	}
+	if value.Kind() == reflect.Ptr {
+		newValue := value.Elem()
+		valueType := newValue.Type().Elem()
 
-	if strings.HasPrefix(typeName, "map") {
-		//map
-		typeNum = 1
-		start := strings.Index(typeName, "[")
-		end := strings.Index(typeName, "]")
-		keyType = typeName[start+1 : end]
-		valueType = strings.Trim(typeName[end+1:], " ")
-	} else if strings.HasPrefix(typeName, "[]") {
-		//slice
-		typeNum = 2
-		valueType = strings.ReplaceAll(strings.ReplaceAll(typeName, "[]", ""), " ", "")
-	} else {
-		//array
-		typeNum = 3
-		valueType = typeName[strings.Index(typeName, "]")+1:]
-	}
-
-	if ptr {
-		//single map should be ptr
-		if typeNum == 1 {
+		if newValue.Kind() == reflect.Map {
+			keyType := newValue.Type().Key()
 			if len(mapVarVarkey) > 0 {
 				key, e := dc.GetValue(Vars, mapVarVarkey)
 				if e != nil {
@@ -315,20 +302,20 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]reflect.Value, mapVarName,
 					return e
 				}
 
-				wantedValue, e := core.GetWantedValue(newValue, valueType)
+				wantedValue, e := core.GetWantedValue(setValue, valueType)
 				if e != nil {
 					return e
 				}
-				reflect.ValueOf(value).Elem().SetMapIndex(reflect.ValueOf(wantedKey), reflect.ValueOf(wantedValue))
+				value.Elem().SetMapIndex(wantedKey, wantedValue)
 				return nil
 			}
 
 			if len(mapVarStrkey) > 0 {
-				wantedValue, e := core.GetWantedValue(newValue, valueType)
+				wantedValue, e := core.GetWantedValue(setValue, valueType)
 				if e != nil {
 					return e
 				}
-				reflect.ValueOf(value).Elem().SetMapIndex(reflect.ValueOf(mapVarStrkey), reflect.ValueOf(wantedValue))
+				value.Elem().SetMapIndex(reflect.ValueOf(mapVarStrkey), wantedValue)
 				return nil
 			}
 
@@ -337,26 +324,25 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]reflect.Value, mapVarName,
 			if e != nil {
 				return e
 			}
-			wantedValue, e := core.GetWantedValue(newValue, valueType)
+			wantedValue, e := core.GetWantedValue(setValue, valueType)
 			if e != nil {
 				return e
 			}
-			reflect.ValueOf(value).Elem().SetMapIndex(reflect.ValueOf(wantedKey), reflect.ValueOf(wantedValue))
+			value.Elem().SetMapIndex(wantedKey, wantedValue)
 			return nil
 		}
 
-		//slice
-		if typeNum == 2 {
+		if newValue.Kind() == reflect.Slice || newValue.Kind() == reflect.Array {
 			if len(mapVarVarkey) > 0 {
 				key, e := dc.GetValue(Vars, mapVarVarkey)
 				if e != nil {
 					return e
 				}
-				wantedValue, e := core.GetWantedValue(newValue, valueType)
+				wantedValue, e := core.GetWantedValue(setValue, valueType)
 				if e != nil {
 					return e
 				}
-				reflect.ValueOf(value).Elem().Index(int(reflect.ValueOf(key).Int())).Set(reflect.ValueOf(wantedValue))
+				value.Elem().Index(int(key.Int())).Set(wantedValue)
 				return nil
 			}
 
@@ -365,249 +351,96 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]reflect.Value, mapVarName,
 			}
 
 			if mapVarIntkey >= 0 {
-				wantedValue, e := core.GetWantedValue(newValue, valueType)
+				wantedValue, e := core.GetWantedValue(setValue, valueType)
 				if e != nil {
 					return e
 				}
-				reflect.ValueOf(value).Elem().Index(int(mapVarIntkey)).Set(reflect.ValueOf(wantedValue))
+				value.Elem().Index(int(mapVarIntkey)).Set(wantedValue)
 				return nil
 			} else {
 				return errors.New("Slice or Array index  must be non-negative!")
 			}
 		}
 
-		if typeNum == 3 {
-			if strings.Contains(mapVarName, ".") {
-
-				splits := strings.Split(mapVarName, ".")
-				stru, e := dc.Get(splits[0])
-				if e != nil {
-					return e
-				}
-
-				struType := reflect.TypeOf(stru).String()
-				var arr reflect.Value
-				if strings.HasPrefix(struType, "*") {
-					arr = reflect.ValueOf(stru).Elem().FieldByName(splits[1])
-				} else {
-					arr = reflect.ValueOf(stru).FieldByName(splits[1])
-				}
-
-				if len(mapVarVarkey) > 0 {
-					key, e := dc.GetValue(Vars, mapVarVarkey)
-					if e != nil {
-						return e
-					}
-					wantedValue, e := core.GetWantedValue(newValue, valueType)
-					if e != nil {
-						return e
-					}
-
-					arr.Elem().Index(int(reflect.ValueOf(key).Int())).Set(reflect.ValueOf(wantedValue))
-					return nil
-				}
-
-				if len(mapVarStrkey) > 0 {
-					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is str\"%s\"", mapVarStrkey))
-				}
-
-				if mapVarIntkey >= 0 {
-					wantedValue, e := core.GetWantedValue(newValue, valueType)
-					if e != nil {
-						return e
-					}
-
-					arr.Elem().Index(int(mapVarIntkey)).Set(reflect.ValueOf(wantedValue))
-					return nil
-				} else {
-					return errors.New("Slice index must be bigger than 0!")
-				}
-
-			} else {
-
-				if len(mapVarVarkey) > 0 {
-					key, e := dc.GetValue(Vars, mapVarVarkey)
-					if e != nil {
-						return e
-					}
-					wantedValue, e := core.GetWantedValue(newValue, valueType)
-					if e != nil {
-						return e
-					}
-
-					reflect.ValueOf(value).Elem().Index(int(reflect.ValueOf(key).Int())).Set(reflect.ValueOf(wantedValue))
-					return nil
-				}
-
-				if len(mapVarStrkey) > 0 {
-					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is str \"%s\"", mapVarStrkey))
-				}
-
-				if mapVarIntkey >= 0 {
-					wantedValue, e := core.GetWantedValue(newValue, valueType)
-					if e != nil {
-						return e
-					}
-
-					reflect.ValueOf(value).Elem().Index(int(mapVarIntkey)).Set(reflect.ValueOf(wantedValue))
-					return nil
-				} else {
-					return errors.New("Slice index must be bigger than 0!")
-				}
-			}
-		}
-
 	} else {
+		newValue := value
+		valueType := newValue.Type().Elem()
 
-		// map in pointer-struct
-		if typeNum == 1 {
-
-			if strings.Contains(mapVarName, ".") {
-
-				splits := strings.Split(mapVarName, ".")
-				stru, err := dc.Get(splits[0])
-				if err != nil {
-					return errors.New(fmt.Sprintf("Not Found struct :%s", stru))
+		if newValue.Kind() == reflect.Map {
+			keyType := newValue.Type().Key()
+			if len(mapVarVarkey) > 0 {
+				key, e := dc.GetValue(Vars, mapVarVarkey)
+				if e != nil {
+					return e
 				}
-
-				if len(mapVarVarkey) > 0 {
-					key, e := dc.GetValue(Vars, mapVarVarkey)
-					if e != nil {
-						return e
-					}
-					wantedKey, e := core.GetWantedValue(key, keyType)
-					if e != nil {
-						return e
-					}
-
-					wantedValue, e := core.GetWantedValue(newValue, valueType)
-					if e != nil {
-						return e
-					}
-					reflect.ValueOf(value).SetMapIndex(reflect.ValueOf(wantedKey), reflect.ValueOf(wantedValue))
-					return nil
-				}
-
-				if len(mapVarStrkey) > 0 {
-					wantedValue, e := core.GetWantedValue(newValue, valueType)
-					if e != nil {
-						return e
-					}
-					reflect.ValueOf(value).SetMapIndex(reflect.ValueOf(mapVarStrkey), reflect.ValueOf(wantedValue))
-					return nil
-				}
-
-				wantedKey, e := core.GetWantedValue(reflect.ValueOf(mapVarIntkey), keyType)
+				wantedKey, e := core.GetWantedValue(key, keyType)
 				if e != nil {
 					return e
 				}
 
-				wantedValue, e := core.GetWantedValue(newValue, valueType)
+				wantedValue, e := core.GetWantedValue(setValue, valueType)
 				if e != nil {
 					return e
 				}
-				reflect.ValueOf(value).SetMapIndex(reflect.ValueOf(wantedKey), reflect.ValueOf(wantedValue))
+				value.SetMapIndex(wantedKey, wantedValue)
 				return nil
-
-			} else {
-				return errors.New("SetMapVarValue Only support directly-Pointer-Map or Map in Pointer-struct!")
 			}
-		}
 
-		//slice in pointer struct
-		if typeNum == 2 {
-			if strings.Contains(mapVarName, ".") {
-
-				if len(mapVarVarkey) > 0 {
-					key, e := dc.GetValue(Vars, mapVarVarkey)
-					if e != nil {
-						return e
-					}
-
-					wantedValue, e := core.GetWantedValue(newValue, valueType)
-					if e != nil {
-						return e
-					}
-
-					reflect.ValueOf(value).Index(int(reflect.ValueOf(key).Int())).Set(reflect.ValueOf(wantedValue))
-					return nil
-				}
-
-				if len(mapVarStrkey) > 0 {
-					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is str \"%s\"", mapVarStrkey))
-				}
-
-				if mapVarIntkey >= 0 {
-					wantedValue, e := core.GetWantedValue(newValue, valueType)
-					if e != nil {
-						return e
-					}
-
-					reflect.ValueOf(value).Index(int(mapVarIntkey)).Set(reflect.ValueOf(wantedValue))
-					return nil
-				} else {
-					return errors.New("Slice index must be bigger than 0!")
-				}
-
-			} else {
-				return errors.New("SetMapVarValue Only support directly-Pointer-Slice or Slice in Pointer-struct!")
-			}
-		}
-
-		// array in pointer-struct
-		if typeNum == 3 {
-			if strings.Contains(mapVarName, ".") {
-
-				splits := strings.Split(mapVarName, ".")
-				stru, e := dc.Get(splits[0])
+			if len(mapVarStrkey) > 0 {
+				wantedValue, e := core.GetWantedValue(setValue, valueType)
 				if e != nil {
 					return e
 				}
+				value.SetMapIndex(reflect.ValueOf(mapVarStrkey), wantedValue)
+				return nil
+			}
 
-				struType := reflect.TypeOf(stru).String()
-				var arr reflect.Value
-				if strings.HasPrefix(struType, "*") {
-					arr = reflect.ValueOf(stru).Elem().FieldByName(splits[1])
-				} else {
-					return errors.New("struct with Array must be pointer-struct, or you can't change Array's value!")
+			//int key
+			wantedKey, e := core.GetWantedValue(reflect.ValueOf(mapVarIntkey), keyType)
+			if e != nil {
+				return e
+			}
+			wantedValue, e := core.GetWantedValue(setValue, valueType)
+			if e != nil {
+				return e
+			}
+			value.SetMapIndex(wantedKey, wantedValue)
+			return nil
+
+		}
+
+		if newValue.Kind() == reflect.Slice || newValue.Kind() == reflect.Array {
+			if len(mapVarVarkey) > 0 {
+				key, e := dc.GetValue(Vars, mapVarVarkey)
+				if e != nil {
+					return e
 				}
-
-				if len(mapVarVarkey) > 0 {
-					key, e := dc.GetValue(Vars, mapVarVarkey)
-					if e != nil {
-						return e
-					}
-					wantedValue, e := core.GetWantedValue(newValue, valueType)
-					if e != nil {
-						return e
-					}
-
-					arr.Index(int(reflect.ValueOf(key).Int())).Set(reflect.ValueOf(wantedValue))
-					return nil
+				wantedValue, e := core.GetWantedValue(setValue, valueType)
+				if e != nil {
+					return e
 				}
+				value.Index(int(key.Int())).Set(wantedValue)
+				return nil
+			}
 
-				if len(mapVarStrkey) > 0 {
-					return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is str \"%s\"", mapVarStrkey))
+			if len(mapVarStrkey) > 0 {
+				return errors.New(fmt.Sprintf("the index of array or slice should not be string, now is str \"%s\"", mapVarStrkey))
+			}
+
+			if mapVarIntkey >= 0 {
+				wantedValue, e := core.GetWantedValue(setValue, valueType)
+				if e != nil {
+					return e
 				}
-
-				if mapVarIntkey >= 0 {
-					wantedValue, e := core.GetWantedValue(newValue, valueType)
-					if e != nil {
-						return e
-					}
-
-					arr.Index(int(mapVarIntkey)).Set(reflect.ValueOf(wantedValue))
-					return nil
-				} else {
-					return errors.New("Slice index must be bigger than 0!")
-				}
-
+				value.Index(int(mapVarIntkey)).Set(wantedValue)
+				return nil
 			} else {
-				return errors.New("SetMapVarValue Only support directly-Pointer-Array or Array in Pointer-struct!")
+				return errors.New("Slice or Array index  must be non-negative!")
 			}
 		}
 	}
-	return errors.New("SetMapVarValue Only support directly-Pointer-Map, directly-Pointer-Slice and directly-Pointer-Array or Map, Slice and Array in Pointer-Struct!")
+
+	return errors.New(fmt.Sprintf("unspport type, mapVarName =%s", mapVarName))
 }
 
 func (dc *DataContext) makeArray(value interface{}) {

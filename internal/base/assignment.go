@@ -1,10 +1,10 @@
 package base
 
 import (
+	"errors"
 	"fmt"
 	"gengine/context"
 	"gengine/internal/core"
-	"gengine/internal/core/errors"
 	"reflect"
 	"runtime"
 	"strings"
@@ -74,7 +74,6 @@ func (a *Assignment) Evaluate(Vars map[string]reflect.Value) (value reflect.Valu
 		}
 	}
 
-	//var pv interface{}
 	if a.AssignOperator == "+=" {
 		_mv, err := core.Add(sv, mv)
 		if err != nil {

@@ -1,9 +1,9 @@
 package base
 
 import (
+	"errors"
 	"fmt"
 	"gengine/context"
-	"gengine/internal/core/errors"
 	"reflect"
 	"runtime"
 	"strings"
@@ -60,7 +60,7 @@ func (mc *MethodCall) Evaluate(Vars map[string]reflect.Value) (mr reflect.Value,
 		argumentValues = av
 	}
 
-	mr, err = mc.dataCtx.ExecMethod(mc.MethodName, argumentValues)
+	mr, err = mc.dataCtx.ExecMethod(Vars, mc.MethodName, argumentValues)
 	if err != nil {
 		return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", mc.LineNum, mc.Column, mc.Code, err))
 	}

@@ -41,5 +41,4 @@ end
 	}
 	println(fmt.Sprintf("execute rule cost %d ns", end-start))
 
-
 }

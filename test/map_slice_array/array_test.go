@@ -10,7 +10,7 @@ import (
 )
 
 type AS struct {
-	MI *[3]int
+	MI [3]int32
 	MM [4]int
 }
 
@@ -44,7 +44,7 @@ end
 
 func Test_Array(t *testing.T) {
 	AS := &AS{
-		MI: &[3]int{},
+		MI: [3]int32{},
 		MM: [4]int{},
 	}
 
@@ -85,3 +85,13 @@ func Test_Array(t *testing.T) {
 	println(fmt.Sprintf("execute rule cost %d ns", end-start))
 
 }
+/*
+func Test_array_un(t *testing.T)  {
+
+	//不可使用反射的方式设置！！！
+	x := [3]int{1,2,34}
+	reflect.ValueOf(x).Index(1).Set(reflect.ValueOf(5))
+
+	println("x--->", x[1])
+
+}*/

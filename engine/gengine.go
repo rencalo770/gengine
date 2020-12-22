@@ -1,10 +1,10 @@
 package engine
 
 import (
+	"errors"
 	"fmt"
 	"gengine/builder"
 	"gengine/internal/base"
-	"gengine/internal/core/errors"
 	"sort"
 	"sync"
 

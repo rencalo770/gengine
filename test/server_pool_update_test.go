@@ -120,7 +120,7 @@ func Test_single_engine(t *testing.T) {
 func Test_server_pool(t *testing.T) {
 
 	apis := make(map[string]interface{})
-	apis["println"]=fmt.Println
+	apis["println"] = fmt.Println
 	pool, e1 := engine.NewGenginePool(10, 20, 1, rule_to_update1, apis)
 	if e1 != nil {
 		panic(e1)

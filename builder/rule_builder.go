@@ -1,10 +1,10 @@
 package builder
 
 import (
+	"errors"
 	"fmt"
 	"gengine/context"
 	"gengine/internal/base"
-	"gengine/internal/core/errors"
 	parser "gengine/internal/iantlr/alr"
 	"gengine/internal/iparser"
 	"gengine/internal/tool"

@@ -8,7 +8,6 @@ import (
 	"testing"
 )
 
-
 var lineNumberRules = `
 rule "line_number"  "when execute error,gengine will give out error"
 begin
@@ -26,25 +25,22 @@ end
 `
 
 type MyStruct struct {
-
 }
 
-func (m *MyStruct)XX(s string)  {
+func (m *MyStruct) XX(s string) {
 	println("XX")
 }
-
 
 func Println(s1, s2 string) bool {
 	println(s1, s2)
 	return false
 }
 
-
 func Test_number(t *testing.T) {
 	dataContext := context.NewDataContext()
 	//注入自定义函数
 	dataContext.Add("Println", Println)
-	ms :=  &MyStruct{}
+	ms := &MyStruct{}
 	dataContext.Add("ms", ms)
 
 	ruleBuilder := builder.NewRuleBuilder(dataContext)
@@ -60,6 +56,4 @@ func Test_number(t *testing.T) {
 		println(fmt.Sprintf("%+v", e2))
 	}
 
-
 }
-

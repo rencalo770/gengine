@@ -1,9 +1,9 @@
 package base
 
 import (
+	"errors"
 	"fmt"
 	"gengine/context"
-	"gengine/internal/core/errors"
 	"reflect"
 )
 
@@ -85,7 +85,7 @@ func (e *Expression) AcceptExpression(expression *Expression) error {
 func (e *Expression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) {
 
 	//priority to calculate single value
-	var math reflect.Value//interface{}
+	var math reflect.Value
 	if e.MathExpression != nil {
 		evl, err := e.MathExpression.Evaluate(Vars)
 		if err != nil {
@@ -94,7 +94,7 @@ func (e *Expression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, err
 		math = evl
 	}
 
-	var atom  reflect.Value//interface{}
+	var atom reflect.Value
 	if e.ExpressionAtom != nil {
 		evl, err := e.ExpressionAtom.Evaluate(Vars)
 		if err != nil {
@@ -103,7 +103,7 @@ func (e *Expression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, err
 		atom = evl
 	}
 
-	var b interface{}
+	var b reflect.Value
 	if e.ExpressionRight == nil {
 		if e.ExpressionLeft != nil {
 			left, err := e.ExpressionLeft.Evaluate(Vars)
@@ -128,15 +128,15 @@ func (e *Expression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, err
 		}
 
 		//
-		flv := lv//reflect.ValueOf(lv)
-		frv := rv//reflect.ValueOf(rv)
+		flv := lv //reflect.ValueOf(lv)
+		frv := rv //reflect.ValueOf(rv)
 
 		if lv.Kind() == reflect.Bool && rv.Kind() == reflect.Bool {
 			if e.LogicalOperator == "&&" {
-				b = flv.Bool() && frv.Bool()
+				b = reflect.ValueOf(flv.Bool() && frv.Bool())
 			}
 			if e.LogicalOperator == "||" {
-				b = flv.Bool() || frv.Bool()
+				b = reflect.ValueOf(flv.Bool() || frv.Bool())
 			}
 		} else {
 			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, || or && can't be used between %s and %s:\n", e.LineNum, e.Column, e.Code, flv.Kind().String(), frv.Kind().String()))
@@ -157,31 +157,31 @@ func (e *Expression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, err
 		}
 
 		//
-		flv := lv//reflect.ValueOf(lv)
-		frv := rv//reflect.ValueOf(rv)
+		flv := lv //reflect.ValueOf(lv)
+		frv := rv //reflect.ValueOf(rv)
 
 		//string compare
-		tlv := lv//reflect.TypeOf(lv).String()
-		trv := rv//reflect.TypeOf(rv).String()
+		tlv := lv //reflect.TypeOf(lv).String()
+		trv := rv //reflect.TypeOf(rv).String()
 		if tlv.Kind() == reflect.String && trv.Kind() == reflect.String {
 			switch e.ComparisonOperator {
 			case "==":
-				b = flv.String() == frv.String()
+				b = reflect.ValueOf(flv.String() == frv.String())
 				break
 			case "!=":
-				b = flv.String() != frv.String()
+				b = reflect.ValueOf(flv.String() != frv.String())
 				break
 			case ">":
-				b = flv.String() > frv.String()
+				b = reflect.ValueOf(flv.String() > frv.String())
 				break
 			case "<":
-				b = flv.String() < frv.String()
+				b = reflect.ValueOf(flv.String() < frv.String())
 				break
 			case ">=":
-				b = flv.String() >= frv.String()
+				b = reflect.ValueOf(flv.String() >= frv.String())
 				break
 			case "<=":
-				b = flv.String() <= frv.String()
+				b = reflect.ValueOf(flv.String() <= frv.String())
 				break
 			default:
 				return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, Can't be recognized ComparisonOperator: %s", e.LineNum, e.Column, e.Code, e.ComparisonOperator))
@@ -220,22 +220,22 @@ func (e *Expression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, err
 
 				switch e.ComparisonOperator {
 				case "==":
-					b = ll == rr
+					b = reflect.ValueOf(ll == rr)
 					break
 				case "!=":
-					b = ll != rr
+					b = reflect.ValueOf(ll != rr)
 					break
 				case ">":
-					b = ll > rr
+					b = reflect.ValueOf(ll > rr)
 					break
 				case "<":
-					b = ll < rr
+					b = reflect.ValueOf(ll < rr)
 					break
 				case ">=":
-					b = ll >= rr
+					b = reflect.ValueOf(ll >= rr)
 					break
 				case "<=":
-					b = ll <= rr
+					b = reflect.ValueOf(ll <= rr)
 					break
 				default:
 					return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, Can't be recognized ComparisonOperator: %s", e.LineNum, e.Column, e.Code, e.ComparisonOperator))
@@ -247,10 +247,10 @@ func (e *Expression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, err
 		if tlv.Kind() == reflect.Bool && trv.Kind() == reflect.Bool {
 			switch e.ComparisonOperator {
 			case "==":
-				b = flv.Bool() == frv.Bool()
+				b = reflect.ValueOf(flv.Bool() == frv.Bool())
 				break
 			case "!=":
-				b = flv.Bool() != frv.Bool()
+				b = reflect.ValueOf(flv.Bool() != frv.Bool())
 				break
 			default:
 				return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, Can't be recognized ComparisonOperator: %s", e.LineNum, e.Column, e.Code, e.ComparisonOperator))
@@ -270,8 +270,8 @@ LAST:
 			return reflect.ValueOf(!atom.Bool()), nil
 		}
 
-		if b != nil {
-			return reflect.ValueOf(!reflect.ValueOf(b).Bool()), nil
+		if b != reflect.ValueOf(nil) {
+			return reflect.ValueOf(!b.Bool()), nil
 		}
 	} else {
 		if math != reflect.ValueOf(nil) {
@@ -282,8 +282,8 @@ LAST:
 			return atom, nil
 		}
 
-		if b != nil {
-			return reflect.ValueOf(b), nil
+		if b != reflect.ValueOf(nil) {
+			return b, nil
 		}
 	}
 	return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, evaluate Expression err!", e.LineNum, e.Column, e.Code))

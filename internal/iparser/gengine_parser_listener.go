@@ -1,9 +1,9 @@
 package iparser
 
 import (
+	"errors"
 	"fmt"
 	"gengine/internal/base"
-	"gengine/internal/core/errors"
 	parser "gengine/internal/iantlr/alr"
 	"reflect"
 	"strconv"

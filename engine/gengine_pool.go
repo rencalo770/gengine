@@ -1,11 +1,11 @@
 package engine
 
 import (
+	"errors"
 	"fmt"
 	"gengine/builder"
 	"gengine/context"
 	"gengine/internal/base"
-	"gengine/internal/core/errors"
 	parser "gengine/internal/iantlr/alr"
 	"gengine/internal/iparser"
 	"gengine/internal/tool"
@@ -432,9 +432,9 @@ func (gp *GenginePool) GetRuleSalience(ruleName string) (int64, error) {
 		return 0, errors.New("no rules in pool!")
 	}
 
-	if rule, ok := gp.ruleBuilder.Kc.RuleEntities[ruleName];ok{
+	if rule, ok := gp.ruleBuilder.Kc.RuleEntities[ruleName]; ok {
 		return rule.Salience, nil
-	}else {
+	} else {
 		return 0, errors.New(fmt.Sprintf("no such rules in pool:\"%s\"", ruleName))
 	}
 }
@@ -448,9 +448,9 @@ func (gp *GenginePool) GetRuleDesc(ruleName string) (string, error) {
 		return "", errors.New("no rules in pool!")
 	}
 
-	if rule, ok := gp.ruleBuilder.Kc.RuleEntities[ruleName];ok{
+	if rule, ok := gp.ruleBuilder.Kc.RuleEntities[ruleName]; ok {
 		return rule.RuleDescription, nil
-	}else {
+	} else {
 		return "", errors.New(fmt.Sprintf("no such rules in pool:\"%s\"", ruleName))
 	}
 }

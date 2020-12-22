@@ -115,3 +115,34 @@ func Test_map_array(t *testing.T) {
 	println(fmt.Sprintf("execute rule cost %d ns", end-start))
 
 }
+
+func Test_unptr_map(t *testing.T) {
+
+	Ma := make(map[int]string)
+
+	dataContext := context.NewDataContext()
+	dataContext.Add("PrintName", fmt.Println)
+	dataContext.Add("Ma", Ma)
+
+	//init rule engine
+	ruleBuilder := builder.NewRuleBuilder(dataContext)
+
+	err := ruleBuilder.BuildRuleFromString(`
+rule "1"
+begin
+a = 1
+Ma[a] = "xxx"
+end
+`)
+
+	if err != nil {
+		panic(err)
+	}
+	eng := engine.NewGengine()
+	// true: means when there are many rules， if one rule execute error，continue to execute rules after the occur error rule
+	err = eng.Execute(ruleBuilder, true)
+	if err != nil {
+		panic(err)
+	}
+	println(Ma[1])
+}

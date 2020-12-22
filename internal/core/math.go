@@ -1,31 +1,19 @@
 package core
 
 import (
+	"errors"
 	"fmt"
-	"gengine/internal/core/errors"
 	"reflect"
 	"strings"
 )
 
-func Add(ax, bx reflect.Value) (interface{}, error) {
-	a := ax //reflect.ValueOf(ax)
+func Add(a, b reflect.Value) (interface{}, error) {
 	akind := a.Kind().String()
-	b := bx//reflect.ValueOf(bx)
 	bkind := b.Kind().String()
 
-	if !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float")) || akind == "string") && !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float")) || bkind == "sting") {
-		return nil, errors.New(fmt.Sprintf("ADD(+) can't be used between %s and %s", akind, bkind))
-	}
 	if akind == "string" && bkind == "string" {
 		//字符串相加
 		return fmt.Sprintf("%s%s", a.String(), b.String()), nil
-	}
-	if akind == "string" && bkind != "string" {
-		return nil, errors.New(fmt.Sprintf("ADD(+) can't be used between %s and %s", akind, bkind))
-	}
-
-	if akind != "string" && bkind == "string" {
-		return nil, errors.New(fmt.Sprintf("ADD(+) can't be used between %s and %s", akind, bkind))
 	}
 
 	if strings.HasPrefix(akind, "int") {
@@ -72,15 +60,9 @@ func Add(ax, bx reflect.Value) (interface{}, error) {
 	return nil, errors.New(fmt.Sprintf("ADD(+) can't be used between %s and %s", akind, bkind))
 }
 
-func Sub(ax, bx reflect.Value) (interface{}, error) {
-	a := ax//reflect.ValueOf(ax)
-	b := bx//reflect.ValueOf(bx)
+func Sub(a, b reflect.Value) (interface{}, error) {
 	akind := a.Kind().String()
 	bkind := b.Kind().String()
-
-	if !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float"))) && !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float"))) {
-		return nil, errors.New(fmt.Sprintf("SUB(-) can't be used between %s and %s", akind, bkind))
-	}
 
 	if strings.HasPrefix(akind, "int") {
 		if strings.HasPrefix(bkind, "int") {
@@ -126,15 +108,9 @@ func Sub(ax, bx reflect.Value) (interface{}, error) {
 	return nil, errors.New(fmt.Sprintf("Sub(-) can't be used between %s and %s", akind, bkind))
 }
 
-func Mul(ax, bx reflect.Value) (interface{}, error) {
-	a := ax//reflect.ValueOf(ax)
-	b := bx//reflect.ValueOf(bx)
+func Mul(a, b reflect.Value) (interface{}, error) {
 	akind := a.Kind().String()
 	bkind := b.Kind().String()
-
-	if !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float"))) && !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float"))) {
-		return nil, errors.New(fmt.Sprintf("Mul(*) can't be used between %s and %s", akind, bkind))
-	}
 
 	if strings.HasPrefix(akind, "int") {
 		if strings.HasPrefix(bkind, "int") {
@@ -180,15 +156,9 @@ func Mul(ax, bx reflect.Value) (interface{}, error) {
 	return nil, errors.New(fmt.Sprintf("Mul(*) can't be used between %s and %s", akind, bkind))
 }
 
-func Div(ax, bx reflect.Value) (interface{}, error) {
-	a := ax//reflect.ValueOf(ax)
-	b := bx//reflect.ValueOf(bx)
+func Div(a, b reflect.Value) (interface{}, error) {
 	akind := a.Kind().String()
 	bkind := b.Kind().String()
-
-	if !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float"))) && !(strings.HasPrefix(akind, "int") || (strings.HasPrefix(akind, "uint")) || (strings.HasPrefix(akind, "float"))) {
-		return nil, errors.New(fmt.Sprintf("DIV(/) can't be used between %s and %s", akind, bkind))
-	}
 
 	if strings.HasPrefix(bkind, "int") {
 		bi := b.Int()

@@ -5,6 +5,9 @@ import (
 )
 
 func IsNil(v interface{}) bool {
+	if v == nil {
+		return true
+	}
 	value := reflect.ValueOf(v)
 	kind := value.Kind()
 	switch kind {

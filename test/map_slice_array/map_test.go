@@ -5,6 +5,7 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -99,5 +100,15 @@ func Test_m1(t *testing.T) {
 		panic(err)
 	}
 	println(fmt.Sprintf("execute rule cost %d ns", end-start))
+
+}
+
+func Test_map_un(t *testing.T)  {
+
+	x := make(map[int]int)
+
+	reflect.ValueOf(x).SetMapIndex(reflect.ValueOf(1), reflect.ValueOf(5))
+
+	println("x--->", x[1])
 
 }

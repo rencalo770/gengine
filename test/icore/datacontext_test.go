@@ -15,7 +15,7 @@ type P struct {
 func Test_in_DataContext(t *testing.T) {
 	dataContext := context.NewDataContext()
 
-	var vm = make(map[string]interface{})
+	var vm = make(map[string]reflect.Value)
 	//var mm = make(map[string]string)
 	//vm["mx"] = mm
 
@@ -34,7 +34,7 @@ func Test_in_DataContext(t *testing.T) {
 
 	//map
 	println(reflect.TypeOf(value_1).String())
-	println(reflect.ValueOf(value_1).MapIndex(reflect.ValueOf("hello")).String())
+	println(value_1.MapIndex(reflect.ValueOf("hello")).String())
 	println("---------------")
 
 	//array
@@ -42,8 +42,8 @@ func Test_in_DataContext(t *testing.T) {
 	if e != nil {
 		panic(e)
 	}
-	println(reflect.TypeOf(value_2).String())
-	println(reflect.ValueOf(value_2).Index(1).Int())
+	println(value_2.String())
+	println(value_2.Index(1).Int())
 	println("---------------")
 
 	//slice
@@ -51,8 +51,8 @@ func Test_in_DataContext(t *testing.T) {
 	if e != nil {
 		panic(e)
 	}
-	println(reflect.TypeOf(value_3).String())
-	println(reflect.ValueOf(value_3).Index(1).Int())
+	println(value_3.String())
+	println(value_3.Index(1).Int())
 	println("---------------")
 
 }
@@ -61,10 +61,10 @@ func Test_in_Var(t *testing.T) {
 
 	dataContext := context.NewDataContext()
 
-	var vm = make(map[string]interface{})
-	vm["mx"] = map[string]string{"hello": "world"}
-	vm["ax"] = [3]int{1, 2, 3}
-	vm["sx"] = []int{7, 8, 9}
+	var vm = make(map[string]reflect.Value)
+	vm["mx"] = reflect.ValueOf(map[string]string{"hello": "world"})
+	vm["ax"] = reflect.ValueOf([3]int{1, 2, 3})
+	vm["sx"] = reflect.ValueOf([]int{7, 8, 9})
 	//dataContext.Add("P", )
 
 	value_1, e := dataContext.GetValue(vm, "mx")
@@ -73,8 +73,8 @@ func Test_in_Var(t *testing.T) {
 	}
 
 	//map
-	println(reflect.TypeOf(value_1).String())
-	println(reflect.ValueOf(value_1).MapIndex(reflect.ValueOf("hello")).String())
+	println(value_1.String())
+	println(value_1.MapIndex(reflect.ValueOf("hello")).String())
 	println("---------------")
 
 	//array
@@ -82,8 +82,8 @@ func Test_in_Var(t *testing.T) {
 	if e != nil {
 		panic(e)
 	}
-	println(reflect.TypeOf(value_2).String())
-	println(reflect.ValueOf(value_2).Index(1).Int())
+	println(value_2.String())
+	println(value_2.Index(1).Int())
 	println("---------------")
 
 	//slice
@@ -91,8 +91,8 @@ func Test_in_Var(t *testing.T) {
 	if e != nil {
 		panic(e)
 	}
-	println(reflect.TypeOf(value_3).String())
-	println(reflect.ValueOf(value_3).Index(1).Int())
+	println(value_3.String())
+	println(value_3.Index(1).Int())
 	println("---------------")
 
 	var x int

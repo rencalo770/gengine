@@ -5,6 +5,7 @@ import (
 	"gengine/builder"
 	"gengine/context"
 	"gengine/engine"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -84,4 +85,12 @@ func Test_s1(t *testing.T) {
 	}
 	println(fmt.Sprintf("execute rule cost %d ns", end-start))
 
+}
+
+
+func Test_slice_un(t *testing.T)  {
+	//可以设置
+	x := []int{1,2,34}
+	reflect.ValueOf(x).Index(1).Set(reflect.ValueOf(5))
+	println("x--->", x[1])
 }

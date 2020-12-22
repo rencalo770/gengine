@@ -1,28 +1,21 @@
 package core
 
 import (
+	"errors"
 	"fmt"
-	"gengine/internal/core/errors"
 	"reflect"
 	"strings"
 )
 
 func InvokeFunction(obj reflect.Value, methodName string, parameters []reflect.Value) (reflect.Value, error) {
-	objVal := obj //reflect.ValueOf(obj)
+	objVal := obj
 
-	fun := objVal.MethodByName(methodName) //.Interface()
-	/*var fun interface{}
-	if !f.IsValid() {
-		return nil, errors.New(fmt.Sprintf("NOT FOUND Function: %s", methodName))
-	} else {
-		fun = f.Interface()
-	}*/
-	//change type for base type params
+	fun := objVal.MethodByName(methodName)
+	if !fun.IsValid() {
+		return reflect.ValueOf(nil), errors.New(fmt.Sprintf("NOT FOUND Function: %s", methodName))
+	}
+
 	params := ParamsTypeChange(fun, parameters)
-	/*args := make([]reflect.Value, 0)
-	for _, param := range params {
-		args = append(args, reflect.ValueOf(param))
-	}*/
 	rs := fun.Call(params)
 	raw, e := GetRawTypeValue(rs)
 	if e != nil {
@@ -37,124 +30,13 @@ if want to support multi return ,change this method implements
 func GetRawTypeValue(rs []reflect.Value) (reflect.Value, error) {
 	if len(rs) == 0 {
 		return reflect.ValueOf(nil), nil
-	}else {
-		return rs[0], nil
-	}
-}
-/*
-func GetRawTypeValue(rs []reflect.Value) (interface{}, error) {
-	if len(rs) == 0 {
-		return nil, nil
 	} else {
-		switch rs[0].Kind() {
-		case reflect.String:
-			return rs[0].String(), nil
-		case reflect.Bool:
-			return rs[0].Bool(), nil
-		case reflect.Int:
-			return int(rs[0].Int()), nil
-		case reflect.Int8:
-			return int8(rs[0].Int()), nil
-		case reflect.Int16:
-			return int16(rs[0].Int()), nil
-		case reflect.Int32:
-			return int32(rs[0].Int()), nil
-		case reflect.Int64:
-			return rs[0].Int(), nil
-		case reflect.Uint:
-			return uint(rs[0].Uint()), nil
-		case reflect.Uint8:
-			return uint8(rs[0].Uint()), nil
-		case reflect.Uint16:
-			return uint16(rs[0].Uint()), nil
-		case reflect.Uint32:
-			return uint32(rs[0].Uint()), nil
-		case reflect.Uint64:
-			return rs[0].Uint(), nil
-		case reflect.Float32:
-			return float32(rs[0].Float()), nil
-		case reflect.Float64:
-			return rs[0].Float(), nil
-		case reflect.Struct:
-			return rs[0].Interface(), nil
-		case reflect.Ptr:
-			if rs[0].IsNil() {
-				return rs[0].Interface(), nil
-			}
-			newPtr := reflect.New(rs[0].Elem().Type())
-			newPtr.Elem().Set(rs[0].Elem())
-			return newPtr.Interface(), nil
-		case reflect.Slice, reflect.Map, reflect.Array:
-			return rs[0].Interface(), nil
-		case reflect.Interface:
-			return rs[0].Interface(), nil
-		case reflect.Chan:
-			return rs[0].Interface(), nil
-		case reflect.Complex64:
-			return complex64(rs[0].Complex()), nil
-		case reflect.Complex128:
-			return rs[0].Complex(), nil
-		case reflect.Func:
-			return rs[0].Interface(), nil
-		default:
-			return nil, errors.New(fmt.Sprintf("Can't be handled type: %s", rs[0].Kind().String()))
-		}
-	}
-}*/
-
-func ValueToInterface(v reflect.Value) interface{} {
-	switch v.Type().Kind() {
-	case reflect.String:
-		return v.String()
-	case reflect.Bool:
-		return v.Bool()
-	case reflect.Int:
-		return int(v.Int())
-	case reflect.Int8:
-		return int8(v.Int())
-	case reflect.Int16:
-		return int16(v.Int())
-	case reflect.Int32:
-		return int32(v.Int())
-	case reflect.Int64:
-		return v.Int()
-	case reflect.Uint:
-		return uint(v.Uint())
-	case reflect.Uint8:
-		return uint8(v.Uint())
-	case reflect.Uint16:
-		return uint16(v.Uint())
-	case reflect.Uint32:
-		return uint32(v.Uint())
-	case reflect.Uint64:
-		return v.Uint()
-	case reflect.Float32:
-		return float32(v.Float())
-	case reflect.Float64:
-		return v.Float()
-	case reflect.Map:
-		return v.Interface()
-	case reflect.Array:
-		return v.Interface()
-	case reflect.Slice:
-		return v.Interface()
-	case reflect.Ptr:
-		return v.Interface()
-		//newPtr := reflect.New(v.Elem().Type())
-		//newPtr.Elem().Set(v.Elem())
-		//return newPtr.Interface()
-	case reflect.Struct:
-		if v.CanInterface() {
-			return v.Interface()
-		}
-		return nil
-	default:
-		return nil
+		return rs[0], nil
 	}
 }
 
 func GetStructAttributeValue(obj reflect.Value, fieldName string) (reflect.Value, error) {
-	stru := obj//reflect.ValueOf(obj)
+	stru := obj
 	var attrVal reflect.Value
 	if stru.Kind() == reflect.Ptr {
 		attrVal = stru.Elem().FieldByName(fieldName)
@@ -162,16 +44,15 @@ func GetStructAttributeValue(obj reflect.Value, fieldName string) (reflect.Value
 		attrVal = stru.FieldByName(fieldName)
 	}
 	return attrVal, nil
-	//return ValueToInterface(attrVal), nil
 }
 
 /**
 set field value
 */
 func SetAttributeValue(obj reflect.Value, fieldName string, value reflect.Value) error {
-	var field = reflect.ValueOf(nil)
-	objType := obj.Type()//reflect.TypeOf(obj)
-	objVal :=  obj//reflect.ValueOf(obj)
+	field := reflect.ValueOf(nil)
+	objType := obj.Type()
+	objVal := obj
 	if objType.Kind() == reflect.Ptr {
 		//it points to struct
 		if objType.Elem().Kind() == reflect.Struct {
@@ -235,20 +116,28 @@ func SetAttributeValue(obj reflect.Value, fieldName string, value reflect.Value)
 			break
 		case reflect.Map:
 			field.Set(value)
+			break
 		case reflect.Array:
 			field.Set(value)
+			break
 		case reflect.Struct:
 			field.Set(value)
+			break
 		case reflect.Interface:
 			field.Set(value)
+			break
 		case reflect.Chan:
 			field.Set(value)
+			break
 		case reflect.Complex64:
 			field.SetComplex(value.Complex())
+			break
 		case reflect.Complex128:
 			field.SetComplex(value.Complex())
+			break
 		case reflect.Func:
 			field.Set(value)
+			break
 		default:
 			return errors.New(fmt.Sprintf("Not support type:%s", field.Type().Kind().String()))
 		}
@@ -425,39 +314,37 @@ func getNumType(param reflect.Value) int {
 	panic(fmt.Sprintf("it is not number type, type is %s !", ts))
 }
 
-func GetWantedValue(newValue reflect.Value, toKind string) (reflect.Value, error) {
-	rawKind := newValue.Kind().String()
-	//rawKind := newValue.Kind().String()
-	if rawKind == toKind {
+func GetWantedValue(newValue reflect.Value, toKind reflect.Type) (reflect.Value, error) {
+	if newValue.Kind() == toKind.Kind() {
 		return newValue, nil
 	}
 
-	switch toKind {
-	case "int":
-		return reflect.ValueOf(newValue.Int()), nil
-	case "int8":
+	switch toKind.Kind() {
+	case reflect.Int:
+		return reflect.ValueOf(int(newValue.Int())), nil
+	case reflect.Int8:
 		return reflect.ValueOf(int8(newValue.Int())), nil
-	case "int16":
+	case reflect.Int16:
 		return reflect.ValueOf(int16(newValue.Int())), nil
-	case "int32":
+	case reflect.Int32:
 		return reflect.ValueOf(int32(newValue.Int())), nil
-	case "int64":
+	case reflect.Int64:
 		return newValue, nil
 
-	case "uint":
+	case reflect.Uint:
 		return reflect.ValueOf(uint(newValue.Uint())), nil
-	case "uint8":
+	case reflect.Uint8:
 		return reflect.ValueOf(uint8(newValue.Uint())), nil
-	case "uint16":
+	case reflect.Uint16:
 		return reflect.ValueOf(uint16(newValue.Uint())), nil
-	case "uint32":
+	case reflect.Uint32:
 		return reflect.ValueOf(uint32(newValue.Uint())), nil
-	case "uint64":
+	case reflect.Uint64:
 		return newValue, nil
 
-	case "float32":
+	case reflect.Float32:
 		return reflect.ValueOf(float32(newValue.Float())), nil
-	case "float64":
+	case reflect.Float64:
 		return newValue, nil
 	}
 
