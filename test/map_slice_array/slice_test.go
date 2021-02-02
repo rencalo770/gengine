@@ -36,8 +36,7 @@ println("S[1]---->",S[1])
 println("S[a]---->",S[a])
 
 
-////can't set value, but can get value
-//SSS[1] = 3333
+SSS[1] = 3333
 println("SSS[1]---->",SSS[1])
 println("SSS[a]---->",SSS[a])
 end

@@ -50,7 +50,7 @@ println("MM[a]->",MM[a])
 println("MM[1]->",MM[a])
 
 
-//can't set value, but can get value
+
 //MMM[1] = 11111111
 println(MMM[1])
 
