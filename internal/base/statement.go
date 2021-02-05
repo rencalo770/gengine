@@ -12,60 +12,35 @@ type Statement struct {
 	FunctionCall  *FunctionCall
 	Assignment    *Assignment
 	ConcStatement *ConcStatement
-	dataCtx       *context.DataContext
 }
 
-func (s *Statement) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error, bool) {
+func (s *Statement) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) (reflect.Value, error, bool) {
 
 	if s.IfStmt != nil {
-		return s.IfStmt.Evaluate(Vars)
+		return s.IfStmt.Evaluate(dc, Vars)
 	}
 
 	if s.MethodCall != nil {
-		v, e := s.MethodCall.Evaluate(Vars)
+		v, e := s.MethodCall.Evaluate(dc, Vars)
 		return v, e, false
 	}
 
 	if s.FunctionCall != nil {
-		v, e := s.FunctionCall.Evaluate(Vars)
+		v, e := s.FunctionCall.Evaluate(dc, Vars)
 		return v, e, false
 	}
 
 	if s.Assignment != nil {
-		v, e := s.Assignment.Evaluate(Vars)
+		v, e := s.Assignment.Evaluate(dc, Vars)
 		return v, e, false
 	}
 
 	if s.ConcStatement != nil {
-		v, e := s.ConcStatement.Evaluate(Vars)
+		v, e := s.ConcStatement.Evaluate(dc, Vars)
 		return v, e, false
 	}
 
 	return reflect.ValueOf(nil), errors.New("Statement evaluate error!"), false
-}
-
-func (s *Statement) Initialize(dc *context.DataContext) {
-	s.dataCtx = dc
-
-	if s.IfStmt != nil {
-		s.IfStmt.Initialize(dc)
-	}
-
-	if s.FunctionCall != nil {
-		s.FunctionCall.Initialize(dc)
-	}
-
-	if s.MethodCall != nil {
-		s.MethodCall.Initialize(dc)
-	}
-
-	if s.Assignment != nil {
-		s.Assignment.Initialize(dc)
-	}
-
-	if s.ConcStatement != nil {
-		s.ConcStatement.Initialize(dc)
-	}
 }
 
 func (s *Statement) AcceptFunctionCall(funcCall *FunctionCall) error {
@@ -73,7 +48,7 @@ func (s *Statement) AcceptFunctionCall(funcCall *FunctionCall) error {
 		s.FunctionCall = funcCall
 		return nil
 	}
-	return errors.New("FunctionCall already defined!")
+	return errors.New("FunctionCall already defined! ")
 }
 
 func (s *Statement) AcceptMethodCall(methodCall *MethodCall) error {
@@ -81,7 +56,7 @@ func (s *Statement) AcceptMethodCall(methodCall *MethodCall) error {
 		s.MethodCall = methodCall
 		return nil
 	}
-	return errors.New("MethodCall already defined!")
+	return errors.New("MethodCall already defined! ")
 }
 
 func (s *Statement) AcceptAssignment(assignment *Assignment) error {
@@ -89,5 +64,5 @@ func (s *Statement) AcceptAssignment(assignment *Assignment) error {
 		s.Assignment = assignment
 		return nil
 	}
-	return errors.New("Assignment already defined!")
+	return errors.New("Assignment already defined! ")
 }

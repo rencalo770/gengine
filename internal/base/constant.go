@@ -7,7 +7,6 @@ import (
 
 type Constant struct {
 	ConstantValue reflect.Value
-	dataCtx       *context.DataContext
 }
 
 func (cons *Constant) AcceptString(str string) error {
@@ -15,11 +14,7 @@ func (cons *Constant) AcceptString(str string) error {
 	return nil
 }
 
-func (cons *Constant) Initialize(dc *context.DataContext) {
-	cons.dataCtx = dc
-}
-
-func (cons *Constant) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) {
+func (cons *Constant) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) (reflect.Value, error) {
 	return cons.ConstantValue, nil
 }
 

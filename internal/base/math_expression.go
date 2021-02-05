@@ -15,7 +15,6 @@ type MathExpression struct {
 	MathMdOperator      string
 	MathExpressionRight *MathExpression
 	ExpressionAtom      *ExpressionAtom
-	dataCtx             *context.DataContext
 }
 
 func (e *MathExpression) AcceptMathExpression(atom *MathExpression) error {
@@ -30,47 +29,31 @@ func (e *MathExpression) AcceptMathExpression(atom *MathExpression) error {
 	return errors.New("expressionAtom set twice")
 }
 
-func (e *MathExpression) Initialize(dc *context.DataContext) {
-	e.dataCtx = dc
-
-	if e.MathExpressionLeft != nil {
-		e.MathExpressionLeft.Initialize(dc)
-	}
-
-	if e.MathExpressionRight != nil {
-		e.MathExpressionRight.Initialize(dc)
-	}
-
-	if e.ExpressionAtom != nil {
-		e.ExpressionAtom.Initialize(dc)
-	}
-}
-
 func (e *MathExpression) AcceptExpressionAtom(atom *ExpressionAtom) error {
 	if e.ExpressionAtom == nil {
 		e.ExpressionAtom = atom
 		return nil
 	}
-	return errors.New("ExpressionAtom already set twice!")
+	return errors.New("ExpressionAtom already set twice ")
 }
 
-func (e *MathExpression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) {
+func (e *MathExpression) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) (reflect.Value, error) {
 
 	//priority to calculate single value
 	if e.ExpressionAtom != nil {
-		return e.ExpressionAtom.Evaluate(Vars)
+		return e.ExpressionAtom.Evaluate(dc, Vars)
 	}
 
 	// check the right whether is nil
 	if e.MathExpressionRight == nil {
-		return e.MathExpressionLeft.Evaluate(Vars)
+		return e.MathExpressionLeft.Evaluate(dc, Vars)
 	}
 
-	lv, err := e.MathExpressionLeft.Evaluate(Vars)
+	lv, err := e.MathExpressionLeft.Evaluate(dc, Vars)
 	if err != nil {
 		return reflect.ValueOf(nil), err
 	}
-	rv, err := e.MathExpressionRight.Evaluate(Vars)
+	rv, err := e.MathExpressionRight.Evaluate(dc, Vars)
 	if err != nil {
 		return reflect.ValueOf(nil), err
 	}

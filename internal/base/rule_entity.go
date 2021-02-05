@@ -12,7 +12,6 @@ type RuleEntity struct {
 	Salience        int64
 	RuleDescription string
 	RuleContent     *RuleContent
-	dataCtx         *context.DataContext
 	Vars            map[string]reflect.Value //belongs to current rule,rule execute finish, it will be clear
 }
 
@@ -34,18 +33,18 @@ func (r *RuleEntity) AcceptInteger(val int64) error {
 	return nil
 }
 
-func (r *RuleEntity) Initialize(dc *context.DataContext) {
+/*func (r *RuleEntity) Initialize(dc *context.DataContext) {
 	r.dataCtx = dc
 
 	if r.RuleContent != nil {
 		r.RuleContent.Initialize(dc)
 	}
 }
-
-func (r *RuleEntity) Execute() (interface{}, error, bool) {
+*/
+func (r *RuleEntity) Execute(dc *context.DataContext) (interface{}, error, bool) {
 	r.Vars = make(map[string]reflect.Value)
 	defer r.clearMap()
-	v, e, b := r.RuleContent.Execute(r.Vars)
+	v, e, b := r.RuleContent.Execute(dc, r.Vars)
 	if v == reflect.ValueOf(nil) {
 		return nil, e, b
 	}

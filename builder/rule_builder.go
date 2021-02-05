@@ -62,11 +62,6 @@ func (builder *RuleBuilder) BuildRuleFromString(ruleString string) error {
 		return errors.New(fmt.Sprintf("%+v", listener.ParseErrors))
 	}
 
-	//initial
-	for _, v := range kc.RuleEntities {
-		v.Initialize(builder.Dc)
-	}
-
 	//sort
 	for _, v := range kc.RuleEntities {
 		kc.SortRules = append(kc.SortRules, v)
@@ -139,8 +134,6 @@ func (builder *RuleBuilder) BuildRuleWithIncremental(ruleString string) error {
 
 	//kc store the new rules
 	for k, v := range kc.RuleEntities {
-		//init
-		v.Initialize(builder.Dc)
 
 		if vm, ok := newRuleEntities[k]; ok {
 			//repalce update

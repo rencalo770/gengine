@@ -8,12 +8,12 @@ import (
 type Statements struct {
 	StatementList   []*Statement
 	ReturnStatement *ReturnStatement
-	dataCtx         *context.DataContext
+	//dataCtx         *context.DataContext
 }
 
-func (s *Statements) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error, bool) {
+func (s *Statements) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) (reflect.Value, error, bool) {
 	for _, statement := range s.StatementList {
-		v, err, b := statement.Evaluate(Vars)
+		v, err, b := statement.Evaluate(dc, Vars)
 		if err != nil {
 			return reflect.ValueOf(nil), err, false
 		}
@@ -24,13 +24,13 @@ func (s *Statements) Evaluate(Vars map[string]reflect.Value) (reflect.Value, err
 		}
 	}
 	if s.ReturnStatement != nil {
-		return s.ReturnStatement.Evaluate(Vars)
+		return s.ReturnStatement.Evaluate(dc, Vars)
 	} else {
 		return reflect.ValueOf(nil), nil, false
 	}
 
 }
-
+/*
 func (s *Statements) Initialize(dc *context.DataContext) {
 	s.dataCtx = dc
 
@@ -44,3 +44,4 @@ func (s *Statements) Initialize(dc *context.DataContext) {
 		s.ReturnStatement.Initialize(dc)
 	}
 }
+*/

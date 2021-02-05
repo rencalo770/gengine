@@ -200,7 +200,7 @@ func (dc *DataContext) SetValue(Vars map[string]reflect.Value, variable string, 
 		v, ok := dc.base[variable]
 		dc.lockBase.Unlock()
 		if ok {
-			return dc.setSingleValue(v, variable, newValue)
+			return core.SetSingleValue(v, variable, newValue)
 		} else {
 			//in RuleEntity
 			dc.lockVars.Lock()
@@ -210,73 +210,6 @@ func (dc *DataContext) SetValue(Vars map[string]reflect.Value, variable string, 
 		}
 	}
 	return errors.New(fmt.Sprintf("setValue not found \"%s\" error.", variable))
-}
-
-//set single value
-func (dc *DataContext) setSingleValue(obj reflect.Value, fieldName string, value reflect.Value) error {
-
-	if obj.Kind() == reflect.Ptr {
-		if value.Kind() == reflect.Ptr {
-			//both ptr
-			value = value.Elem()
-		}
-
-		objKind := obj.Elem().Kind()
-		valueKind := value.Kind()
-		if objKind == valueKind {
-			obj.Elem().Set(value)
-			return nil
-		} else {
-			valueKindStr := valueKind.String()
-			switch objKind {
-			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-				if strings.HasPrefix(valueKindStr, "int") {
-					obj.Elem().SetInt(value.Int())
-					return nil
-				}
-				if strings.HasPrefix(valueKindStr, "float") {
-					obj.Elem().SetInt(int64(value.Float()))
-					return nil
-				}
-				if strings.HasPrefix(valueKindStr, "uint") {
-					obj.Elem().SetInt(int64(value.Uint()))
-					return nil
-				}
-				break
-			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-				if strings.HasPrefix(valueKindStr, "int") && value.Int() >= 0 {
-					obj.Elem().SetUint(uint64(value.Int()))
-					return nil
-				}
-				if strings.HasPrefix(valueKindStr, "float") && value.Float() >= 0 {
-					obj.Elem().SetUint(uint64(value.Float()))
-					return nil
-				}
-				if strings.HasPrefix(valueKindStr, "uint") {
-					obj.Elem().SetUint(value.Uint())
-					return nil
-				}
-				break
-			case reflect.Float32, reflect.Float64:
-				if strings.HasPrefix(valueKindStr, "int") {
-					obj.Elem().SetFloat(float64(value.Int()))
-					return nil
-				}
-				if strings.HasPrefix(valueKindStr, "float") {
-					obj.Elem().SetFloat(value.Float())
-					return nil
-				}
-				if strings.HasPrefix(valueKindStr, "uint") {
-					obj.Elem().SetFloat(float64(value.Uint()))
-					return nil
-				}
-				break
-			}
-			return errors.New(fmt.Sprintf("\"%s\" value type \"%s\" is different from \"%s\" ", fieldName, obj.Elem().Kind().String(), value.Kind().String()))
-		}
-	} else {
-		return errors.New(fmt.Sprintf("\"%s\" value is unassignable!", fieldName))
-	}
 }
 
 func (dc *DataContext) SetMapVarValue(Vars map[string]reflect.Value, mapVarName, mapVarStrkey, mapVarVarkey string, mapVarIntkey int64, setValue reflect.Value) error {
@@ -444,5 +377,5 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]reflect.Value, mapVarName,
 }
 
 func (dc *DataContext) makeArray(value interface{}) {
-
+	 //todo
 }

@@ -1,23 +1,13 @@
 package base
 
 import (
+	//"gengine/context"
 	"gengine/context"
 	"reflect"
 )
 
 type Args struct {
 	ArgList []*Arg
-	dataCtx *context.DataContext
-}
-
-func (as *Args) Initialize(dc *context.DataContext) {
-	as.dataCtx = dc
-
-	if as.ArgList != nil {
-		for _, val := range as.ArgList {
-			val.Initialize(dc)
-		}
-	}
 }
 
 func (as *Args) AcceptFunctionCall(funcCall *FunctionCall) error {
@@ -68,13 +58,13 @@ func (as *Args) AcceptExpression(exp *Expression) error {
 	return nil
 }
 
-func (as *Args) Evaluate(Vars map[string]reflect.Value) ([]reflect.Value, error) {
+func (as *Args) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) ([]reflect.Value, error) {
 	if as.ArgList == nil || len(as.ArgList) == 0 {
 		return make([]reflect.Value, 0), nil
 	}
 	retVal := make([]reflect.Value, len(as.ArgList))
 	for i, v := range as.ArgList {
-		rv, err := v.Evaluate(Vars)
+		rv, err := v.Evaluate(dc, Vars)
 		if err != nil {
 			return retVal, err
 		}

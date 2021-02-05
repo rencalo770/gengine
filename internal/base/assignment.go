@@ -18,10 +18,9 @@ type Assignment struct {
 	AssignOperator string
 	MathExpression *MathExpression
 	Expression     *Expression
-	dataCtx        *context.DataContext
 }
 
-func (a *Assignment) Evaluate(Vars map[string]reflect.Value) (value reflect.Value, err error) {
+func (a *Assignment) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) (value reflect.Value, err error) {
 
 	defer func() {
 		if e := recover(); e != nil {
@@ -41,14 +40,14 @@ func (a *Assignment) Evaluate(Vars map[string]reflect.Value) (value reflect.Valu
 	var mv reflect.Value
 
 	if a.MathExpression != nil {
-		mv, err = a.MathExpression.Evaluate(Vars)
+		mv, err = a.MathExpression.Evaluate(dc, Vars)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
 	}
 
 	if a.Expression != nil {
-		mv, err = a.Expression.Evaluate(Vars)
+		mv, err = a.Expression.Evaluate(dc, Vars)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
@@ -61,14 +60,14 @@ func (a *Assignment) Evaluate(Vars map[string]reflect.Value) (value reflect.Valu
 	}
 
 	if len(a.Variable) > 0 {
-		sv, err = a.dataCtx.GetValue(Vars, a.Variable)
+		sv, err = dc.GetValue(Vars, a.Variable)
 		if err != nil {
 			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
 		}
 	}
 
 	if a.MapVar != nil {
-		sv, err = a.MapVar.Evaluate(Vars)
+		sv, err = a.MapVar.Evaluate(dc, Vars)
 		if err != nil {
 			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
 		}
@@ -112,7 +111,7 @@ func (a *Assignment) Evaluate(Vars map[string]reflect.Value) (value reflect.Valu
 
 END:
 	if len(a.Variable) > 0 {
-		err = a.dataCtx.SetValue(Vars, a.Variable, mv)
+		err = dc.SetValue(Vars, a.Variable, mv)
 		if err != nil {
 			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", a.LineNum, a.Column, a.Code, err))
 		}
@@ -120,7 +119,7 @@ END:
 	}
 
 	if a.MapVar != nil {
-		err = a.dataCtx.SetMapVarValue(Vars, a.MapVar.Name, a.MapVar.Strkey, a.MapVar.Varkey, a.MapVar.Intkey, mv)
+		err = dc.SetMapVarValue(Vars, a.MapVar.Name, a.MapVar.Strkey, a.MapVar.Varkey, a.MapVar.Intkey, mv)
 		if err != nil {
 			return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column:%d, code: %s, %+v:", a.LineNum, a.Column, a.Code, err))
 		}
@@ -130,29 +129,12 @@ END:
 	return
 }
 
-func (a *Assignment) Initialize(dc *context.DataContext) {
-	a.dataCtx = dc
-
-	if a.MathExpression != nil {
-		a.MathExpression.Initialize(dc)
-	}
-
-	if a.MapVar != nil {
-		a.MapVar.Initialize(dc)
-	}
-
-	if a.Expression != nil {
-		a.Expression.Initialize(dc)
-	}
-
-}
-
 func (a *Assignment) AcceptMathExpression(me *MathExpression) error {
 	if a.MathExpression == nil {
 		a.MathExpression = me
 		return nil
 	}
-	return errors.New("MathExpression already set twice!")
+	return errors.New("MathExpression already set twice! ")
 }
 
 func (a *Assignment) AcceptVariable(name string) error {
@@ -160,7 +142,7 @@ func (a *Assignment) AcceptVariable(name string) error {
 		a.Variable = name
 		return nil
 	}
-	return errors.New("Variable already set twice!")
+	return errors.New("Variable already set twice! ")
 }
 
 func (a *Assignment) AcceptMapVar(mapVar *MapVar) error {
@@ -168,7 +150,7 @@ func (a *Assignment) AcceptMapVar(mapVar *MapVar) error {
 		a.MapVar = mapVar
 		return nil
 	}
-	return errors.New("MapVar already set twice!")
+	return errors.New("MapVar already set twice")
 }
 
 func (a *Assignment) AcceptExpression(exp *Expression) error {
@@ -176,5 +158,5 @@ func (a *Assignment) AcceptExpression(exp *Expression) error {
 		a.Expression = exp
 		return nil
 	}
-	return errors.New("Expression already set twice!")
+	return errors.New("Expression already set twice! ")
 }

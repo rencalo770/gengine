@@ -32,7 +32,7 @@ fl = room.Filter(ft)
 md = room.Model(fl)
 res = room.Rerank(md)
 result.Add(rc, ft, fl, md, res)
-println("hellow")
+//println("hellow")
 end
 rule "23" "xxx"
 begin
@@ -121,7 +121,9 @@ func Test_server_pool(t *testing.T) {
 
 	apis := make(map[string]interface{})
 	apis["println"] = fmt.Println
-	pool, e1 := engine.NewGenginePool(10, 20, 1, rule_to_update1, apis)
+	start := time.Now()
+	pool, e1 := engine.NewGenginePool(1, 2, 1, rule_to_update1, apis)
+	fmt.Println("cost time", time.Since(start).Milliseconds())
 	if e1 != nil {
 		panic(e1)
 	}
@@ -133,7 +135,7 @@ func Test_server_pool(t *testing.T) {
 	go exe1(pool)
 
 	go update(pool)
-
+	go update(pool)
 	time.Sleep(20 * time.Second)
 
 }
@@ -159,9 +161,9 @@ func exe1(pool *engine.GenginePool) {
 		}
 
 		if len(ne) != 0 {
-			println(fmt.Sprintf("other not exist :%+v", ne))
+			panic(fmt.Sprintf("other not exist :%+v", ne))
 		} /*else {
-			println(fmt.Sprintf("5 exist :%+v", result.I))
+			println(fmt.Sprintf("exist :%+v", result.M))
 		}*/
 	}
 }

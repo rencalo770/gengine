@@ -12,30 +12,6 @@ type ConcStatement struct {
 	Assignments   []*Assignment
 	FunctionCalls []*FunctionCall
 	MethodCalls   []*MethodCall
-	dataCtx       *context.DataContext
-}
-
-func (cs *ConcStatement) Initialize(dc *context.DataContext) {
-	cs.dataCtx = dc
-
-	if len(cs.Assignments) > 0 {
-		for _, assignment := range cs.Assignments {
-			assignment.Initialize(dc)
-		}
-	}
-
-	if len(cs.FunctionCalls) > 0 {
-		for _, fu := range cs.FunctionCalls {
-			fu.Initialize(dc)
-		}
-	}
-
-	if len(cs.MethodCalls) > 0 {
-		for _, m := range cs.MethodCalls {
-			m.Initialize(dc)
-		}
-	}
-
 }
 
 func (cs *ConcStatement) AcceptAssignment(assignment *Assignment) error {
@@ -53,7 +29,7 @@ func (cs *ConcStatement) AcceptMethodCall(methodCall *MethodCall) error {
 	return nil
 }
 
-func (cs *ConcStatement) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) {
+func (cs *ConcStatement) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) (reflect.Value, error) {
 
 	aLen := len(cs.Assignments)
 	fLen := len(cs.FunctionCalls)
@@ -64,15 +40,15 @@ func (cs *ConcStatement) Evaluate(Vars map[string]reflect.Value) (reflect.Value,
 
 	} else if l == 1 {
 		if aLen > 0 {
-			return cs.Assignments[0].Evaluate(Vars)
+			return cs.Assignments[0].Evaluate(dc, Vars)
 		}
 
 		if fLen > 0 {
-			return cs.FunctionCalls[0].Evaluate(Vars)
+			return cs.FunctionCalls[0].Evaluate(dc, Vars)
 		}
 
 		if mLen > 0 {
-			return cs.MethodCalls[0].Evaluate(Vars)
+			return cs.MethodCalls[0].Evaluate(dc, Vars)
 		}
 
 	} else {
@@ -85,7 +61,7 @@ func (cs *ConcStatement) Evaluate(Vars map[string]reflect.Value) (reflect.Value,
 		for _, assign := range cs.Assignments {
 			assignment := assign
 			go func() {
-				_, e := assignment.Evaluate(Vars)
+				_, e := assignment.Evaluate(dc, Vars)
 				if e != nil {
 					errLock.Lock()
 					eMsg = append(eMsg, fmt.Sprintf("%+v", e))
@@ -97,7 +73,7 @@ func (cs *ConcStatement) Evaluate(Vars map[string]reflect.Value) (reflect.Value,
 		for _, fu := range cs.FunctionCalls {
 			fun := fu
 			go func() {
-				_, e := fun.Evaluate(Vars)
+				_, e := fun.Evaluate(dc, Vars)
 				if e != nil {
 					errLock.Lock()
 					eMsg = append(eMsg, fmt.Sprintf("%+v", e))
@@ -110,7 +86,7 @@ func (cs *ConcStatement) Evaluate(Vars map[string]reflect.Value) (reflect.Value,
 		for _, me := range cs.MethodCalls {
 			meth := me
 			go func() {
-				_, e := meth.Evaluate(Vars)
+				_, e := meth.Evaluate(dc, Vars)
 				if e != nil {
 					errLock.Lock()
 					eMsg = append(eMsg, fmt.Sprintf("%+v", e))

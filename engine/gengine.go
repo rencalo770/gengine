@@ -43,12 +43,12 @@ func (g *Gengine) Execute(rb *builder.RuleBuilder, b bool) error {
 	g.returnResult = make(map[string]interface{})
 
 	if len(rb.Kc.SortRules) == 0 {
-		return errors.New("no rule has been injected into engine.")
+		return errors.New("no rule has been injected into engine! ")
 	}
 
 	var eMsg []string
 	for _, r := range rb.Kc.SortRules {
-		v, err, bx := r.Execute()
+		v, err, bx := r.Execute(rb.Dc)
 		if bx {
 			g.addResult(r.RuleName, v)
 		}
@@ -84,12 +84,12 @@ func (g *Gengine) ExecuteWithStopTagDirect(rb *builder.RuleBuilder, b bool, sTag
 	g.returnResult = make(map[string]interface{})
 
 	if len(rb.Kc.SortRules) == 0 {
-		return errors.New("no rule has been injected into engine.")
+		return errors.New("no rule has been injected into engine! ")
 	}
 
 	var eMsg []string
 	for _, r := range rb.Kc.SortRules {
-		v, err, bx := r.Execute()
+		v, err, bx := r.Execute(rb.Dc)
 		if bx {
 			g.addResult(r.RuleName, v)
 		}
@@ -122,7 +122,7 @@ func (g *Gengine) ExecuteConcurrent(rb *builder.RuleBuilder) error {
 	g.returnResult = make(map[string]interface{})
 
 	if len(rb.Kc.RuleEntities) == 0 {
-		return errors.New("no rule has been injected into engine.")
+		return errors.New("no rule has been injected into engine! ")
 	}
 
 	var errLock sync.Mutex
@@ -133,7 +133,7 @@ func (g *Gengine) ExecuteConcurrent(rb *builder.RuleBuilder) error {
 	for _, r := range rb.Kc.RuleEntities {
 		rr := r
 		go func() {
-			v, e, bx := rr.Execute()
+			v, e, bx := rr.Execute(rb.Dc)
 			if bx {
 				g.addResult(rr.RuleName, v)
 			}
@@ -164,11 +164,11 @@ func (g *Gengine) ExecuteMixModel(rb *builder.RuleBuilder) error {
 	g.returnResult = make(map[string]interface{})
 
 	if len(rb.Kc.SortRules) == 0 {
-		return errors.New("no rule has been injected into engine.")
+		return errors.New("no rule has been injected into engine! ")
 	}
 
 	rules := rb.Kc.SortRules
-	v, e, bx := rules[0].Execute()
+	v, e, bx := rules[0].Execute(rb.Dc)
 	if bx {
 		g.addResult(rules[0].RuleName, v)
 	}
@@ -186,7 +186,7 @@ func (g *Gengine) ExecuteMixModel(rb *builder.RuleBuilder) error {
 		for _, r := range rules[1:] {
 			rr := r
 			go func() {
-				v, e, bx := rr.Execute()
+				v, e, bx := rr.Execute(rb.Dc)
 				if bx {
 					g.addResult(rr.RuleName, v)
 				}
@@ -225,11 +225,11 @@ func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb *builder.RuleBuilder, sTag
 	g.returnResult = make(map[string]interface{})
 
 	if len(rb.Kc.SortRules) == 0 {
-		return errors.New("no rule has been injected into engine.")
+		return errors.New("no rule has been injected into engine! ")
 	}
 
 	rules := rb.Kc.SortRules
-	v, e, bx := rules[0].Execute()
+	v, e, bx := rules[0].Execute(rb.Dc)
 	if bx {
 		g.addResult(rules[0].RuleName, v)
 	}
@@ -247,7 +247,7 @@ func (g *Gengine) ExecuteMixModelWithStopTagDirect(rb *builder.RuleBuilder, sTag
 			for _, r := range rules[1:] {
 				rr := r
 				go func() {
-					v, e, bx := rr.Execute()
+					v, e, bx := rr.Execute(rb.Dc)
 					if bx {
 						g.addResult(rr.RuleName, v)
 					}
@@ -277,7 +277,7 @@ func (g *Gengine) ExecuteSelectedRules(rb *builder.RuleBuilder, names []string) 
 	g.returnResult = make(map[string]interface{})
 
 	if len(rb.Kc.RuleEntities) == 0 {
-		return errors.New("no rule has been injected into engine.")
+		return errors.New("no rule has been injected into engine! ")
 	}
 
 	var rules []*base.RuleEntity
@@ -303,7 +303,7 @@ func (g *Gengine) ExecuteSelectedRules(rb *builder.RuleBuilder, names []string) 
 	var eMsg []string
 	for _, rule := range rules {
 		rr := rule
-		v, e, bx := rr.Execute()
+		v, e, bx := rr.Execute(rb.Dc)
 		if bx {
 			g.addResult(rr.RuleName, v)
 		}
@@ -327,7 +327,7 @@ func (g *Gengine) ExecuteSelectedRulesWithControl(rb *builder.RuleBuilder, b boo
 	g.returnResult = make(map[string]interface{})
 
 	if len(rb.Kc.SortRules) == 0 {
-		return errors.New("no rule has been injected into engine.")
+		return errors.New("no rule has been injected into engine! ")
 	}
 
 	var rules []*base.RuleEntity
@@ -353,7 +353,7 @@ func (g *Gengine) ExecuteSelectedRulesWithControl(rb *builder.RuleBuilder, b boo
 	var eMsg []string
 	for _, rule := range rules {
 		rr := rule
-		v, e, bx := rr.Execute()
+		v, e, bx := rr.Execute(rb.Dc)
 		if bx {
 			g.addResult(rr.RuleName, v)
 		}
@@ -381,7 +381,7 @@ func (g *Gengine) ExecuteSelectedRulesWithControlAndStopTag(rb *builder.RuleBuil
 	g.returnResult = make(map[string]interface{})
 
 	if len(rb.Kc.SortRules) == 0 {
-		return errors.New("no rule has been injected into engine.")
+		return errors.New("no rule has been injected into engine! ")
 	}
 
 	var rules []*base.RuleEntity
@@ -407,7 +407,7 @@ func (g *Gengine) ExecuteSelectedRulesWithControlAndStopTag(rb *builder.RuleBuil
 	var eMsg []string
 	for _, rule := range rules {
 		rr := rule
-		v, e, bx := rr.Execute()
+		v, e, bx := rr.Execute(rb.Dc)
 		if bx {
 			g.addResult(rr.RuleName, v)
 		}
@@ -438,7 +438,7 @@ func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names 
 	g.returnResult = make(map[string]interface{})
 
 	if len(rb.Kc.RuleEntities) == 0 {
-		return errors.New("no rule has been injected into engine.")
+		return errors.New("no rule has been injected into engine! ")
 	}
 
 	var rules []*base.RuleEntity
@@ -456,7 +456,7 @@ func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names 
 	}
 
 	if len(rules) == 1 {
-		v, e, bx := rules[0].Execute()
+		v, e, bx := rules[0].Execute(rb.Dc)
 		if bx {
 			g.addResult(rules[0].RuleName, v)
 		}
@@ -475,7 +475,7 @@ func (g *Gengine) ExecuteSelectedRulesConcurrent(rb *builder.RuleBuilder, names 
 	for _, r := range rules {
 		rr := r
 		go func() {
-			v, e, bx := rr.Execute()
+			v, e, bx := rr.Execute(rb.Dc)
 			if bx {
 				g.addResult(rr.RuleName, v)
 			}
@@ -503,7 +503,7 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 	g.returnResult = make(map[string]interface{})
 
 	if len(rb.Kc.RuleEntities) == 0 {
-		return errors.New("no rule has been injected into engine.")
+		return errors.New("no rule has been injected into engine! ")
 	}
 
 	var rules []*base.RuleEntity
@@ -521,7 +521,7 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 	}
 
 	if len(rules) == 1 {
-		v, e, bx := rules[0].Execute()
+		v, e, bx := rules[0].Execute(rb.Dc)
 		if bx {
 			g.addResult(rules[0].RuleName, v)
 		}
@@ -537,7 +537,7 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 
 	if len(rules) == 2 {
 		for _, r := range rules {
-			v, err, bx := r.Execute()
+			v, err, bx := r.Execute(rb.Dc)
 			if bx {
 				g.addResult(r.RuleName, v)
 			}
@@ -549,7 +549,7 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 	}
 
 	// rLen >= 3
-	v, e, bx := rules[0].Execute()
+	v, e, bx := rules[0].Execute(rb.Dc)
 	if bx {
 		g.addResult(rules[0].RuleName, v)
 	}
@@ -565,7 +565,7 @@ func (g *Gengine) ExecuteSelectedRulesMixModel(rb *builder.RuleBuilder, names []
 	for _, r := range rules[1:] {
 		rr := r
 		go func() {
-			v, e, bx := rr.Execute()
+			v, e, bx := rr.Execute(rb.Dc)
 			if bx {
 				g.addResult(rr.RuleName, v)
 			}
@@ -593,12 +593,12 @@ func (g *Gengine) ExecuteInverseMixModel(rb *builder.RuleBuilder) error {
 	rules := rb.Kc.SortRules
 	length := len(rules)
 	if length == 0 {
-		return errors.New("no rule has been injected into engine.")
+		return errors.New("no rule has been injected into engine! ")
 	}
 
 	if length <= 2 {
 		for _, r := range rules {
-			v, e, bx := r.Execute()
+			v, e, bx := r.Execute(rb.Dc)
 			if bx {
 				g.addResult(r.RuleName, v)
 			}
@@ -617,7 +617,7 @@ func (g *Gengine) ExecuteInverseMixModel(rb *builder.RuleBuilder) error {
 	for _, r := range rules[:length-1] {
 		rr := r
 		go func() {
-			v, e, bx := rr.Execute()
+			v, e, bx := rr.Execute(rb.Dc)
 			if bx {
 				g.addResult(rr.RuleName, v)
 			}
@@ -635,7 +635,7 @@ func (g *Gengine) ExecuteInverseMixModel(rb *builder.RuleBuilder) error {
 		return errors.New(fmt.Sprintf("%+v", eMsg))
 	}
 
-	v, e, bx := rules[length-1].Execute()
+	v, e, bx := rules[length-1].Execute(rb.Dc)
 	if bx {
 		g.addResult(rules[length-1].RuleName, v)
 	}
@@ -659,7 +659,7 @@ func (g *Gengine) ExecuteSelectedRulesInverseMixModel(rb *builder.RuleBuilder, n
 
 	length := len(rules)
 	if length == 0 {
-		return errors.New("no rule has been selected to execute.")
+		return errors.New("no rule has been selected to execute! ")
 	}
 
 	//resort
@@ -669,7 +669,7 @@ func (g *Gengine) ExecuteSelectedRulesInverseMixModel(rb *builder.RuleBuilder, n
 
 	if length <= 2 {
 		for _, r := range rules {
-			v, e, bx := r.Execute()
+			v, e, bx := r.Execute(rb.Dc)
 			if bx {
 				g.addResult(r.RuleName, v)
 			}
@@ -688,7 +688,7 @@ func (g *Gengine) ExecuteSelectedRulesInverseMixModel(rb *builder.RuleBuilder, n
 	for _, r := range rules[:length-1] {
 		rr := r
 		go func() {
-			v, e, bx := rr.Execute()
+			v, e, bx := rr.Execute(rb.Dc)
 			if bx {
 				g.addResult(rr.RuleName, v)
 			}
@@ -706,7 +706,7 @@ func (g *Gengine) ExecuteSelectedRulesInverseMixModel(rb *builder.RuleBuilder, n
 		return errors.New(fmt.Sprintf("%+v", eMsg))
 	}
 
-	v, e, bx := rules[length-1].Execute()
+	v, e, bx := rules[length-1].Execute(rb.Dc)
 	if bx {
 		g.addResult(rules[length-1].RuleName, v)
 	}
@@ -740,7 +740,7 @@ func (g *Gengine) ExecuteNSortMConcurrent(nSort, mConcurrent int, rb *builder.Ru
 	//nSort
 	nRules := rb.Kc.SortRules[:nSort]
 	for _, rule := range nRules {
-		v, e, bx := rule.Execute()
+		v, e, bx := rule.Execute(rb.Dc)
 		if bx {
 			g.addResult(rule.RuleName, v)
 		}
@@ -760,7 +760,7 @@ func (g *Gengine) ExecuteNSortMConcurrent(nSort, mConcurrent int, rb *builder.Ru
 	for _, r := range mRules {
 		rr := r
 		go func() {
-			v, e, bx := rr.Execute()
+			v, e, bx := rr.Execute(rb.Dc)
 			if bx {
 				g.addResult(rr.RuleName, v)
 			}
@@ -812,7 +812,7 @@ func (g *Gengine) ExecuteNConcurrentMSort(nConcurrent, mSort int, rb *builder.Ru
 	for _, r := range nRules {
 		rr := r
 		go func() {
-			v, e, bx := rr.Execute()
+			v, e, bx := rr.Execute(rb.Dc)
 			if bx {
 				g.addResult(rr.RuleName, v)
 			}
@@ -835,7 +835,7 @@ func (g *Gengine) ExecuteNConcurrentMSort(nConcurrent, mSort int, rb *builder.Ru
 	//mSort
 	mRules := rb.Kc.SortRules[nConcurrent:][:mSort]
 	for _, rule := range mRules {
-		v, e, bx := rule.Execute()
+		v, e, bx := rule.Execute(rb.Dc)
 		if bx {
 			g.addResult(rule.RuleName, v)
 		}
@@ -886,7 +886,7 @@ func (g *Gengine) ExecuteNConcurrentMConcurrent(nConcurrent, mConcurrent int, rb
 	for _, r := range nRules {
 		rr := r
 		go func() {
-			v, e, bx := rr.Execute()
+			v, e, bx := rr.Execute(rb.Dc)
 			if bx {
 				g.addResult(rr.RuleName, v)
 			}
@@ -913,7 +913,7 @@ func (g *Gengine) ExecuteNConcurrentMConcurrent(nConcurrent, mConcurrent int, rb
 	for _, r := range mRules {
 		rr := r
 		go func() {
-			v, e, bx := rr.Execute()
+			v, e, bx := rr.Execute(rb.Dc)
 			if bx {
 				g.addResult(rr.RuleName, v)
 			}
@@ -966,7 +966,7 @@ func (g *Gengine) ExecuteSelectedNSortMConcurrent(nSort, mConcurrent int, rb *bu
 		if rule, ok := rb.Kc.RuleEntities[v]; ok {
 			rules = append(rules, rule)
 		} else {
-			return errors.New(fmt.Sprintf("not exist rule:%s", rule))
+			return errors.New(fmt.Sprintf("not exist rule:%s", rule.RuleName))
 		}
 	}
 
@@ -981,7 +981,7 @@ func (g *Gengine) ExecuteSelectedNSortMConcurrent(nSort, mConcurrent int, rb *bu
 	//nSort
 	nRules := rules[:nSort]
 	for _, rule := range nRules {
-		v, e, bx := rule.Execute()
+		v, e, bx := rule.Execute(rb.Dc)
 		if bx {
 			g.addResult(rule.RuleName, v)
 		}
@@ -1001,7 +1001,7 @@ func (g *Gengine) ExecuteSelectedNSortMConcurrent(nSort, mConcurrent int, rb *bu
 	for _, r := range mRules {
 		rr := r
 		go func() {
-			v, e, bx := rr.Execute()
+			v, e, bx := rr.Execute(rb.Dc)
 			if bx {
 				g.addResult(rr.RuleName, v)
 			}
@@ -1054,7 +1054,7 @@ func (g *Gengine) ExecuteSelectedNConcurrentMSort(nConcurrent, mSort int, rb *bu
 		if rule, ok := rb.Kc.RuleEntities[v]; ok {
 			rules = append(rules, rule)
 		} else {
-			return errors.New(fmt.Sprintf("not exist rule:%s", rule))
+			return errors.New(fmt.Sprintf("not exist rule:%s", rule.RuleName))
 		}
 	}
 
@@ -1073,7 +1073,7 @@ func (g *Gengine) ExecuteSelectedNConcurrentMSort(nConcurrent, mSort int, rb *bu
 	for _, r := range nRules {
 		rr := r
 		go func() {
-			v, e, bx := rr.Execute()
+			v, e, bx := rr.Execute(rb.Dc)
 			if bx {
 				g.addResult(rr.RuleName, v)
 			}
@@ -1096,7 +1096,7 @@ func (g *Gengine) ExecuteSelectedNConcurrentMSort(nConcurrent, mSort int, rb *bu
 	//mSort
 	mRules := rules[nConcurrent:][:mSort]
 	for _, rule := range mRules {
-		v, e, bx := rule.Execute()
+		v, e, bx := rule.Execute(rb.Dc)
 		if bx {
 			g.addResult(rule.RuleName, v)
 		}
@@ -1148,7 +1148,7 @@ func (g *Gengine) ExecuteSelectedNConcurrentMConcurrent(nConcurrent, mConcurrent
 		if rule, ok := rb.Kc.RuleEntities[v]; ok {
 			rules = append(rules, rule)
 		} else {
-			return errors.New(fmt.Sprintf("not exist rule:%s", rule))
+			return errors.New(fmt.Sprintf("not exist rule:%s", rule.RuleName))
 		}
 	}
 
@@ -1167,7 +1167,7 @@ func (g *Gengine) ExecuteSelectedNConcurrentMConcurrent(nConcurrent, mConcurrent
 	for _, r := range nRules {
 		rr := r
 		go func() {
-			v, e, bx := rr.Execute()
+			v, e, bx := rr.Execute(rb.Dc)
 			if bx {
 				g.addResult(rr.RuleName, v)
 			}
@@ -1194,7 +1194,7 @@ func (g *Gengine) ExecuteSelectedNConcurrentMConcurrent(nConcurrent, mConcurrent
 	for _, r := range mRules {
 		rr := r
 		go func() {
-			v, e, bx := rr.Execute()
+			v, e, bx := rr.Execute(rb.Dc)
 			if bx {
 				g.addResult(rr.RuleName, v)
 			}

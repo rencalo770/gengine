@@ -31,26 +31,6 @@ type Expression struct {
 	LogicalOperator    string
 	ComparisonOperator string
 	NotOperator        string
-	dataCtx            *context.DataContext
-}
-
-func (e *Expression) Initialize(dc *context.DataContext) {
-	e.dataCtx = dc
-
-	if e.ExpressionLeft != nil {
-		e.ExpressionLeft.Initialize(dc)
-	}
-	if e.ExpressionRight != nil {
-		e.ExpressionRight.Initialize(dc)
-	}
-
-	if e.ExpressionAtom != nil {
-		e.ExpressionAtom.Initialize(dc)
-	}
-
-	if e.MathExpression != nil {
-		e.MathExpression.Initialize(dc)
-	}
 }
 
 func (e *Expression) AcceptExpressionAtom(atom *ExpressionAtom) error {
@@ -58,7 +38,7 @@ func (e *Expression) AcceptExpressionAtom(atom *ExpressionAtom) error {
 		e.ExpressionAtom = atom
 		return nil
 	}
-	return errors.New("ExpressionAtom already set twice!")
+	return errors.New("ExpressionAtom already set twice! ")
 }
 
 func (e *Expression) AcceptMathExpression(atom *MathExpression) error {
@@ -66,7 +46,7 @@ func (e *Expression) AcceptMathExpression(atom *MathExpression) error {
 		e.MathExpression = atom
 		return nil
 	}
-	return errors.New(" Expression's MathExpression set twice")
+	return errors.New(" Expression's MathExpression set twice! ")
 }
 
 func (e *Expression) AcceptExpression(expression *Expression) error {
@@ -82,12 +62,12 @@ func (e *Expression) AcceptExpression(expression *Expression) error {
 	return errors.New("Expression already set twice! ")
 }
 
-func (e *Expression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) {
+func (e *Expression) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) (reflect.Value, error) {
 
 	//priority to calculate single value
 	var math reflect.Value
 	if e.MathExpression != nil {
-		evl, err := e.MathExpression.Evaluate(Vars)
+		evl, err := e.MathExpression.Evaluate(dc, Vars)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
@@ -96,7 +76,7 @@ func (e *Expression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, err
 
 	var atom reflect.Value
 	if e.ExpressionAtom != nil {
-		evl, err := e.ExpressionAtom.Evaluate(Vars)
+		evl, err := e.ExpressionAtom.Evaluate(dc, Vars)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
@@ -106,7 +86,7 @@ func (e *Expression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, err
 	var b reflect.Value
 	if e.ExpressionRight == nil {
 		if e.ExpressionLeft != nil {
-			left, err := e.ExpressionLeft.Evaluate(Vars)
+			left, err := e.ExpressionLeft.Evaluate(dc, Vars)
 			if err != nil {
 				return reflect.ValueOf(nil), err
 			}
@@ -117,12 +97,12 @@ func (e *Expression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, err
 	// && ||  just only to be used between boolean
 	if e.LogicalOperator != "" {
 
-		lv, err := e.ExpressionLeft.Evaluate(Vars)
+		lv, err := e.ExpressionLeft.Evaluate(dc, Vars)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
 
-		rv, err := e.ExpressionRight.Evaluate(Vars)
+		rv, err := e.ExpressionRight.Evaluate(dc, Vars)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
@@ -146,12 +126,12 @@ func (e *Expression) Evaluate(Vars map[string]reflect.Value) (reflect.Value, err
 	// == > < != >= <=  just only to be used between number and number, string and string, bool and bool
 	if e.ComparisonOperator != "" {
 
-		lv, err := e.ExpressionLeft.Evaluate(Vars)
+		lv, err := e.ExpressionLeft.Evaluate(dc, Vars)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}
 
-		rv, err := e.ExpressionRight.Evaluate(Vars)
+		rv, err := e.ExpressionRight.Evaluate(dc, Vars)
 		if err != nil {
 			return reflect.ValueOf(nil), err
 		}

@@ -8,22 +8,14 @@ import (
 
 type ElseStmt struct {
 	StatementList *Statements
-	dataCtx       *context.DataContext
 }
 
-func (e *ElseStmt) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error, bool) {
+func (e *ElseStmt) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) (reflect.Value, error, bool) {
 
 	if e.StatementList != nil {
-		return e.StatementList.Evaluate(Vars)
+		return e.StatementList.Evaluate(dc, Vars)
 	} else {
 		return reflect.ValueOf(nil), nil, false
-	}
-}
-
-func (e *ElseStmt) Initialize(dc *context.DataContext) {
-	e.dataCtx = dc
-	if e.StatementList != nil {
-		e.StatementList.Initialize(dc)
 	}
 }
 
@@ -32,5 +24,5 @@ func (e *ElseStmt) AcceptStatements(stmts *Statements) error {
 		e.StatementList = stmts
 		return nil
 	}
-	return errors.New("ElseStmt set twice!")
+	return errors.New("ElseStmt set twice! ")
 }

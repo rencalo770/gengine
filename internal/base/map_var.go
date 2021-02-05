@@ -15,15 +15,10 @@ type MapVar struct {
 	Intkey  int64  // array index
 	Strkey  string // map key
 	Varkey  string // array index or map key
-	dataCtx *context.DataContext
 }
 
-func (m *MapVar) Initialize(dc *context.DataContext) {
-	m.dataCtx = dc
-}
-
-func (m *MapVar) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) {
-	value, e := m.dataCtx.GetValue(Vars, m.Name)
+func (m *MapVar) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) (reflect.Value, error) {
+	value, e := dc.GetValue(Vars, m.Name)
 	if e != nil {
 		return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 	}
@@ -34,7 +29,7 @@ func (m *MapVar) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) 
 			keyType := newValue.Type().Key()
 
 			if len(m.Varkey) > 0 {
-				key, e := m.dataCtx.GetValue(Vars, m.Varkey)
+				key, e := dc.GetValue(Vars, m.Varkey)
 				if e != nil {
 					return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 				}
@@ -52,7 +47,6 @@ func (m *MapVar) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) 
 			}
 
 			if len(m.Strkey) > 0 {
-				println("-----111---->", m.Strkey)
 				mv := value.Elem().MapIndex(reflect.ValueOf(m.Strkey))
 				if mv.IsValid() {
 					return mv, nil
@@ -77,7 +71,7 @@ func (m *MapVar) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) 
 		if newValue.Kind() == reflect.Slice || newValue.Kind() == reflect.Array {
 
 			if len(m.Varkey) > 0 {
-				wantedKey, e := m.dataCtx.GetValue(Vars, m.Varkey)
+				wantedKey, e := dc.GetValue(Vars, m.Varkey)
 				if e != nil {
 					return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 				}
@@ -102,7 +96,7 @@ func (m *MapVar) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) 
 			keyType := newValue.Type().Key()
 
 			if len(m.Varkey) > 0 {
-				key, e := m.dataCtx.GetValue(Vars, m.Varkey)
+				key, e := dc.GetValue(Vars, m.Varkey)
 				if e != nil {
 					return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 				}
@@ -144,7 +138,7 @@ func (m *MapVar) Evaluate(Vars map[string]reflect.Value) (reflect.Value, error) 
 		if newValue.Kind() == reflect.Slice || newValue.Kind() == reflect.Array {
 
 			if len(m.Varkey) > 0 {
-				wantedKey, e := m.dataCtx.GetValue(Vars, m.Varkey)
+				wantedKey, e := dc.GetValue(Vars, m.Varkey)
 				if e != nil {
 					return reflect.ValueOf(nil), errors.New(fmt.Sprintf("line %d, column %d, code: %s, %+v", m.LineNum, m.Column, m.Code, e))
 				}
@@ -175,7 +169,7 @@ func (m *MapVar) AcceptVariable(name string) error {
 		m.Varkey = name
 		return nil
 	}
-	return errors.New("MapVar's Varkey set three times!")
+	return errors.New("MapVar's Varkey set three times! ")
 }
 
 func (m *MapVar) AcceptInteger(i64 int64) error {
@@ -188,5 +182,5 @@ func (m *MapVar) AcceptString(str string) error {
 		m.Strkey = str
 		return nil
 	}
-	return errors.New("MapVar's Strkey set three times!")
+	return errors.New("MapVar's Strkey set three times! ")
 }
