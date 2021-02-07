@@ -59,13 +59,12 @@ func Test_rp1(t *testing.T) {
 
 	go func() {
 		for {
-			if pool.IsExist("1") {
-				println("exist 1...")
-			}
+			isExist := pool.IsExist([]string{"1"})
+			println(fmt.Sprintf("exist 1... %+v", isExist))
 
-			if pool.IsExist("2") {
-				println("exist 2...")
-			}
+
+			isExist = pool.IsExist([]string{"2"})
+			println(fmt.Sprintf("exist 2... %+v", isExist))
 			time.Sleep(1 * time.Second)
 
 		}

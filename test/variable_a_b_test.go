@@ -23,11 +23,9 @@ func NewFunc() {
 	println("newFunc....")
 }
 
-
 func (r *Res) GetFunc() func() {
 	return NewFunc
 }
-
 
 type CTX struct {
 	Res *Res

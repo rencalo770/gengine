@@ -6,7 +6,6 @@ import (
 )
 
 type oneCopy struct {
-
 }
 
 //此测试为了证明在不改变struct自身的数据情况下，同时传入多个参数到结构体所指的方法上去执行时，这些参数是不会相互覆盖的
@@ -29,44 +28,41 @@ func Test_base_one_copy_rules(t *testing.T) {
 
 	op := &oneCopy{}
 
-
 	go func() {
-		for i:=0; i< 100000 ; i++{
+		for i := 0; i < 100000; i++ {
 			op.change(&m1)
 		}
 	}()
 
-
 	go func() {
-		for i:=0; i< 1000 ; i++{
+		for i := 0; i < 1000; i++ {
 			op.change(&m2)
 		}
 	}()
 
 	go func() {
-		for i:=0; i< 1000 ; i++{
+		for i := 0; i < 1000; i++ {
 			op.change(&m3)
 		}
 	}()
 
-	time.Sleep(2 *time.Second)
+	time.Sleep(2 * time.Second)
 
-	for k,v :=range m1  {
+	for k, v := range m1 {
 		println("m1-->", k, v)
 	}
 
-	for k,v :=range m2  {
+	for k, v := range m2 {
 		println("m2-->", k, v)
 	}
 
-	for k,v :=range m3  {
+	for k, v := range m3 {
 		println("m3-->", k, v)
 	}
 
 }
 
-func (op *oneCopy)change(m *map[string]string) {
+func (op *oneCopy) change(m *map[string]string) {
 	(*m)["a"] = "b"
 	(*m)["a1"] = "b1000"
 }
-

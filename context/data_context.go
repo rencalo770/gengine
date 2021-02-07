@@ -377,5 +377,5 @@ func (dc *DataContext) SetMapVarValue(Vars map[string]reflect.Value, mapVarName,
 }
 
 func (dc *DataContext) makeArray(value interface{}) {
-	 //todo
+	//todo
 }

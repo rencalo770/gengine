@@ -211,21 +211,21 @@ func (gp *GenginePool) UpdatePooledRules(ruleStr string) error {
 	defer gp.updateLock.Unlock()
 
 	rbi, e := makeRuleBuilder(ruleStr, gp.apis)
-	gp.ruleBuilder = rbi
 	if e != nil {
 		return e
-	} else {
-		if len(rbi.Kc.RuleEntities) == 0 {
-			return errors.New(fmt.Sprintf("if you want to clear all rules, use method \"pool.ClearPoolRules()\""))
-		}
-
-		for i := 0; i < int(gp.max); i++ {
-			gp.rbSlice[i].Kc = gp.ruleBuilder.Kc
-		}
-
-		gp.clear = false
-		return nil
 	}
+
+	if len(rbi.Kc.RuleEntities) == 0 {
+		return errors.New(fmt.Sprintf("if you want to clear all rules, use method \"pool.ClearPoolRules()\""))
+	}
+
+	gp.ruleBuilder = rbi
+	for i := 0; i < int(gp.max); i++ {
+		gp.rbSlice[i].Kc = gp.ruleBuilder.Kc
+	}
+
+	gp.clear = false
+	return nil
 }
 
 func getKc(ruleString string) (*base.KnowledgeContext, error) {
@@ -372,6 +372,22 @@ func (gp *GenginePool) ClearPoolRules() {
 	}
 }
 
+//remove rules
+func (gp *GenginePool) RemoveRules(ruleNames []string) error {
+	gp.updateLock.Lock()
+	defer gp.updateLock.Unlock()
+
+	e := gp.ruleBuilder.RemoveRules(ruleNames)
+	if e != nil {
+		return e
+	}
+
+	for _, rb := range gp.rbSlice {
+		_ = rb.RemoveRules(ruleNames)
+	}
+	return nil
+}
+
 /*
 1 sort model
 2 concurrent model
@@ -395,15 +411,28 @@ func (gp *GenginePool) GetExecModel() int {
 }
 
 //check the rule whether exist
-func (gp *GenginePool) IsExist(ruleName string) bool {
+func (gp *GenginePool) IsExist(ruleNames []string) []bool {
 	gp.updateLock.Lock()
 	defer gp.updateLock.Unlock()
 
-	if gp.clear || gp.ruleBuilder == nil {
-		return false
+	if len(ruleNames) == 0 {
+		return make([]bool, 0)
 	}
-	_, ok := gp.ruleBuilder.Kc.RuleEntities[ruleName]
-	return ok
+
+	exist := make([]bool, 0)
+	if gp.clear || gp.ruleBuilder == nil {
+		for i := 0; i < len(ruleNames); i++ {
+			exist = append(exist, false)
+		}
+		return exist
+	}
+
+	for _, name := range ruleNames {
+		_, ok := gp.ruleBuilder.Kc.RuleEntities[name]
+		exist = append(exist, ok)
+	}
+
+	return exist
 }
 
 //get the rule's salience

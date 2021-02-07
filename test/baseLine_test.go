@@ -40,7 +40,7 @@ end
 
 	resultMap, _ := eng.GetRulesResultMap()
 
-	r,ok := resultMap["3"]
+	r, ok := resultMap["3"]
 	if ok {
 		println("return ---->", r.(string))
 	}
@@ -51,12 +51,10 @@ type P struct {
 	ProjectInformation map[string]string
 }
 
-
-
 func input() *P {
 	return &P{ProjectInformation: map[string]string{
-		"ProjectType": "MIS系统,内部平台",
-		"TargetUser":"合作伙伴,政府",
-		"ServerInvoker":"前段页面,手机H5,手机APP",
+		"ProjectType":   "MIS系统,内部平台",
+		"TargetUser":    "合作伙伴,政府",
+		"ServerInvoker": "前段页面,手机H5,手机APP",
 	}}
 }

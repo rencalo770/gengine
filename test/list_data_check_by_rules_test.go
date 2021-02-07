@@ -6,7 +6,6 @@ import (
 	"testing"
 )
 
-
 /*type User struct {
 	Name string
 	Age int
@@ -41,7 +40,7 @@ end
 	// there is your a list of data(users)
 	users := make([]*User, 100)
 
-	for _, user := range users  {
+	for _, user := range users {
 		tmpApisOrData := make(map[string]interface{})
 		tmpApisOrData["user"] = user
 		//execute rules
@@ -54,27 +53,22 @@ end
 		// err== nil to do you want to do
 	}
 
-
 	// or concurrent to execute
 	/*
-	for _, user := range users  {
-		u := user
-		go func() {
-			tmpApisOrData := make(map[string]interface{})
-			tmpApisOrData["user"] = u
-			//execute rules
-			//all methods the gengine pool supply is thread-safety
-			e, _ := pool.Execute(tmpApisOrData, true)
-			if e != nil {
-				//log or return the err
-				//errors.New(fmt.Sprintf("execute rules err:%+v", e))
-			}
-			// err== nil to do you want to do
-		}()
-	}
+		for _, user := range users  {
+			u := user
+			go func() {
+				tmpApisOrData := make(map[string]interface{})
+				tmpApisOrData["user"] = u
+				//execute rules
+				//all methods the gengine pool supply is thread-safety
+				e, _ := pool.Execute(tmpApisOrData, true)
+				if e != nil {
+					//log or return the err
+					//errors.New(fmt.Sprintf("execute rules err:%+v", e))
+				}
+				// err== nil to do you want to do
+			}()
+		}
 	*/
 }
-
-
-
-

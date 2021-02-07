@@ -194,3 +194,67 @@ func (builder *RuleBuilder) BuildRuleWithIncremental(ruleString string) error {
 
 	return nil
 }
+
+func (builder *RuleBuilder) RemoveRules(ruleNames []string) error {
+	builder.buildLock.Lock()
+	defer builder.buildLock.Unlock()
+
+	if len(ruleNames) == 0 {
+		return errors.New(fmt.Sprintf("no rules need to be remove! "))
+	}
+
+	newRuleEntities := make(map[string]*base.RuleEntity)
+	for name, entity := range builder.Kc.RuleEntities {
+		flag := true
+		for _, delName := range ruleNames {
+			if delName == name {
+				flag = false
+				break
+			}
+		}
+		if flag {
+			newRuleEntities[name] = entity
+		}
+	}
+
+	newSortRuleEntities := make([]*base.RuleEntity, 0)
+	for _, entity := range newRuleEntities {
+		newSortRuleEntities = append(newSortRuleEntities, entity)
+	}
+
+	if len(newSortRuleEntities) > 1 {
+		sort.SliceStable(newSortRuleEntities, func(i, j int) bool {
+			return newSortRuleEntities[i].Salience > newSortRuleEntities[j].Salience
+		})
+	}
+
+	newSortRulesIndexMap := make(map[string]int)
+	for k, v := range newSortRuleEntities {
+		newSortRulesIndexMap[v.RuleName] = k
+	}
+
+	kc := base.NewKnowledgeContext()
+
+	kc.RuleEntities = newRuleEntities
+	kc.SortRules = newSortRuleEntities
+	kc.SortRulesIndexMap = newSortRulesIndexMap
+
+	builder.Kc = kc
+	return nil
+}
+
+func (builder *RuleBuilder) IsExist(ruleNames []string) []bool {
+	builder.buildLock.Lock()
+	defer builder.buildLock.Unlock()
+
+	if len(ruleNames) == 0 {
+		return make([]bool, 0)
+	}
+
+	exist := make([]bool, 0)
+	for _, name := range ruleNames {
+		_, ok := builder.Kc.RuleEntities[name]
+		exist = append(exist, ok)
+	}
+	return exist
+}

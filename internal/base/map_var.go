@@ -11,10 +11,10 @@ import (
 //support map or array
 type MapVar struct {
 	SourceCode
-	Name    string // map name
-	Intkey  int64  // array index
-	Strkey  string // map key
-	Varkey  string // array index or map key
+	Name   string // map name
+	Intkey int64  // array index
+	Strkey string // map key
+	Varkey string // array index or map key
 }
 
 func (m *MapVar) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) (reflect.Value, error) {

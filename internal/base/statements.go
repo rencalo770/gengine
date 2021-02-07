@@ -8,7 +8,6 @@ import (
 type Statements struct {
 	StatementList   []*Statement
 	ReturnStatement *ReturnStatement
-	//dataCtx         *context.DataContext
 }
 
 func (s *Statements) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) (reflect.Value, error, bool) {
@@ -25,23 +24,6 @@ func (s *Statements) Evaluate(dc *context.DataContext, Vars map[string]reflect.V
 	}
 	if s.ReturnStatement != nil {
 		return s.ReturnStatement.Evaluate(dc, Vars)
-	} else {
-		return reflect.ValueOf(nil), nil, false
 	}
-
+	return reflect.ValueOf(nil), nil, false
 }
-/*
-func (s *Statements) Initialize(dc *context.DataContext) {
-	s.dataCtx = dc
-
-	if s.StatementList != nil {
-		for _, val := range s.StatementList {
-			val.Initialize(dc)
-		}
-	}
-
-	if s.ReturnStatement != nil {
-		s.ReturnStatement.Initialize(dc)
-	}
-}
-*/

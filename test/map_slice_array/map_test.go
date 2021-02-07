@@ -103,7 +103,7 @@ func Test_m1(t *testing.T) {
 
 }
 
-func Test_map_un(t *testing.T)  {
+func Test_map_un(t *testing.T) {
 
 	x := make(map[int]int)
 

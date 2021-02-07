@@ -66,8 +66,8 @@ func Test_pool_select_rules(t *testing.T) {
 	}
 	println("desc--->", desc)
 
-	exist := pool.IsExist("333")
-	println("rule 333 exist--->", exist)
+	exist := pool.IsExist([]string{"333"})
+	println(fmt.Sprintf("rule 333 exist--->%+v", exist))
 
 }
 

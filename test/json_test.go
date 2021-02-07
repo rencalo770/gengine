@@ -15,7 +15,7 @@ func JsonString(s string) {
 	ms := make(map[string]map[string]string)
 
 	//this is very important!!!
-	bytes := []byte(strings.Replace(s, "\\", "",-1))
+	bytes := []byte(strings.Replace(s, "\\", "", -1))
 
 	e := json.Unmarshal(bytes, &ms)
 	if e != nil {
@@ -24,16 +24,15 @@ func JsonString(s string) {
 	println(ms["hello"]["never"])
 }
 
+func Test_hello_222(t *testing.T) {
 
-func Test_hello_222(t *testing.T)  {
-
-/*	ms := make(map[string]map[string]string)
-	m := make(map[string]string)
-	m["never"] = "give up"
-	ms["hello"] = m
-	bytes, _ := json.Marshal(&ms)
-	fmt.Println(string(bytes))
-*/
+	/*	ms := make(map[string]map[string]string)
+		m := make(map[string]string)
+		m["never"] = "give up"
+		ms["hello"] = m
+		bytes, _ := json.Marshal(&ms)
+		fmt.Println(string(bytes))
+	*/
 	ruleStr := `
 rule "test" "test_d" salience 100
 begin

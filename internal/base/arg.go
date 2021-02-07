@@ -15,7 +15,7 @@ type Arg struct {
 	Expression   *Expression
 }
 
-func (a *Arg) Evaluate(dc *context.DataContext ,Vars map[string]reflect.Value) (reflect.Value, error) {
+func (a *Arg) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) (reflect.Value, error) {
 	if len(a.Variable) > 0 {
 		return dc.GetValue(Vars, a.Variable)
 	}

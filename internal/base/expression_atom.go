@@ -55,7 +55,7 @@ func (e *ExpressionAtom) AcceptMapVar(mapVar *MapVar) error {
 	return errors.New("MapVar already defined! ")
 }
 
-func (e *ExpressionAtom) Evaluate(dc *context.DataContext,Vars map[string]reflect.Value) (reflect.Value, error) {
+func (e *ExpressionAtom) Evaluate(dc *context.DataContext, Vars map[string]reflect.Value) (reflect.Value, error) {
 	if len(e.Variable) > 0 {
 		return dc.GetValue(Vars, e.Variable)
 	} else if e.Constant != nil {

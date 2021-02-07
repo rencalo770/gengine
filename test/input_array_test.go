@@ -8,8 +8,8 @@ import (
 	"testing"
 )
 
-func Test_input_array(t *testing.T)  {
-	
+func Test_input_array(t *testing.T) {
+
 	var rule = `
 rule "test" "test" 
 begin
@@ -44,7 +44,6 @@ end
 
 }
 
-
 type InputAndResult struct {
 	Result map[string][]string
 }
@@ -53,11 +52,10 @@ func (input *InputAndResult) AddStringArray(key string, value []string) {
 	input.Result[key] = value
 }
 
-func (input *InputAndResult)GetSlice(vs ... string) []string{
+func (input *InputAndResult) GetSlice(vs ...string) []string {
 	var s []string
-	for _, v := range vs  {
+	for _, v := range vs {
 		s = append(s, v)
 	}
 	return s
 }
-
