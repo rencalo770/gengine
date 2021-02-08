@@ -388,6 +388,26 @@ func (gp *GenginePool) RemoveRules(ruleNames []string) error {
 	return nil
 }
 
+//plugin_exportName_apiName.so
+// _ is a separator
+//plugin is prefix
+//exportName is user export in plugin file
+//apiName is plugin used in gengine
+func (gp *GenginePool) PluginLoader(absolutePathOfSO string) error {
+	gp.updateLock.Lock()
+	defer gp.updateLock.Unlock()
+
+	apiName, exportApi, e := gp.ruleBuilder.Dc.PluginLoader(absolutePathOfSO)
+	if e != nil {
+		return e
+	}
+
+	for _, rb := range gp.rbSlice {
+		rb.Dc.Add(apiName, exportApi)
+	}
+	return nil
+}
+
 /*
 1 sort model
 2 concurrent model

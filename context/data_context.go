@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"gengine/internal/core"
+	"path"
+	"path/filepath"
+	"plugin"
 	"reflect"
 	"strings"
 	"sync"
@@ -29,8 +32,8 @@ func (dc *DataContext) loadInnerUDF() {
 
 func (dc *DataContext) Add(key string, obj interface{}) {
 	dc.lockBase.Lock()
+	defer dc.lockBase.Unlock()
 	dc.base[key] = reflect.ValueOf(obj)
-	dc.lockBase.Unlock()
 }
 
 func (dc *DataContext) Del(keys ...string) {
@@ -38,10 +41,50 @@ func (dc *DataContext) Del(keys ...string) {
 		return
 	}
 	dc.lockBase.Lock()
+	defer dc.lockBase.Unlock()
+
 	for _, key := range keys {
 		delete(dc.base, key)
 	}
-	dc.lockBase.Unlock()
+}
+
+//plugin_exportName_apiName.so
+// _ is a separator
+//plugin is prefix
+//exportName is user export in plugin file
+//apiName is plugin used in gengine
+func (dc *DataContext) PluginLoader(absolutePathOfSO string) (string, plugin.Symbol, error) {
+
+	plg, err := plugin.Open(absolutePathOfSO)
+	if err != nil {
+		return "", nil, err
+	}
+
+	_, file := filepath.Split(absolutePathOfSO)
+	if path.Ext(file) != ".so" {
+		return "", nil, errors.New(fmt.Sprintf("%s is not a plugin file", absolutePathOfSO))
+	}
+
+	fileWithOutExt := strings.ReplaceAll(file, ".so", "")
+
+	splits := strings.Split(fileWithOutExt, "_")
+	if len(splits) != 3 || !strings.HasPrefix(file, "plugin_") {
+		return "", nil, errors.New(fmt.Sprintf("the plugin file name(%s) is not fit for need! ", absolutePathOfSO))
+	}
+
+	exportName := splits[1]
+	apiName := splits[2]
+
+	exportApi, err := plg.Lookup(exportName)
+	if err != nil {
+		return "", nil, err
+	}
+
+	dc.lockBase.Lock()
+	defer dc.lockBase.Unlock()
+
+	dc.base[apiName] = reflect.ValueOf(exportApi)
+	return apiName, exportApi, nil
 }
 
 func (dc *DataContext) Get(key string) (reflect.Value, error) {
